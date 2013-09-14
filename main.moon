@@ -48,30 +48,33 @@ p2 = Powerup world, layer, 0, 50, image
 p3 = Powerup world, layer, 200, 50, image
 
 
--- health = 100
 
--- texture = MOAIImage.new()
--- texture\load('resources/texture.png')
 
--- sprite = MOAIGfxQuad2D.new()
--- sprite\setTexture(texture)
--- sprite\setRect(-128, -128, 128, 128)
+newCharacter = (layer) ->
 
--- Aanmaken prop
-prop = MOAIProp2D.new()
-prop\setDeck(sprite)
-prop\setLoc(0, 0)
+  texture = MOAIImage.new()
+  texture\load('resources/texture.png')
 
--- Aanmaken behaviour
-behaviour = RotateBehaviour()
+  sprite = MOAIGfxQuad2D.new()
+  sprite\setTexture(texture)
+  sprite\setRect(-128, -128, 128, 128)
 
-c = Hero( prop, health, behaviour, layer)
-c\add()
-c\method()
-c\update()
+  -- Aanmaken prop
+  prop = MOAIProp2D.new()
+  prop\setDeck(sprite)
+  prop\setLoc(0, 0)
+
+  health = 100
+
+  -- Aanmaken behaviour
+  behaviour = RotateBehaviour()
+
+  c = Character( prop, health, behaviour, layer)
+  c
+
+c = newCharacter(layer)\add()\update()
 
 p = Pointer(world, layer)
-print 'test'
 
 -- Clicks controleren
 -- partition = layer\getPartition()

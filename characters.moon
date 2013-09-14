@@ -19,6 +19,7 @@ export class Character
 
   add: =>
     @layer\insertProp @prop
+    @
 
   remove: =>
     @layer\removeProp @prop
@@ -70,7 +71,7 @@ export class Pointer
   @worldY: 0
 
   new: (@world, @layer) =>
-    print 'new pointer'
+    -- TODO dit implementeren voor touch
     MOAIInputMgr.device.pointer\setCallback ( @\callback )
     MOAIInputMgr.device.mouseLeft\setCallback ( @\onClick )
 
