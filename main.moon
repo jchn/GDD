@@ -73,6 +73,7 @@ newCharacter = (layer) ->
   c
 
 c = newCharacter(layer)\add()\update()
+print c.name
 
 p = Pointer(world, layer)
 

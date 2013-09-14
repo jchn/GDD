@@ -4,18 +4,9 @@ export class Character
 
   name: 'character'
 
-  method: ->
-    print "method"
-
-  remove: =>
-    @layer\removeProp(@prop)
-
   update: =>
     @behaviour\execute(@)
-
-  delegateClick: =>
-    if MOAIInputMgr.device.pointer
-      MOAIInputMgr.device.mouseLeft\setCallback @onClick
+    @
 
   add: =>
     @layer\insertProp @prop
@@ -23,6 +14,10 @@ export class Character
 
   remove: =>
     @layer\removeProp @prop
+    @
+
+  setBehaviour: (behaviour) =>
+    -- Finish current behaviour, set new behaviour
 
 export class Hero extends Character
 
@@ -31,6 +26,8 @@ export class Enemy extends Character
 export class Ufo extends Character
 
 export class Behaviour
+
+  name: 'behaviour'
 
   new: =>
 
@@ -42,6 +39,8 @@ export class RotateBehaviour extends Behaviour
     character.prop\moveRot 360, 3
 
 export class Powerup
+
+  name: 'powerup'
 
   new: (@world, @layer, @x, @y, @image) =>
     @body = @world\addBody( MOAIBox2DBody.DYNAMIC )
@@ -78,7 +77,6 @@ export class Pointer
   onClick: (down) =>
     if down
       @pick = @layer\getPartition()\propForPoint @worldX, @worldY
-      print @pick
       if @pick
         @mouseBody = @world\addBody MOAIBox2DBody.DYNAMIC
 
@@ -90,8 +88,6 @@ export class Pointer
         @pick = nil
 
   callback: (x, y) =>
-    print 'move'
-    print @
     @worldX, @worldY = @layer\wndToWorld x, y
 
     if @pick
