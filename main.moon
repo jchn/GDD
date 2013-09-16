@@ -50,7 +50,7 @@ p3 = Powerup world, layer, 200, 50, image
 
 
 
-newCharacter = (layer) ->
+newCharacter = (layer, world) ->
 
   texture = MOAIImage.new()
   texture\load('resources/texture.png')
@@ -66,16 +66,60 @@ newCharacter = (layer) ->
 
   health = 100
 
-  -- Aanmaken behaviour
-  behaviour = RotateBehaviour()
 
-  c = Character( prop, health, behaviour, layer)
+
+  c = Character( prop, health, layer, world)
   c
 
-c = newCharacter(layer)\add()\update()
-print c.name
+c = newCharacter(layer, world)\add()
+c\setBehaviour WalkBehaviour c
+
+
+
+threadFunc = ->
+  while true
+    c\update()
+    x, y = c.body\getPosition()
+    -- viewport\setOffset(x, 0)
+    -- print viewport\getLoc()
+    coroutine.yield()
+
+thread = MOAIThread.new()
+thread\run(threadFunc)
 
 p = Pointer(world, layer)
+
+performWithDelay = (delay, func, repeats, ...) ->
+  print 'performWithDelay'
+  t = MOAITimer.new()
+  t\setSpan delay/100
+  print t\getTime()
+  t\setListener(MOAITimer.EVENT_TIMER_END_SPAN, ->
+    print t\getTime()
+    t\stop()
+    t = nil
+    func(unpack(arg))
+    if repeats
+      if repeats > 1
+        performWithDelay( delay, func, repeats - 1, unpack( arg ) )
+      elseif repeats == 0
+        performWithDelay( delay, func, 0, unpack( arg ) ))
+  t\start()
+
+test = ->
+  print 'delay'
+  c\setBehaviour Behaviour c
+
+test2 = ->
+  print 'delay2'
+  c\setBehaviour WalkBehaviour c
+
+performWithDelay( 100, test )
+performWithDelay( 200, test2 )
+performWithDelay( 300, test )
+performWithDelay( 400, test2 )
+
+
 
 -- Clicks controleren
 -- partition = layer\getPartition()
