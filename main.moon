@@ -7,8 +7,8 @@ require 'pointer'
 export mouseX = 0
 export mouseY = 0
 -- Openen window
-screenWidth = 1136
-screenHeight = 640
+screenWidth = 480
+screenHeight = 320
 MOAISim.openWindow "wrestlers vs aliens", screenWidth, screenHeight
 
 -- 1. Aanmaken van een viewport
@@ -33,12 +33,12 @@ world = MOAIBox2DWorld.new()
 world\setGravity( 0, -10 ) -- Zwaartekracht
 world\setUnitsToMeters( 1/30 ) -- Hoeveel units in een meter. Let op dat Units niet per se pixels zijn, dat hangt af van de scale van de viewport
 world\start()
-layer\setBox2DWorld( world )
+-- layer\setBox2DWorld( world )
 
 
 -- De grond
 staticBody = world\addBody( MOAIBox2DBody.STATIC )
-staticBody\setTransform(0,-200)
+staticBody\setTransform(0,-100)
 
 rectFixture   = staticBody\addRect( -512, -15, 512, 15 )
 
@@ -58,19 +58,21 @@ newCharacter = (layer, world) ->
   texture = MOAIImage.new()
   texture\load('resources/wrestler_idle.png')
 
-  sprite = MOAIGfxQuad2D.new()
-  sprite\setTexture(texture)
-  rect = Rectangle -128, -128, 128, 128
-  sprite\setRect(rect\get())
+  rect = Rectangle 0, -64, 64, 64
+
+  tileLib = MOAITileDeck2D\new()
+  tileLib\setTexture(texture)
+  tileLib\setSize(2, 1)
+  tileLib\setRect(rect\get())
 
   -- Aanmaken prop
   prop = MOAIProp2D.new()
-  prop\setDeck(sprite)
+  prop\setDeck(tileLib)
   prop\setLoc(0, 0)
+  prop\setColor 1.0, 1.0, 1.0, 1.0
+  prop\setBlendMode(MOAIProp2D.GL_SRC_ALPHA, MOAIProp2D.GL_ONE_MINUS_SRC_ALPHA)
 
   health = 100
-
-
 
   c = Character( prop, layer, world, 1, rect )
   c

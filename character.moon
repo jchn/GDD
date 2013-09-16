@@ -27,10 +27,23 @@ export class Character
     table.insert @behaviors, behaviorID\lower()
 
   update: =>
-    print 'updating'
 
   add: =>
     @layer\insertProp @prop
+
+    curve = MOAIAnimCurve.new()
+    curve\reserveKeys(2)
+
+    curve\setKey(1, 0.25, 1)
+    curve\setKey(2, 0.5, 2)
+
+    anim = MOAIAnim\new()
+    anim\reserveLinks(1)
+    anim\setLink(1, curve, @prop, MOAIProp2D.ATTR_INDEX)
+    anim\setMode(MOAITimer.LOOP)
+    anim\setSpan(1)
+    anim\start()
+
     @
 
   remove: =>
