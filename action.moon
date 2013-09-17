@@ -1,31 +1,31 @@
 export class Action --behavior
 
-  execute: (character, otherCharacters) =>
-    character.state = Characterstate.EXECUTING
+  new: (@character) =>
 
-  stop: (character, otherCharacters) =>
-    character.state = Characterstate.FINISHING
+  execute: (otherCharacters = {}) =>
+    @character.state = Characterstate.EXECUTING
+
+  stop: (otherCharacters = {}) =>
+    @character.state = Characterstate.FINISHING
     if @beforeStop
-      @beforeStop(character, otherCharacters)
-    character.state = Characterstate.IDLE
+      @beforeStop(otherCharacters)
+    @character.state = Characterstate.IDLE
 
 export class IdleAction extends Action
-  execute: (character, otherCharacters) =>
-    if character.state == Characterstate.IDLE
-      print 'setting animation from behavior'
+
+  execute: (otherCharacters = {}) =>
+    if @character.state == Characterstate.IDLE
 
       texture = R.WRESTLER_IDLE
-      print 'mushroom'
-      print R.MUSHROOM
-      rect = character.rectangle
-      --rect\subtract( 32, 32, 32, 32 )
+
+      rect = Rectangle -32, -32, 32, 32
 
       @tileLib = MOAITileDeck2D\new()
       @tileLib\setTexture(texture)
       @tileLib\setSize(2, 1)
       @tileLib\setRect(rect\get())
 
-      character.prop\setDeck @tileLib
+      @character.prop\setDeck @tileLib
 
       @curve = MOAIAnimCurve.new()
       @curve\reserveKeys(2)
@@ -35,31 +35,33 @@ export class IdleAction extends Action
 
       @anim = MOAIAnim\new()
       @anim\reserveLinks(1)
-      @anim\setLink(1, @curve, character.prop, MOAIProp2D.ATTR_INDEX)
+      @anim\setLink(1, @curve, @character.prop, MOAIProp2D.ATTR_INDEX)
       @anim\setMode(MOAITimer.LOOP)
       @anim\setSpan(1)
       @anim\start()
-    super character
+    super @character
 
-  beforeStop: (character, otherCharacters) =>
+  beforeStop: (otherCharacters = {}) =>
     @anim\stop()
     @anim = nil
     @curve = nil
 
 export class WalkAction extends Action
-  execute: (character, otherCharacters) =>
-    if character.state == Characterstate.IDLE
+
+  execute: (otherCharacters = {}) =>
+    if @character.state == Characterstate.IDLE
 
       texture = R.WRESTLER_WALK
 
       rect = character.rectangle
+
 
       @tileLib = MOAITileDeck2D\new()
       @tileLib\setTexture(texture)
       @tileLib\setSize(6, 1)
       @tileLib\setRect(rect\get())
 
-      character.prop\setDeck @tileLib
+      @character.prop\setDeck @tileLib
 
       @curve = MOAIAnimCurve.new()
       @curve\reserveKeys(6)
@@ -73,16 +75,23 @@ export class WalkAction extends Action
 
       @anim = MOAIAnim\new()
       @anim\reserveLinks(1)
-      @anim\setLink(1, @curve, character.prop, MOAIProp2D.ATTR_INDEX)
+      @anim\setLink(1, @curve, @character.prop, MOAIProp2D.ATTR_INDEX)
       @anim\setMode(MOAITimer.LOOP)
       @anim\setSpan(1.0)
       @anim\start()
+      @anim\setListener(MOAITimer.EVENT_TIMER_END_SPAN, @\test)
+      -- @anim\stop(otherCharacters)
 
-      character.body\setLinearVelocity(40, 0)
-    super character
+      @character.body\setLinearVelocity(40, 0)
+    super @character
 
-  beforeStop: (character, otherCharacters) =>
+  test: =>
+    print 'stop'
+    @stop!
+
+  beforeStop: (otherCharacters = {}) =>
     @anim\stop()
-    character.body\setLinearVelocity(0, 0)
+    @character.body\setLinearVelocity(0, 0)
     @anim = nil
     @curve = nil
+

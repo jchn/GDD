@@ -50,12 +50,16 @@ p2 = Powerup world, layer, 0, 50, R.MUSHROOM
 p3 = Powerup world, layer, 200, 50, R.MUSHROOM
 
 newCharacter = (layer, world) ->
+
   print "NEW Char: world: "
   print world
   characterFactory.makeCharacter("unit", layer, world, 1)
 
 c = newCharacter(layer, world)\add()
-c\addBehavior IdleAction()
+print 'c'
+print c
+a = IdleAction(c)
+c\addBehavior(a)
 
 threadFunc = ->
   while true
@@ -71,12 +75,11 @@ thread\run(threadFunc)
 p = Pointer(world, layer)
 
 performWithDelay = (delay, func, repeats, ...) ->
-  print 'performWithDelay'
   t = MOAITimer.new()
   t\setSpan delay/100
-  print t\getTime()
+  -- print t\getTime()
   t\setListener(MOAITimer.EVENT_TIMER_END_SPAN, ->
-    print t\getTime()
+    -- print t\getTime()
     t\stop()
     t = nil
     func(unpack(arg))
@@ -88,11 +91,9 @@ performWithDelay = (delay, func, repeats, ...) ->
   t\start()
 
 test = ->
-  print 'delay'
   c\addBehavior IdleAction c
 
 test2 = ->
-  print 'delay2'
   c\addBehavior WalkAction c
 
 performWithDelay( 0, test )
