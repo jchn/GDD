@@ -44,35 +44,16 @@ staticBody\setTransform(0,-100)
 
 rectFixture   = staticBody\addRect( -512, -15, 512, 15 )
 
-p0 = Powerup world, layer, -400, 50, R.MUSHROOM
+p0 = Powerup world, layer, 100, 50, R.MUSHROOM
 p1 = Powerup world, layer, -200, 50, R.MUSHROOM
 p2 = Powerup world, layer, 0, 50, R.MUSHROOM
 p3 = Powerup world, layer, 200, 50, R.MUSHROOM
 
 newCharacter = (layer, world) ->
 
-  texture = MOAIImage.new()
-  texture\load('resources/wrestler_idle.png')
-
-  rect = Rectangle -32, -32, 32, 32
-
-  tileLib = MOAITileDeck2D\new()
-  tileLib\setTexture(texture)
-  tileLib\setSize(2, 1)
-  tileLib\setRect(rect\get())
-
-  -- Aanmaken prop
-  prop = MOAIProp2D.new()
-  prop\setDeck(tileLib)
-  prop\setLoc(0, 0)
-  prop\setColor 1.0, 1.0, 1.0, 1.0
-  prop\setBlendMode(MOAIProp2D.GL_SRC_ALPHA, MOAIProp2D.GL_ONE_MINUS_SRC_ALPHA)
-
-  health = 100
-
-  c = Character( prop, layer, world, 1, rect )
-  c
-
+  print "NEW Char: world: "
+  print world
+  characterFactory.makeCharacter("unit", layer, world, 1)
 
 c = newCharacter(layer, world)\add()
 print 'c'

@@ -17,6 +17,7 @@ export class IdleAction extends Action
     if @character.state == Characterstate.IDLE
 
       texture = R.WRESTLER_IDLE
+
       rect = Rectangle -32, -32, 32, 32
 
       @tileLib = MOAITileDeck2D\new()
@@ -52,7 +53,8 @@ export class WalkAction extends Action
 
       texture = R.WRESTLER_WALK
 
-      rect = Rectangle -32, -32, 32, 32
+      rect = character.rectangle
+
 
       @tileLib = MOAITileDeck2D\new()
       @tileLib\setTexture(texture)
