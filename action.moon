@@ -17,8 +17,8 @@ export class IdleAction extends Action
       texture = R.WRESTLER_IDLE
       print 'mushroom'
       print R.MUSHROOM
-      rect = Rectangle 0, -64, 64, 64
-      rect\subtract( 32, 32, 32, 32 )
+      rect = character.rectangle
+      --rect\subtract( 32, 32, 32, 32 )
 
       @tileLib = MOAITileDeck2D\new()
       @tileLib\setTexture(texture)
@@ -52,8 +52,7 @@ export class WalkAction extends Action
 
       texture = R.WRESTLER_WALK
 
-      rect = Rectangle 0, -64, 64, 64
-      rect\subtract( 32, 32, 32, 32 )
+      rect = character.rectangle
 
       @tileLib = MOAITileDeck2D\new()
       @tileLib\setTexture(texture)

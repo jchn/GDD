@@ -4,12 +4,12 @@ export Characterstate = {
   FINISHING: 2
 }
 
-export class Character
+class Character
   new: (@prop, @layer, @world, @direction, @rectangle, @stats = { health: 100 }, @behaviors = {}) =>
     @state = Characterstate.IDLE
 
     @body = @world\addBody( MOAIBox2DBody.KINEMATIC )
-    @body\setTransform 0, 0
+    @body\setTransform -200, -55
     @fixture = @body\addRect( @rectangle\get() )
     @prop\setParent @body
     @prop.body = @body
@@ -54,3 +54,37 @@ export class Character
 
   remove: =>
     @layer\removeProp @prop
+
+class Hero extends Character
+
+class BasicUnit extends Character
+
+class UFO extends Character
+
+class CharacterFactory
+  makeCharacter: (characterID, layer, world, direction, stats = { health: 100 }, behaviors = {}) ->
+    characterID = characterID\lower()
+    print "Factory: " .. characterID
+    prop = MOAIProp2D.new()
+    prop\setLoc(0, 0)
+    prop\setColor 1.0, 1.0, 1.0, 1.0
+    prop\setBlendMode(MOAIProp2D.GL_SRC_ALPHA, MOAIProp2D.GL_ONE_MINUS_SRC_ALPHA)
+
+    switch characterID
+      when "hero"
+        print "Hero Character"
+        rectangle = Rectangle(-32,-32,32,32)
+        Hero(prop, layer, world, direction, rectangle, stats, behaviors)
+
+      when "unit"
+        print "Basic Unit Character"
+        rectangle = Rectangle(-32,-32,32,32)
+        Hero(prop, layer, world, direction, rectangle, stats, behaviors)
+
+      else
+        print "Generic Unit Character"
+        rectangle = Rectangle(-32,-32,32,32)
+        Character(prop, layer, world, direction, rectangle, stats, behaviors)
+
+
+export characterFactory = CharacterFactory()
