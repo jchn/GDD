@@ -54,8 +54,7 @@ newCharacter = (layer, world) ->
   texture = MOAIImage.new()
   texture\load('resources/wrestler_idle.png')
 
-  rect = Rectangle 0, -64, 64, 64
-  rect\subtract( 32, 32, 32, 32 )
+  rect = Rectangle -32, -32, 32, 32
 
   tileLib = MOAITileDeck2D\new()
   tileLib\setTexture(texture)
@@ -74,8 +73,12 @@ newCharacter = (layer, world) ->
   c = Character( prop, layer, world, 1, rect )
   c
 
+
 c = newCharacter(layer, world)\add()
-c\addBehavior IdleAction()
+print 'c'
+print c
+a = IdleAction(c)
+c\addBehavior(a)
 
 threadFunc = ->
   while true
@@ -91,12 +94,11 @@ thread\run(threadFunc)
 p = Pointer(world, layer)
 
 performWithDelay = (delay, func, repeats, ...) ->
-  print 'performWithDelay'
   t = MOAITimer.new()
   t\setSpan delay/100
-  print t\getTime()
+  -- print t\getTime()
   t\setListener(MOAITimer.EVENT_TIMER_END_SPAN, ->
-    print t\getTime()
+    -- print t\getTime()
     t\stop()
     t = nil
     func(unpack(arg))
@@ -108,11 +110,9 @@ performWithDelay = (delay, func, repeats, ...) ->
   t\start()
 
 test = ->
-  print 'delay'
   c\addBehavior IdleAction c
 
 test2 = ->
-  print 'delay2'
   c\addBehavior WalkAction c
 
 performWithDelay( 0, test )

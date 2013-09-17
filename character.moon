@@ -14,7 +14,7 @@ export class Character
     @prop\setParent @body
     @prop.body = @body
 
-    @behavior = Action()
+    @behavior = Action(@)
 
   alterHealth: (deltaHealth) =>
     @stats.health += deltaHealth
@@ -28,11 +28,13 @@ export class Character
     -- print "addBehavior "..behaviorID\lower()
     -- table.insert @behaviors, behaviorID\lower()
 
-    @behavior\stop(@)
+    @behavior\stop()
+    print 'behavior in character'
+    print @behavior.character
     @behavior = behavior
 
   update: =>
-    @behavior\execute(@)
+    @behavior\execute()
 
   add: =>
     @layer\insertProp @prop
@@ -49,7 +51,6 @@ export class Character
     -- anim\setMode(MOAITimer.LOOP)
     -- anim\setSpan(1)
     -- anim\start()
-
     @
 
   remove: =>
