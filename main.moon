@@ -4,12 +4,14 @@ require 'character'
 require 'action'
 require 'powerup'
 require 'pointer'
+require 'resource'
 export mouseX = 0
 export mouseY = 0
 -- Openen window
 screenWidth = 480
 screenHeight = 320
 MOAISim.openWindow "wrestlers vs aliens", screenWidth, screenHeight
+R\load()
 
 -- 1. Aanmaken van een viewport
 
@@ -42,16 +44,10 @@ staticBody\setTransform(0,-100)
 
 rectFixture   = staticBody\addRect( -512, -15, 512, 15 )
 
-image = MOAIImage.new()
-image\load "resources/mushroom.png"
-
-p0 = Powerup world, layer, -400, 50, image
-p1 = Powerup world, layer, -200, 50, image
-p2 = Powerup world, layer, 0, 50, image
-p3 = Powerup world, layer, 200, 50, image
-
-
-
+p0 = Powerup world, layer, -400, 50, R.MUSHROOM
+p1 = Powerup world, layer, -200, 50, R.MUSHROOM
+p2 = Powerup world, layer, 0, 50, R.MUSHROOM
+p3 = Powerup world, layer, 200, 50, R.MUSHROOM
 
 newCharacter = (layer, world) ->
 
@@ -59,6 +55,7 @@ newCharacter = (layer, world) ->
   texture\load('resources/wrestler_idle.png')
 
   rect = Rectangle 0, -64, 64, 64
+  rect\subtract( 32, 32, 32, 32 )
 
   tileLib = MOAITileDeck2D\new()
   tileLib\setTexture(texture)
@@ -78,7 +75,7 @@ newCharacter = (layer, world) ->
   c
 
 c = newCharacter(layer, world)\add()
--- c\setBehaviour WalkBehaviour c
+c\addBehavior IdleAction()
 
 threadFunc = ->
   while true
@@ -110,15 +107,15 @@ performWithDelay = (delay, func, repeats, ...) ->
         performWithDelay( delay, func, 0, unpack( arg ) ))
   t\start()
 
--- test = ->
---   print 'delay'
---   c\setBehaviour Behaviour c
+test = ->
+  print 'delay'
+  c\addBehavior IdleAction c
 
--- test2 = ->
---   print 'delay2'
---   c\setBehaviour WalkBehaviour c
+test2 = ->
+  print 'delay2'
+  c\addBehavior WalkAction c
 
--- performWithDelay( 100, test )
--- performWithDelay( 200, test2 )
--- performWithDelay( 300, test )
--- performWithDelay( 400, test2 )
+performWithDelay( 0, test )
+performWithDelay( 400, test2 )
+performWithDelay( 800, test )
+performWithDelay( 1000, test2 )
