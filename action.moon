@@ -53,7 +53,7 @@ export class WalkAction extends Action
 
       texture = R.WRESTLER_WALK
 
-      rect = character.rectangle
+      rect = @character.rectangle
 
 
       @tileLib = MOAITileDeck2D\new()
