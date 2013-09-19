@@ -1,4 +1,4 @@
-export class Action --behavior
+class Action --behavior
 
   new: (@character) =>
 
@@ -11,7 +11,12 @@ export class Action --behavior
       @beforeStop(otherCharacters)
     @character.state = Characterstate.IDLE
 
-export class IdleAction extends Action
+  getOtherCharacters: () =>
+
+  poll: (otherCharacters = {}) =>
+    return true, 0
+
+class IdleAction extends Action
 
   execute: (otherCharacters = {}) =>
     if @character.state == Characterstate.IDLE
@@ -37,6 +42,7 @@ export class IdleAction extends Action
       @anim\reserveLinks(1)
       @anim\setLink(1, @curve, @character.prop, MOAIProp2D.ATTR_INDEX)
       @anim\setMode(MOAITimer.LOOP)
+      @anim\setListener(MOAITimer.EVENT_TIMER_END_SPAN, @\stop)
       @anim\setSpan(1)
       @anim\start()
     super @character
@@ -46,7 +52,10 @@ export class IdleAction extends Action
     @anim = nil
     @curve = nil
 
-export class WalkAction extends Action
+  poll: (otherCharacters = {}) =>
+    return true, math.random(0,1000)
+
+class WalkAction extends Action
 
   execute: (otherCharacters = {}) =>
     if @character.state == Characterstate.IDLE
@@ -95,3 +104,51 @@ export class WalkAction extends Action
     @anim = nil
     @curve = nil
 
+  poll: (otherCharacters = {}) =>
+    return true, math.random(0,900)
+
+class AttackAction extends Action
+
+  new: (@character) =>
+
+  execute: () =>
+    super
+    -- Voor de actie uit. Alle betrokken characters krijgen 2 damage.
+    for char in getOtherCharacters() do
+      char.alterHealth(-2)
+
+  stop: (otherCharacters = {}) =>
+    super
+
+  getOtherCharacters: () =>
+    -- Haalt alle andere characters op binnen een bepaalde range.
+    -- Dit zijn de characters die geraakt kunnen worden door de aanval.
+    minX = @character.getLocation()
+    return getOtherCharacters(@character, minX, minX + 10)
+
+  poll: () =>
+    -- Voorbeeld voor de poll functie
+    -- Deze aanval kan altijd worden uitgevoerd
+    -- De score is in dit geval de damage die gedaan kan worden (er moet overal dezelfde metric gekozen worden)
+    return true, table.getn(otherCharacters) * 2 
+
+class ActionFactory
+  makeAction: (actionID, character) ->
+    actionID = actionID\lower()
+    print "Action Factory: " .. actionID
+
+    switch actionID
+      when "idle"
+        print "Idle Action"
+        IdleAction(character)
+
+      when "walk"
+        print "Walk Action"
+        WalkAction(character)
+
+      else
+        print "Generic Action"
+        IdleAction(character)
+
+
+export actionFactory = ActionFactory()

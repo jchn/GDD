@@ -5,6 +5,7 @@ require 'action'
 require 'powerup'
 require 'pointer'
 require 'resource'
+require 'ai'
 export mouseX = 0
 export mouseY = 0
 -- Openen window
@@ -49,17 +50,39 @@ p1 = Powerup world, layer, -200, 50, R.MUSHROOM
 p2 = Powerup world, layer, 0, 50, R.MUSHROOM
 p3 = Powerup world, layer, 200, 50, R.MUSHROOM
 
+export direction = {
+  LEFT: -1,
+  RIGHT: 1
+}
+
+export characters = {}
+
 newCharacter = (layer, world) ->
 
   print "NEW Char: world: "
   print world
-  characterFactory.makeCharacter("unit", layer, world, 1)
+  newChar = characterFactory.makeCharacter("hero", layer, world, 1)
+  print newChar
+  table.insert(characters, newChar)
+  return newChar
+
+export getOtherCharacters = (character, xMin, xMax) ->
+  tempCharacterList = {}
+  for char in *characters do
+    if char != character
+      x, y = char.getLocation()
+
+      if x >= xMin and x <= xMax
+        insert.table(tempCharacterList, char)
+
+  return tempCharacterList
+
 
 c = newCharacter(layer, world)\add()
 print 'c'
 print c
-a = IdleAction(c)
-c\addBehavior(a)
+--a = IdleAction(c)
+--c\addBehavior(a)
 
 threadFunc = ->
   while true
@@ -91,12 +114,12 @@ performWithDelay = (delay, func, repeats, ...) ->
   t\start()
 
 test = ->
-  c\addBehavior IdleAction c
+  --c\addBehavior IdleAction c
 
 test2 = ->
-  c\addBehavior WalkAction c
+  --c\addBehavior WalkAction c
 
-performWithDelay( 0, test )
-performWithDelay( 400, test2 )
-performWithDelay( 800, test )
-performWithDelay( 1000, test2 )
+--performWithDelay( 0, test )
+--performWithDelay( 400, test2 )
+--performWithDelay( 800, test )
+--performWithDelay( 1000, test2 )
