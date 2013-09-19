@@ -6,6 +6,7 @@ require 'powerup'
 require 'pointer'
 require 'resource'
 require 'ai'
+
 export mouseX = 0
 export mouseY = 0
 -- Openen window
@@ -55,30 +56,11 @@ export direction = {
   RIGHT: 1
 }
 
-export characters = {}
+c = characterManager.makeCharacter("hero", layer, world)\add()
 
-newCharacter = (layer, world) ->
+for i = 1, 3
+  characterManager.makeCharacter("unit", layer, world)\add()
 
-  print "NEW Char: world: "
-  print world
-  newChar = characterFactory.makeCharacter("hero", layer, world, 1)
-  print newChar
-  table.insert(characters, newChar)
-  return newChar
-
-export getOtherCharacters = (character, xMin, xMax) ->
-  tempCharacterList = {}
-  for char in *characters do
-    if char != character
-      x, y = char.getLocation()
-
-      if x >= xMin and x <= xMax
-        insert.table(tempCharacterList, char)
-
-  return tempCharacterList
-
-
-c = newCharacter(layer, world)\add()
 print 'c'
 print c
 --a = IdleAction(c)
@@ -86,7 +68,12 @@ print c
 
 threadFunc = ->
   while true
-    c\update!
+
+    characterManager.updateCharacters()
+
+    -- a\update()
+    -- b\update()
+    -- c\update!
     -- x, y = c.body\getPosition()
     -- viewport\setOffset(x, 0)
     -- print viewport\getLoc()
@@ -113,13 +100,22 @@ performWithDelay = (delay, func, repeats, ...) ->
         performWithDelay( delay, func, 0, unpack( arg ) ))
   t\start()
 
-test = ->
-  --c\addBehavior IdleAction c
+-- test = ->
+--   c\addBehavior IdleAction c
 
-test2 = ->
-  --c\addBehavior WalkAction c
+-- test2 = ->
+--   c\addBehavior WalkAction c
+
+performWithDelay( 400, -> characterManager.removeCharacters((char) -> return char != c))
 
 --performWithDelay( 0, test )
 --performWithDelay( 400, test2 )
 --performWithDelay( 800, test )
 --performWithDelay( 1000, test2 )
+
+otherChars = characterManager.selectCharacters((i) -> return i != c)
+
+print "OTHER CHARACTERS"
+for oChar in *otherChars do
+  print oChar
+

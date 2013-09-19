@@ -11,8 +11,6 @@ class AI
 			
 			-- Loop door alle action objecten die de target character hee
 			for actionID, possibleAction in pairs character.actions do
-				print "Thinking"
-
 				-- Able: of de actie überhaupt uitgevoerd kan worden door de target character
 				-- Score: elke actie bepaalt zelf hoe nuttig die actie is in een bepaalde vooraf afgesproken metric
 				able, score = possibleAction\poll()
@@ -22,9 +20,7 @@ class AI
 					options[score] = possibleAction
 
 			-- Geef de action met de hogste score terug, zodat de target character die actie uit kan gaan voeren
-			print "Selected action: "
 			selectedOption = options[table.maxn(options)]
-			print selectedOption
 
 			return true, selectedOption
 

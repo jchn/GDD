@@ -71,6 +71,19 @@ class Character
 
   remove: =>
     @layer\removeProp @prop
+    @
+
+  destroy: =>
+    @state = nil
+    @pop = nil
+    @fixture = nil
+    @actions = nil
+    @stats = nil
+    @rectangle = nil
+    @layer = nil
+    @world = nil
+    @direction = nil
+    @body\destroy()
 
 class Hero extends Character
 
@@ -78,7 +91,34 @@ class Unit extends Character
 
 class UFO extends Character
 
-class CharacterFactory
+class CharacterManager
+
+  characters = {}
+
+  updateCharacters: () ->
+    for character in *characters do
+      character\update()
+
+  selectCharacters: (queryFunction) ->
+    selected = {}
+
+    for char in *characters do
+      if queryFunction(char)
+        selected[#selected+1] = char
+    return selected
+
+  removeCharacters: (queryFunction) ->
+    tempCharacters = {}
+
+    for char in *characters do
+      if not queryFunction(char)
+        tempCharacters[#tempCharacters+1] = char
+      else
+        char\remove()
+        char\destroy()
+
+    characters = tempCharacters
+
   makeCharacter: (characterID, layer, world) ->
     characterID = characterID\lower()
     print "Character Factory: " .. characterID
@@ -142,4 +182,4 @@ class CharacterFactory
     return newCharacter
 
 
-export characterFactory = CharacterFactory()
+export characterManager = CharacterManager()

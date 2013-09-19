@@ -11,8 +11,6 @@ class Action --behavior
       @beforeStop(otherCharacters)
     @character.state = Characterstate.IDLE
 
-  getOtherCharacters: () =>
-
   poll: (otherCharacters = {}) =>
     return true, 0
 
@@ -105,32 +103,29 @@ class WalkAction extends Action
     @curve = nil
 
   poll: (otherCharacters = {}) =>
-    return true, math.random(0,900)
+    return true, math.random(0,800)
 
-class AttackAction extends Action
+class AttackAction
 
   new: (@character) =>
 
   execute: () =>
-    super
-    -- Voor de actie uit. Alle betrokken characters krijgen 2 damage.
-    for char in getOtherCharacters() do
-      char.alterHealth(-2)
+    if @character.state == Characterstate.IDLE
 
-  stop: (otherCharacters = {}) =>
+      super @character
+    
+  stop: () =>
     super
 
-  getOtherCharacters: () =>
-    -- Haalt alle andere characters op binnen een bepaalde range.
-    -- Dit zijn de characters die geraakt kunnen worden door de aanval.
-    minX = @character.getLocation()
-    return getOtherCharacters(@character, minX, minX + 10)
+  selectOtherCharacters: () =>
+    otherChars = characterManager.selectCharacters((i) -> i != @character)
+    return otherChars
 
   poll: () =>
     -- Voorbeeld voor de poll functie
     -- Deze aanval kan altijd worden uitgevoerd
     -- De score is in dit geval de damage die gedaan kan worden (er moet overal dezelfde metric gekozen worden)
-    return true, table.getn(otherCharacters) * 2 
+    return true, 2000
 
 class ActionFactory
   makeAction: (actionID, character) ->
@@ -145,6 +140,9 @@ class ActionFactory
       when "walk"
         print "Walk Action"
         WalkAction(character)
+
+      when "attack"
+        AttackAction(character)
 
       else
         print "Generic Action"
