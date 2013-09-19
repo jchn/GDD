@@ -5,7 +5,7 @@ export Characterstate = {
 }
 
 class Character
-  new: (@prop, @layer, @world, @direction, @rectangle, @stats = { health: 100 }, @behaviors = {}) =>
+  new: (@characterID, @prop, @layer, @world, @direction, @rectangle, @stats, actionIDs) =>
     @state = Characterstate.IDLE
 
     @body = @world\addBody( MOAIBox2DBody.KINEMATIC )
@@ -14,7 +14,14 @@ class Character
     @prop\setParent @body
     @prop.body = @body
 
-    @behavior = Action(@)
+    --@behavior = Action(@)
+
+    @actions = {}
+    for actionID in *actionIDs do
+      @addAction(actionID)
+
+  getLocation: () =>
+    return @body.getLocation()
 
   alterHealth: (deltaHealth) =>
     @stats.health += deltaHealth
@@ -24,17 +31,26 @@ class Character
   die: =>
     print "Character dead"
 
-  addBehavior: (behavior) =>
+  addAction: (actionID) =>
+    if @actions[actionID] == nil
+      @actions[actionID] = actionFactory.makeAction(actionID, @)
+      print "added Action"
+      print @actions[actionID]
+
+  --addBehavior: (behavior) =>
     -- print "addBehavior "..behaviorID\lower()
     -- table.insert @behaviors, behaviorID\lower()
 
-    @behavior\stop()
-    print 'behavior in character'
-    print @behavior.character
-    @behavior = behavior
+    --@behavior\stop()
+    --print 'behavior in character'
+    --print @behavior.character
+    --@behavior = behavior
 
   update: =>
-    @behavior\execute()
+    if @state == Characterstate.IDLE
+      doSomething, currentAction = ai.think(@)
+      if doSomething
+        currentAction\execute()
 
   add: =>
     @layer\insertProp @prop
@@ -58,34 +74,72 @@ class Character
 
 class Hero extends Character
 
-class BasicUnit extends Character
+class Unit extends Character
 
 class UFO extends Character
 
 class CharacterFactory
-  makeCharacter: (characterID, layer, world, direction, stats = { health: 100 }, behaviors = {}) ->
+  makeCharacter: (characterID, layer, world) ->
     characterID = characterID\lower()
-    print "Factory: " .. characterID
+    print "Character Factory: " .. characterID
     prop = MOAIProp2D.new()
     prop\setLoc(0, 0)
     prop\setColor 1.0, 1.0, 1.0, 1.0
     prop\setBlendMode(MOAIProp2D.GL_SRC_ALPHA, MOAIProp2D.GL_ONE_MINUS_SRC_ALPHA)
 
+    newCharacter = {}
+
     switch characterID
+
       when "hero"
         print "Hero Character"
         rectangle = Rectangle(-32,-32,32,32)
-        Hero(prop, layer, world, direction, rectangle, stats, behaviors)
+
+        stats = {
+          health: 100,
+          attack: 8,
+          defense: 7
+        }
+
+        actionIDs = {
+          "walk", "idle"
+        }
+
+        newCharacter = Hero(characterID, prop, layer, world, direction.RIGHT, rectangle, stats, actionIDs)
 
       when "unit"
         print "Basic Unit Character"
         rectangle = Rectangle(-32,-32,32,32)
-        Hero(prop, layer, world, direction, rectangle, stats, behaviors)
+
+        stats = {
+          health: 100,
+          attack: 8,
+          defense: 7
+        }
+
+        actionIDs = {
+          "walk", "idle"
+        }
+
+        newCharacter = Unit(characterID, prop, layer, world, direction.LEFT, rectangle, stats, actionIDs)
 
       else
-        print "Generic Unit Character"
+        print "Generic Character"
         rectangle = Rectangle(-32,-32,32,32)
-        Character(prop, layer, world, direction, rectangle, stats, behaviors)
+
+        stats = {
+          health: 100,
+          attack: 8,
+          defense: 7
+        }
+
+        actionIDs = {
+          "walk", "idle"
+        }
+
+        newCharacter = Character(characterID, prop, layer, world, direction.LEFT, rectangle, stats, actionIDs)
+    table.insert(characters, newCharacter)
+    return newCharacter
 
 
 export characterFactory = CharacterFactory()
