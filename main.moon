@@ -6,6 +6,7 @@ require 'powerup'
 require 'pointer'
 require 'resource'
 require 'ai'
+require 'simplebutton'
 
 export mouseX = 0
 export mouseY = 0
@@ -26,6 +27,10 @@ viewport\setScale screenWidth, screenHeight
 layer = MOAILayer2D.new()
 layer\setViewport viewport
 MOAIRenderMgr.pushRenderPass layer
+
+layer2 = MOAILayer2D.new()
+layer2\setViewport viewport
+MOAIRenderMgr.pushRenderPass layer2
 
 -- 3. Achtergrondkleur instellen
 
@@ -65,6 +70,9 @@ print 'c'
 print c
 --a = IdleAction(c)
 --c\addBehavior(a)
+btn = MOAIProp2D.new()
+button = SimpleButton layer, R.BUTTON, Rectangle(-64, -64, 64, 64), -> print 'derp'
+button\add()
 
 threadFunc = ->
   while true
@@ -118,4 +126,3 @@ otherChars = characterManager.selectCharacters((i) -> return i != c)
 print "OTHER CHARACTERS"
 for oChar in *otherChars do
   print oChar
-

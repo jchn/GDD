@@ -16,12 +16,15 @@ export class Pointer
       @pick = @layer\getPartition()\propForPoint @worldX, @worldY
       @mouseBody = @world\addBody MOAIBox2DBody.DYNAMIC
       if @pick and @pick.draggable
-
         @mouseJoint = @world\addMouseJoint @mouseBody, @pick.body, @worldX, @worldY, 10000.0 * @pick.body\getMass()
+      if @pick and @pick.clickable
+        @pick.parent\onClick()
     else
-      if @pick
+      if @pick and @pick.draggable
         @mouseBody\destroy()
         @mouseBody = nil
+        @pick = nil
+      else if @pick
         @pick = nil
 
   callback: (x, y) =>
@@ -29,3 +32,6 @@ export class Pointer
 
     if @pick and @pick.draggable
       @mouseJoint\setTarget @worldX, @worldY
+
+  getXY: (layer, x, y) =>
+    layer\wndToWorld x, y
