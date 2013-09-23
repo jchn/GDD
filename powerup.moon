@@ -19,6 +19,7 @@ class Powerup
     @prop.body = @body
     @prop.draggable = true
     @prop\setParent @body
+    @prop\setBlendMode(MOAIProp2D.GL_SRC_ALPHA, MOAIProp2D.GL_ONE_MINUS_SRC_ALPHA)
 
     @layer\insertProp @prop
 

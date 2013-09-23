@@ -10,6 +10,7 @@ export _ = require 'underscore'
 
 export mouseX = 0
 export mouseY = 0
+
 -- Openen window
 screenWidth = 480
 screenHeight = 320
@@ -17,14 +18,13 @@ MOAISim.openWindow "wrestlers vs aliens", screenWidth, screenHeight
 R\load()
 
 camera = MOAICamera2D.new()
--- 1. Aanmaken van een viewport
 
+-- 1. Aanmaken van een viewport
 viewport = MOAIViewport.new()
 viewport\setSize screenWidth, screenHeight
 viewport\setScale screenWidth, screenHeight
 
 -- 2. Toevoegen van een layer
-
 characterLayer = MOAILayer2D.new()
 characterLayer\setViewport viewport
 characterLayer\setCamera camera
@@ -36,7 +36,6 @@ powerupLayer\setCamera camera
 MOAIRenderMgr.pushRenderPass powerupLayer
 
 -- 3. Achtergrondkleur instellen
-
 MOAIGfxDevice\getFrameBuffer()\setClearColor 0, 0, 0, 1
 
 -- Box2d WORLD
@@ -45,8 +44,7 @@ world = MOAIBox2DWorld.new()
 world\setGravity( 0, -10 ) -- Zwaartekracht
 world\setUnitsToMeters( 1/30 ) -- Hoeveel units in een meter. Let op dat Units niet per se pixels zijn, dat hangt af van de scale van de viewport
 world\start()
-characterLayer\setBox2DWorld( world )
-
+--characterLayer\setBox2DWorld( world )
 
 -- De grond
 staticBody = world\addBody( MOAIBox2DBody.STATIC )
@@ -65,15 +63,9 @@ export direction = {
   RIGHT: 1
 }
 
-
 characterManager.setLayerAndWorld(characterLayer, world)
 c = characterManager.makeCharacter("hero")\add()
 u = characterManager.makeCharacter("ufo")\add()
-
-print 'c'
-print c
---a = IdleAction(c)
---c\addBehavior(a)
 
 threadFunc = ->
   while true
@@ -107,29 +99,7 @@ performWithDelay = (delay, func, repeats, ...) ->
         performWithDelay( delay, func, 0, unpack( arg ) ))
   t\start()
 
--- test = ->
---   c\addBehavior IdleAction c
-
--- test2 = ->
---   c\addBehavior WalkAction c
-
--- performWithDelay( 70000, ->
---   for char in *characterManager.selectCharacters((char) -> return char.name == 'unit') do
---     char\alterHealth(-10000))
-
---performWithDelay( 0, test )
---performWithDelay( 400, test2 )
---performWithDelay( 800, test )
---performWithDelay( 1000, test2 )
-
---otherChars = characterManager.selectCharacters((i) -> return i.name == 'unit')
-
--- print "OTHER CHARACTERS"
--- for oChar in *otherChars do
---   print oChar
-
 rightclickCallback = (down) ->
   if down
     characterManager.makeCharacter("unit")\add()
-
 MOAIInputMgr.device.mouseRight\setCallback ( rightclickCallback )

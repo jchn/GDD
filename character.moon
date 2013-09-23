@@ -27,9 +27,6 @@ class Character
     @add()
     @update()
 
-    if @init
-      @init()
-
   getLocation: () =>
     return @body\getPosition()
 
@@ -37,9 +34,15 @@ class Character
     print "Health was #{@stats.health}"
     @stats.health += deltaHealth
     print "Health is #{@stats.health}"
+    if deltaHealth < 0
+      @colorBlink(1.0, 0.0, 0.0)
 
   forceDeath: () =>
     @stats.health = 0
+
+  colorBlink: (red, green, blue, length = 0.40) =>
+    @prop\seekColor red, green, blue, 1.0, 0.10
+    @prop\moveColor 1.0, 1.0, 1.0, 1.0, length
 
   die: =>
     print "character died"
@@ -88,11 +91,14 @@ class Character
 class PowerupUser extends Character
 
   onCollide: (own, other) =>
-    if other.character.name == 'powerup'
-      other.character\remove()
-      other.character\destroy()
+    own = own.character
+    other = other.character
+    if other.name == 'powerup'
+      other\remove()
+      other\destroy()
       p\clear()
-      other.character\execute(own.character)
+      other\execute(own)
+      own\colorBlink(0.0, 1.0, 0.0)
 
 class Hero extends PowerupUser
 
@@ -110,22 +116,15 @@ class UFO extends Character
 
   name: 'ufo'
 
-  init: () =>
-    @powerupCollection = {}
-
   onCollide: (own, other, event) =>
-    if other.character.name == 'powerup'
-      other.character\remove()
-      other.character\destroy()
-      own.character\alterPowerups(other.character.specificName)
+    own = own.character
+    other = other.character
+    if other.name == 'powerup'
+      other\remove()
+      other\destroy()
+      own\colorBlink(0.0, 1.0, 0.0, 0.80)
+      characterManager.collectPowerup(other.specificName)
       p\clear()
-
-  alterPowerups: (powerupSpecificName) =>
-    if not @powerupCollection[powerupSpecificName]
-      @powerupCollection[powerupSpecificName] = 0
-
-    @powerupCollection[powerupSpecificName] += 1
-    print "Powerup collection: #{@powerupCollection[powerupSpecificName]}"
 
 class CharacterManager
 
@@ -133,6 +132,31 @@ class CharacterManager
   layer = nil
   world = nil
   ufo = nil
+
+  collectedPowerups = {}
+  lastTimestamp = 0
+  comboCounter = 0
+
+  collectPowerup: (powerupSpecificName) ->
+    if collectedPowerups[powerupSpecificName] == nil
+      collectedPowerups[powerupSpecificName] = 0
+
+    aantal = 1
+    time = os.time()
+    if time - lastTimestamp <= 1
+      comboCounter += 1
+      aantal = 1 + comboCounter
+    else
+      comboCounter = 0
+
+    lastTimestamp = time
+
+    collectedPowerups[powerupSpecificName] += aantal
+    
+    print "Powerup collection: #{collectedPowerups[powerupSpecificName]} with combo counter #{comboCounter}"
+
+  getSpawnableUnits: () ->
+    -- foo
 
   selectCharacters: (queryFunction) ->
     _.select(characters, queryFunction)

@@ -201,7 +201,7 @@ class JumpwalkAction extends Action
       @character\forceDeath()
       @\stop()
       for char in *otherCharacters do
-        char\alterHealth(-10)
+        char\alterHealth(-5)
 
   selectCharacters: () =>
     characterManager.selectCharacters((char) ->
