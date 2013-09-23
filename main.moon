@@ -23,13 +23,9 @@ R\load()
 -- 2. Toevoegen van een layer
 
 LayerMgr\createLayer('characters', 1, true)\render!
-LayerMgr\createLayer('powerups', 2, true)\render!
+LayerMgr\createLayer('ui', 2, true)\render!
 LayerMgr\createLayer('powerups', 3, true)\render!
 LayerMgr\createLayer('box2d', 4, false)
-
-layer2 = MOAILayer2D.new()
-layer2\setViewport viewport
-MOAIRenderMgr.pushRenderPass layer2
 
 -- 3. Achtergrondkleur instellen
 
@@ -60,16 +56,9 @@ c = characterManager.makeCharacter("hero", LayerMgr\getLayer('characters'), R.WO
 for i = 1, 3
   characterManager.makeCharacter("unit", LayerMgr\getLayer('characters'), R.WORLD)\add()
 
-<<<<<<< HEAD
-print 'c'
-print c
---a = IdleAction(c)
---c\addBehavior(a)
 btn = MOAIProp2D.new()
-button = SimpleButton layer, R.BUTTON, Rectangle(-64, -64, 64, 64), -> print 'derp'
+button = SimpleButton LayerMgr\getLayer("ui"), R.BUTTON, Rectangle(-64, -64, 64, 64), -> print 'derp'
 button\add()
-=======
->>>>>>> layermgr
 
 threadFunc = ->
   while true
