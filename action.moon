@@ -2,16 +2,17 @@ class Action --behavior
 
   new: (@character) =>
 
-  execute: (otherCharacters = {}) =>
+  execute: () =>
     @character.state = Characterstate.EXECUTING
 
-  stop: (otherCharacters = {}) =>
+  stop: () =>
     @character.state = Characterstate.FINISHING
     if @beforeStop
       @beforeStop(otherCharacters)
     @character.state = Characterstate.IDLE
+    @character\update()
 
-  poll: (otherCharacters = {}) =>
+  poll: () =>
     return true, 0
 
 class IdleAction extends Action
@@ -21,7 +22,7 @@ class IdleAction extends Action
 
       texture = R.WRESTLER_IDLE
 
-      rect = Rectangle -32, -32, 32, 32
+      rect = @character.rectangle
 
       @tileLib = MOAITileDeck2D\new()
       @tileLib\setTexture(texture)
@@ -89,7 +90,7 @@ class WalkAction extends Action
       @anim\setListener(MOAITimer.EVENT_TIMER_END_SPAN, @\test)
       -- @anim\stop(otherCharacters)
 
-      @character.body\setLinearVelocity(40, 0)
+      @character.body\setLinearVelocity(40 * @character.direction, 0)
     super @character
 
   test: =>
@@ -105,29 +106,126 @@ class WalkAction extends Action
   poll: (otherCharacters = {}) =>
     return true, math.random(0,800)
 
-class AttackAction
+class FlyAction extends Action
 
-  new: (@character) =>
-
-  execute: () =>
+  execute: (otherCharacters = {}) =>
     if @character.state == Characterstate.IDLE
 
-      super @character
-    
-  stop: () =>
-    super
+      texture = R.UFO
 
-  selectOtherCharacters: () =>
-    otherChars = characterManager.selectCharacters((i) -> i != @character)
-    return otherChars
+      rect = @character.rectangle
 
-  poll: () =>
-    -- Voorbeeld voor de poll functie
-    -- Deze aanval kan altijd worden uitgevoerd
-    -- De score is in dit geval de damage die gedaan kan worden (er moet overal dezelfde metric gekozen worden)
-    return true, 2000
+      @tileLib = MOAITileDeck2D\new()
+      @tileLib\setTexture(texture)
+      @tileLib\setSize(8, 1)
+      @tileLib\setRect(rect\get())
 
-class ActionFactory
+      @character.prop\setDeck @tileLib
+
+      @curve = MOAIAnimCurve.new()
+      @curve\reserveKeys(2)
+
+      @curve\setKey(1, 0.25, 1)
+      @curve\setKey(2, 0.5, 2)
+
+      @anim = MOAIAnim\new()
+      @anim\reserveLinks(1)
+      @anim\setLink(1, @curve, @character.prop, MOAIProp2D.ATTR_INDEX)
+      @anim\setMode(MOAITimer.LOOP)
+      @anim\setListener(MOAITimer.EVENT_TIMER_END_SPAN, @\stop)
+      @anim\setSpan(1)
+      @anim\start()
+
+    super @character
+
+  beforeStop: (otherCharacters = {}) =>
+    @anim\stop()
+    @anim = nil
+    @curve = nil
+
+  poll: (otherCharacters = {}) =>
+    return true, math.random(0,1000)
+
+class JumpwalkAction extends Action
+
+  execute: (otherCharacters = {}) =>
+    if @character.state == Characterstate.IDLE
+
+      texture = R.ALIEN
+
+      rect = @character.rectangle
+
+
+      @tileLib = MOAITileDeck2D\new()
+      @tileLib\setTexture(texture)
+      @tileLib\setSize(6, 1)
+      @tileLib\setRect(rect\get())
+
+      @character.prop\setDeck @tileLib
+
+      @curve = MOAIAnimCurve.new()
+      @curve\reserveKeys(6)
+
+      @curve\setKey(1, 0.20, 1)
+      @curve\setKey(2, 0.30, 2)
+      @curve\setKey(3, 0.50, 3)
+      @curve\setKey(4, 1.80, 4)
+      @curve\setKey(5, 1.90, 5)
+      @curve\setKey(6, 2.00, 6)
+
+      @anim = MOAIAnim\new()
+      @anim\reserveLinks(1)
+      @anim\setLink(1, @curve, @character.prop, MOAIProp2D.ATTR_INDEX)
+      @anim\setMode(MOAITimer.LOOP)
+      @anim\setSpan(2.0)
+      @anim\start()
+      @anim\setListener(MOAITimer.EVENT_TIMER_END_SPAN, @\test)
+      -- @anim\stop(otherCharacters)
+
+      @timer = MOAITimer.new()
+      @timer\setSpan(2.0/15)
+      @timer\setMode(MOAITimer.LOOP)
+      @timer\setListener(MOAITimer.EVENT_TIMER_END_SPAN, @\update)
+      @timer\start()
+      @counter = 1
+      @jumpTable = { 60, 40, 30, 20, 10, 0, 0, -10, -20, -30, -40, -60, 0, 0, 0 }
+
+    super @character
+
+  update: () =>
+    @character.body\setLinearVelocity(60 * @character.direction, @jumpTable[@counter])
+    @counter += 1
+    otherCharacters = @selectCharacters()
+
+    if #otherCharacters > 0
+      @character\forceDeath()
+      @\stop()
+      for char in *otherCharacters do
+        char\alterHealth(-10)
+
+  selectCharacters: () =>
+    characterManager.selectCharacters((char) ->
+      x1, y1 = char\getLocation()
+      x2, y2 = @character\getLocation()
+
+      return char.name == 'hero' and (x1 >= x2 - 20 and x1 <= x2 + 20) )
+
+  test: =>
+    print 'stop'
+    @stop!
+
+  beforeStop: (otherCharacters = {}) =>
+    @timer\stop()
+    @anim\stop()
+    @character.body\setLinearVelocity(0, 0)
+    @anim = nil
+    @curve = nil
+
+  poll: (otherCharacters = {}) =>
+    return true, math.random(0,800)
+
+
+class ActionManager
   makeAction: (actionID, character) ->
     actionID = actionID\lower()
     print "Action Factory: " .. actionID
@@ -141,12 +239,11 @@ class ActionFactory
         print "Walk Action"
         WalkAction(character)
 
-      when "attack"
-        AttackAction(character)
+      when "jumpwalk"
+        JumpwalkAction(character)
 
-      else
-        print "Generic Action"
-        IdleAction(character)
+      when "fly"
+        FlyAction(character)
 
 
-export actionFactory = ActionFactory()
+export actionManager = ActionManager()

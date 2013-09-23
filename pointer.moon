@@ -19,7 +19,10 @@ export class Pointer
 
         @mouseJoint = @world\addMouseJoint @mouseBody, @pick.body, @worldX, @worldY, 10000.0 * @pick.body\getMass()
     else
-      if @pick
+      @clear()
+
+  clear: () =>
+    if @pick
         @mouseBody\destroy()
         @mouseBody = nil
         @pick = nil

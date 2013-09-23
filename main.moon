@@ -6,6 +6,7 @@ require 'powerup'
 require 'pointer'
 require 'resource'
 require 'ai'
+export _ = require 'underscore'
 
 export mouseX = 0
 export mouseY = 0
@@ -15,6 +16,7 @@ screenHeight = 320
 MOAISim.openWindow "wrestlers vs aliens", screenWidth, screenHeight
 R\load()
 
+camera = MOAICamera2D.new()
 -- 1. Aanmaken van een viewport
 
 viewport = MOAIViewport.new()
@@ -23,9 +25,15 @@ viewport\setScale screenWidth, screenHeight
 
 -- 2. Toevoegen van een layer
 
-layer = MOAILayer2D.new()
-layer\setViewport viewport
-MOAIRenderMgr.pushRenderPass layer
+characterLayer = MOAILayer2D.new()
+characterLayer\setViewport viewport
+characterLayer\setCamera camera
+MOAIRenderMgr.pushRenderPass characterLayer
+
+powerupLayer = MOAILayer2D.new()
+powerupLayer\setViewport viewport
+powerupLayer\setCamera camera
+MOAIRenderMgr.pushRenderPass powerupLayer
 
 -- 3. Achtergrondkleur instellen
 
@@ -37,7 +45,7 @@ world = MOAIBox2DWorld.new()
 world\setGravity( 0, -10 ) -- Zwaartekracht
 world\setUnitsToMeters( 1/30 ) -- Hoeveel units in een meter. Let op dat Units niet per se pixels zijn, dat hangt af van de scale van de viewport
 world\start()
--- layer\setBox2DWorld( world )
+characterLayer\setBox2DWorld( world )
 
 
 -- De grond
@@ -46,20 +54,21 @@ staticBody\setTransform(0,-100)
 
 rectFixture   = staticBody\addRect( -512, -15, 512, 15 )
 
-p0 = Powerup world, layer, 100, 50, R.MUSHROOM
-p1 = Powerup world, layer, -200, 50, R.MUSHROOM
-p2 = Powerup world, layer, 0, 50, R.MUSHROOM
-p3 = Powerup world, layer, 200, 50, R.MUSHROOM
+powerupManager.setLayerAndWorld(powerupLayer, world)
+powerupManager.makePowerup("health", 170, 0, R.MUSROOM)
+powerupManager.makePowerup("health", 200, 0, R.MUSROOM)
+powerupManager.makePowerup("health", 230, 0, R.MUSROOM)
+powerupManager.makePowerup("health", 260, 0, R.MUSROOM)
 
 export direction = {
   LEFT: -1,
   RIGHT: 1
 }
 
-c = characterManager.makeCharacter("hero", layer, world)\add()
 
-for i = 1, 3
-  characterManager.makeCharacter("unit", layer, world)\add()
+characterManager.setLayerAndWorld(characterLayer, world)
+c = characterManager.makeCharacter("hero")\add()
+u = characterManager.makeCharacter("ufo")\add()
 
 print 'c'
 print c
@@ -69,20 +78,18 @@ print c
 threadFunc = ->
   while true
 
-    characterManager.updateCharacters()
+    x = c.body\getPosition()
+    camera\setLoc((x + 180))
+    staticBody\setTransform(x,-100)
 
-    -- a\update()
-    -- b\update()
-    -- c\update!
-    -- x, y = c.body\getPosition()
-    -- viewport\setOffset(x, 0)
-    -- print viewport\getLoc()
+    u.body\setTransform((x + 360), -35)
+
     coroutine.yield()
 
 thread = MOAIThread.new()
 thread\run(threadFunc)
 
-p = Pointer(world, layer)
+export p = Pointer(world, powerupLayer)
 
 performWithDelay = (delay, func, repeats, ...) ->
   t = MOAITimer.new()
@@ -106,16 +113,23 @@ performWithDelay = (delay, func, repeats, ...) ->
 -- test2 = ->
 --   c\addBehavior WalkAction c
 
-performWithDelay( 400, -> characterManager.removeCharacters((char) -> return char != c))
+-- performWithDelay( 70000, ->
+--   for char in *characterManager.selectCharacters((char) -> return char.name == 'unit') do
+--     char\alterHealth(-10000))
 
 --performWithDelay( 0, test )
 --performWithDelay( 400, test2 )
 --performWithDelay( 800, test )
 --performWithDelay( 1000, test2 )
 
-otherChars = characterManager.selectCharacters((i) -> return i != c)
+--otherChars = characterManager.selectCharacters((i) -> return i.name == 'unit')
 
-print "OTHER CHARACTERS"
-for oChar in *otherChars do
-  print oChar
+-- print "OTHER CHARACTERS"
+-- for oChar in *otherChars do
+--   print oChar
 
+rightclickCallback = (down) ->
+  if down
+    characterManager.makeCharacter("unit")\add()
+
+MOAIInputMgr.device.mouseRight\setCallback ( rightclickCallback )
