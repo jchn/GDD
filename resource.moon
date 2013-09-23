@@ -16,6 +16,7 @@ class Resource
     @WORLD\setUnitsToMeters( 1/30 ) -- Hoeveel units in een meter. Let op dat Units niet per se pixels zijn, dat hangt af van de scale van de viewport
     @WORLD\start()
 
+    @BUTTON = MOAITexture.new()
 
   load: () =>
     @WRESTLER_IDLE\load('resources/wrestler_idle.png')
