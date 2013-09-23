@@ -4,18 +4,17 @@ class Resource
     @WRESTLER_IDLE = MOAIImage.new()
     @WRESTLER_WALK = MOAIImage.new()
     @MUSHROOM = MOAIImage.new()
-    -- databuffer = MOAIDataBuffer.new()
-    -- databuffer\load 'animations/test.json'
-    -- json = databuffer\getString()
-    -- print json
-    -- file = MOAIJsonParser.decode json
-    -- print file.animation.a
 
-    -- @animations: {
-      
-    -- }
+    @SCREEN_WIDTH = 480
+    @SCREEN_HEIGHT = 320
+    @VIEWPORT = MOAIViewport.new()
+    @VIEWPORT\setSize @SCREEN_WIDTH, @SCREEN_HEIGHT
+    @VIEWPORT\setScale @SCREEN_WIDTH, @SCREEN_HEIGHT
 
-    @BUTTON = MOAITexture.new()
+    @WORLD = MOAIBox2DWorld.new()
+    @WORLD\setGravity( 0, -10 ) -- Zwaartekracht
+    @WORLD\setUnitsToMeters( 1/30 ) -- Hoeveel units in een meter. Let op dat Units niet per se pixels zijn, dat hangt af van de scale van de viewport
+    @WORLD\start()
 
 
   load: () =>
