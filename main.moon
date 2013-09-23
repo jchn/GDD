@@ -1,11 +1,12 @@
 io.stdout\setvbuf("no")
+require 'resource'
 require 'rectangle'
 require 'character'
 require 'action'
 require 'powerup'
 require 'pointer'
-require 'resource'
 require 'ai'
+require 'layermanager'
 
 export mouseX = 0
 export mouseY = 0
@@ -17,79 +18,58 @@ R\load()
 
 -- 1. Aanmaken van een viewport
 
-viewport = MOAIViewport.new()
-viewport\setSize screenWidth, screenHeight
-viewport\setScale screenWidth, screenHeight
 
 -- 2. Toevoegen van een layer
 
-layer = MOAILayer2D.new()
-layer\setViewport viewport
-MOAIRenderMgr.pushRenderPass layer
+LayerMgr\createLayer('characters', 1, true)\render!
+LayerMgr\createLayer('powerups', 2, true)\render!
+LayerMgr\createLayer('powerups', 3, true)\render!
+LayerMgr\createLayer('box2d', 4, false)
 
 -- 3. Achtergrondkleur instellen
 
 MOAIGfxDevice\getFrameBuffer()\setClearColor 0, 0, 0, 1
 
 -- Box2d WORLD
--- Wat je altijd nodig hebt is een Box2D wereld. Hier zie je niet per definitie iets van op het scherm
-world = MOAIBox2DWorld.new()
-world\setGravity( 0, -10 ) -- Zwaartekracht
-world\setUnitsToMeters( 1/30 ) -- Hoeveel units in een meter. Let op dat Units niet per se pixels zijn, dat hangt af van de scale van de viewport
-world\start()
--- layer\setBox2DWorld( world )
+LayerMgr\getLayer('box2d')\setBox2DWorld( R.WORLD )
 
 
 -- De grond
-staticBody = world\addBody( MOAIBox2DBody.STATIC )
+staticBody = R.WORLD\addBody( MOAIBox2DBody.STATIC )
 staticBody\setTransform(0,-100)
 
 rectFixture   = staticBody\addRect( -512, -15, 512, 15 )
 
-p0 = Powerup world, layer, 100, 50, R.MUSHROOM
-p1 = Powerup world, layer, -200, 50, R.MUSHROOM
-p2 = Powerup world, layer, 0, 50, R.MUSHROOM
-p3 = Powerup world, layer, 200, 50, R.MUSHROOM
+p0 = Powerup R.WORLD, LayerMgr\getLayer('powerups'), 100, 50, R.MUSHROOM
+p1 = Powerup R.WORLD, LayerMgr\getLayer('powerups'), -200, 50, R.MUSHROOM
+p2 = Powerup R.WORLD, LayerMgr\getLayer('powerups'), 0, 50, R.MUSHROOM
+p3 = Powerup R.WORLD, LayerMgr\getLayer('powerups'), 200, 50, R.MUSHROOM
 
 export direction = {
   LEFT: -1,
   RIGHT: 1
 }
 
-c = characterManager.makeCharacter("hero", layer, world)\add()
+c = characterManager.makeCharacter("hero", LayerMgr\getLayer('characters'), R.WORLD)\add()
 
 for i = 1, 3
-  characterManager.makeCharacter("unit", layer, world)\add()
+  characterManager.makeCharacter("unit", LayerMgr\getLayer('characters'), R.WORLD)\add()
 
-print 'c'
-print c
---a = IdleAction(c)
---c\addBehavior(a)
 
 threadFunc = ->
   while true
 
     characterManager.updateCharacters()
 
-    -- a\update()
-    -- b\update()
-    -- c\update!
-    -- x, y = c.body\getPosition()
-    -- viewport\setOffset(x, 0)
-    -- print viewport\getLoc()
     coroutine.yield()
 
 thread = MOAIThread.new()
 thread\run(threadFunc)
 
-p = Pointer(world, layer)
-
 performWithDelay = (delay, func, repeats, ...) ->
   t = MOAITimer.new()
   t\setSpan delay/100
-  -- print t\getTime()
   t\setListener(MOAITimer.EVENT_TIMER_END_SPAN, ->
-    -- print t\getTime()
     t\stop()
     t = nil
     func(unpack(arg))
@@ -100,18 +80,7 @@ performWithDelay = (delay, func, repeats, ...) ->
         performWithDelay( delay, func, 0, unpack( arg ) ))
   t\start()
 
--- test = ->
---   c\addBehavior IdleAction c
-
--- test2 = ->
---   c\addBehavior WalkAction c
-
 performWithDelay( 400, -> characterManager.removeCharacters((char) -> return char != c))
-
---performWithDelay( 0, test )
---performWithDelay( 400, test2 )
---performWithDelay( 800, test )
---performWithDelay( 1000, test2 )
 
 otherChars = characterManager.selectCharacters((i) -> return i != c)
 
