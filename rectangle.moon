@@ -10,3 +10,10 @@ export class Rectangle
     @xMax -= xMax
     @yMax -= yMax
     @get()
+
+  add: (xMin, yMin, xMax, yMax) =>
+    @xMin += xMin
+    @yMin += yMin
+    @xMax += xMax
+    @yMax += yMax
+    @get()
