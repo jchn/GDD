@@ -18,12 +18,16 @@ class Resource
 
     @BUTTON = MOAITexture.new()
 
+    @ALIEN = MOAIImage.new()
+    @UFO = MOAIImage.new()
   load: () =>
     @WRESTLER_IDLE\load('resources/wrestler_idle.png')
     @WRESTLER_WALK\load('resources/wrestler_walk.png')
     @MUSHROOM\load('resources/mushroom.png')
+    @ALIEN\load('resources/alien.png')
+    @UFO\load('resources/ufo.png')
 
-    @BUTTON\load "resources/mushroom.png"
+    @BUTTON\load "resources/button_alien_rank1.png"
 
   loadJson: () =>
     @databuffer = MOAIDataBuffer.new()

@@ -17,9 +17,3 @@ export class Rectangle
     @xMax += xMax
     @yMax += yMax
     @get()
-
-  toWnd: (layer) =>
-    print 'toWnd'
-    print layer\worldToWnd @xMin, @yMin
-    print layer\worldToWnd @xMax, @yMax
-    @get()

@@ -5,78 +5,81 @@ export Characterstate = {
 }
 
 class Character
-  new: (@characterID, @prop, @layer, @world, @direction, @rectangle, @stats, actionIDs) =>
+
+  name: 'character'
+
+  new: (@characterID, @prop, @layer, @world, @direction, @rectangle, @stats, actionIDs, x = 0, y = 0) =>
     @state = Characterstate.IDLE
 
     @body = @world\addBody( MOAIBox2DBody.KINEMATIC )
-    @body\setTransform -200, -55
+    @body\setTransform x, y
     @fixture = @body\addRect( @rectangle\get() )
+    @fixture.character = @
+    if @onCollide
+      @fixture\setCollisionHandler(@onCollide, MOAIBox2DArbiter.BEGIN)
     @prop\setParent @body
     @prop.body = @body
-
-    --@behavior = Action(@)
 
     @actions = {}
     for actionID in *actionIDs do
       @addAction(actionID)
 
+    @add()
+    @update()
+
   getLocation: () =>
-    return @body.getLocation()
+    return @body\getPosition()
 
   alterHealth: (deltaHealth) =>
+    print "Health was #{@stats.health}"
     @stats.health += deltaHealth
-    if @stats.health <= 0
-      @die()
+    print "Health is #{@stats.health}"
+    if deltaHealth < 0
+      @colorBlink(1.0, 0.0, 0.0)
+
+  forceDeath: () =>
+    @stats.health = 0
+
+  colorBlink: (red, green, blue, length = 0.40) =>
+    @prop\seekColor red, green, blue, 1.0, 0.10
+    @prop\moveColor 1.0, 1.0, 1.0, 1.0, length
 
   die: =>
-    print "Character dead"
+    print "character died"
+    if @beforeDeath
+      @beforeDeath()
+    characterManager.removeCharacters((c) -> return c == @)
+    @remove()
+    @destroy()
 
   addAction: (actionID) =>
     if @actions[actionID] == nil
-      @actions[actionID] = actionFactory.makeAction(actionID, @)
+      @actions[actionID] = actionManager.makeAction(actionID, @)
       print "added Action"
       print @actions[actionID]
 
-  --addBehavior: (behavior) =>
-    -- print "addBehavior "..behaviorID\lower()
-    -- table.insert @behaviors, behaviorID\lower()
-
-    --@behavior\stop()
-    --print 'behavior in character'
-    --print @behavior.character
-    --@behavior = behavior
-
-  update: =>
-    if @state == Characterstate.IDLE
+  update: () =>
+    if @stats.health > 0 and @state == Characterstate.IDLE
       doSomething, currentAction = ai.think(@)
       if doSomething
         currentAction\execute()
+    elseif @stats.health <= 0
+      @die()
 
   add: =>
     @layer\insertProp @prop
-
-    -- curve = MOAIAnimCurve.new()
-    -- curve\reserveKeys(2)
-
-    -- curve\setKey(1, 0.25, 1)
-    -- curve\setKey(2, 0.5, 2)
-
-    -- anim = MOAIAnim\new()
-    -- anim\reserveLinks(1)
-    -- anim\setLink(1, curve, @prop, MOAIProp2D.ATTR_INDEX)
-    -- anim\setMode(MOAITimer.LOOP)
-    -- anim\setSpan(1)
-    -- anim\start()
     @
 
   remove: =>
+    print "REMOVED CHARACTER"
     @layer\removeProp @prop
     @
 
   destroy: =>
+    print "DESTROY CHARACTER"
     @state = nil
-    @pop = nil
-    @fixture = nil
+    @prop = nil
+    @fixture\destroy()
     @actions = nil
     @stats = nil
     @rectangle = nil
@@ -85,41 +88,87 @@ class Character
     @direction = nil
     @body\destroy()
 
-class Hero extends Character
+class PowerupUser extends Character
 
-class Unit extends Character
+  onCollide: (own, other) =>
+    own = own.character
+    other = other.character
+    if other.name == 'powerup'
+      other\remove()
+      other\destroy()
+      Pntr\clear()
+      other\execute(own)
+      own\colorBlink(0.0, 1.0, 0.0)
+
+class Hero extends PowerupUser
+
+  name: 'hero'
+
+class Unit extends PowerupUser
+
+  name: 'unit'
+
+  beforeDeath: () =>
+    x, y = @getLocation()
+    powerupManager.makePowerup("health", x + 20 , y + 150 , R.MUSROOM)
 
 class UFO extends Character
+
+  name: 'ufo'
+
+  onCollide: (own, other, event) =>
+    own = own.character
+    other = other.character
+    if other.name == 'powerup'
+      other\remove()
+      other\destroy()
+      own\colorBlink(0.0, 1.0, 0.0, 0.80)
+      characterManager.collectPowerup(other.specificName)
+      Pntr\clear()
 
 class CharacterManager
 
   characters = {}
+  layer = nil
+  world = nil
+  ufo = nil
 
-  updateCharacters: () ->
-    for character in *characters do
-      character\update()
+  collectedPowerups = {}
+  lastTimestamp = 0
+  comboCounter = 0
+
+  collectPowerup: (powerupSpecificName) ->
+    if collectedPowerups[powerupSpecificName] == nil
+      collectedPowerups[powerupSpecificName] = 0
+
+    aantal = 1
+    time = os.time()
+    if time - lastTimestamp <= 1
+      comboCounter += 1
+      aantal = 1 + comboCounter
+    else
+      comboCounter = 0
+
+    lastTimestamp = time
+
+    collectedPowerups[powerupSpecificName] += aantal
+    
+    print "Powerup collection: #{collectedPowerups[powerupSpecificName]} with combo counter #{comboCounter}"
+
+  getSpawnableUnits: () ->
+    -- foo
 
   selectCharacters: (queryFunction) ->
-    selected = {}
-
-    for char in *characters do
-      if queryFunction(char)
-        selected[#selected+1] = char
-    return selected
+    _.select(characters, queryFunction)
 
   removeCharacters: (queryFunction) ->
-    tempCharacters = {}
+    characters = _.reject(characters, queryFunction)
 
-    for char in *characters do
-      if not queryFunction(char)
-        tempCharacters[#tempCharacters+1] = char
-      else
-        char\remove()
-        char\destroy()
+  setLayerAndWorld: (newLayer, newWorld) ->
+    layer = newLayer
+    world = newWorld
 
-    characters = tempCharacters
-
-  makeCharacter: (characterID, layer, world) ->
+  makeCharacter: (characterID) ->
     characterID = characterID\lower()
     print "Character Factory: " .. characterID
     prop = MOAIProp2D.new()
@@ -145,23 +194,40 @@ class CharacterManager
           "walk", "idle"
         }
 
-        newCharacter = Hero(characterID, prop, layer, world, direction.RIGHT, rectangle, stats, actionIDs)
+        newCharacter = Hero(characterID, prop, layer, world, direction.RIGHT, rectangle, stats, actionIDs, 0, -55)
 
       when "unit"
         print "Basic Unit Character"
-        rectangle = Rectangle(-32,-32,32,32)
+        rectangle = Rectangle(-20,-20,20,20)
 
         stats = {
-          health: 100,
+          health: 10,
           attack: 8,
           defense: 7
         }
 
         actionIDs = {
-          "walk", "idle"
+          "jumpwalk"
+        }
+        x = ufo\getLocation()
+        print "New location: #{x}"
+
+        newCharacter = Unit(characterID, prop, layer, world, direction.LEFT, rectangle, stats, actionIDs, x, -70)
+
+      when "ufo"
+        print "UFO Character"
+        rectangle = Rectangle(-60,-50,60,50)
+
+        stats = {
+          health: 100
         }
 
-        newCharacter = Unit(characterID, prop, layer, world, direction.LEFT, rectangle, stats, actionIDs)
+        actionIDs= {
+          "fly"
+        }
+
+        newCharacter = UFO(characterID, prop, layer, world, direction.RIGHT, rectangle, stats, actionIDs, 0, 20)
+        ufo = newCharacter
 
       else
         print "Generic Character"

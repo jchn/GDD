@@ -15,6 +15,7 @@ class Pointer
   listenTo: (layer) =>
     layer.x = 0
     layer.y = 0
+    print "layer priority #{layer.priority}"
     @layers[layer.priority] = layer
 
   stopListeningTo: (layer) =>
@@ -22,18 +23,24 @@ class Pointer
 
   onClick: (down) =>
     if down
-      for layer in *@layers
+      print "number of layers: #{#@layers}"
+      for priority, layer in pairs @layers
         if not @pick
-          @pick = layer\getPartition()\propForPoint layer.x, layer.y
-          @mouseBody = @world\addBody MOAIBox2DBody.DYNAMIC
-          @handlePick(layer)
+          partition = layer\getPartition!
+          if partition
+            @pick = partition\propForPoint layer.x, layer.y
+            @mouseBody = @world\addBody MOAIBox2DBody.DYNAMIC
+            @handlePick(layer)
     else
-      if @pick and @pick.draggable
-        @mouseBody\destroy()
-        @mouseBody = nil
-        @pick = nil
-      else if @pick
-        @pick = nil
+      @clear()
+
+  clear: () =>
+    if @pick
+      @mouseBody\destroy()
+      @mouseBody = nil
+      @pick = nil
+    else if @pick
+      @pick = nil
 
   handlePick: (layer) =>
     if @pick
@@ -43,7 +50,7 @@ class Pointer
         @pick.parent.onClick()
 
   callback: (x, y) =>
-    for layer in *@layers
+    for priority, layer in pairs @layers
       layer.x, layer.y = layer\wndToWorld x, y
       if @pick and @pick.draggable
         @mouseJoint\setTarget layer.x, layer.y

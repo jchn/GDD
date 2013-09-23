@@ -1,5 +1,5 @@
 class LayerManager
-  new: (@viewport) =>
+  new: (@viewport, @camera) =>
     @layers = {}
 
   addLayer: (layer) =>
@@ -11,11 +11,13 @@ class LayerManager
   getLayer: (name) =>
     @layers[name]
 
-  createLayer: (name, priority, interactive) =>
+  createLayer: (name, priority, interactive, attachedToCamera = true) =>
     layer = MOAILayer.new()
     layer.name = name
     layer.priority = priority
     layer.interactive = interactive
+    if attachedToCamera
+      layer\setCamera @camera
 
     layer.render = ->
       MOAIRenderMgr.pushRenderPass layer
@@ -46,4 +48,4 @@ class LayerManager
 
     @removeLayer layer
 
-export LayerMgr = LayerManager R.VIEWPORT
+export LayerMgr = LayerManager R.VIEWPORT, camera

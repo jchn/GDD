@@ -1,4 +1,5 @@
 io.stdout\setvbuf("no")
+export camera = MOAICamera2D.new()
 require 'resource'
 require 'rectangle'
 require 'character'
@@ -9,13 +10,17 @@ require 'ai'
 require 'simplebutton'
 require 'layermanager'
 
+export _ = require 'lib/underscore'
+
 export mouseX = 0
 export mouseY = 0
+
 -- Openen window
 screenWidth = 480
 screenHeight = 320
 MOAISim.openWindow "wrestlers vs aliens", screenWidth, screenHeight
 R\load()
+
 
 -- 1. Aanmaken van een viewport
 
@@ -23,17 +28,15 @@ R\load()
 -- 2. Toevoegen van een layer
 
 LayerMgr\createLayer('characters', 1, true)\render!
-LayerMgr\createLayer('ui', 2, true)\render!
-LayerMgr\createLayer('powerups', 3, true)\render!
-LayerMgr\createLayer('box2d', 4, false)
+LayerMgr\createLayer('ui', 2, true, false)\render!
+LayerMgr\createLayer('box2d', 3, false)
+LayerMgr\createLayer('powerups', 4, true)\render!
 
 -- 3. Achtergrondkleur instellen
-
 MOAIGfxDevice\getFrameBuffer()\setClearColor 0, 0, 0, 1
 
 -- Box2d WORLD
 LayerMgr\getLayer('box2d')\setBox2DWorld( R.WORLD )
-
 
 -- De grond
 staticBody = R.WORLD\addBody( MOAIBox2DBody.STATIC )
@@ -41,29 +44,29 @@ staticBody\setTransform(0,-100)
 
 rectFixture   = staticBody\addRect( -512, -15, 512, 15 )
 
-p0 = Powerup R.WORLD, LayerMgr\getLayer('powerups'), 100, 50, R.MUSHROOM
-p1 = Powerup R.WORLD, LayerMgr\getLayer('powerups'), -200, 50, R.MUSHROOM
-p2 = Powerup R.WORLD, LayerMgr\getLayer('powerups'), 0, 50, R.MUSHROOM
-p3 = Powerup R.WORLD, LayerMgr\getLayer('powerups'), 200, 50, R.MUSHROOM
+powerupManager.setLayerAndWorld(LayerMgr\getLayer('powerups'), R.WORLD)
+powerupManager.makePowerup("health", 170, 0, R.MUSROOM)
+powerupManager.makePowerup("health", 200, 0, R.MUSROOM)
+powerupManager.makePowerup("health", 230, 0, R.MUSROOM)
+powerupManager.makePowerup("health", 260, 0, R.MUSROOM)
 
 export direction = {
   LEFT: -1,
   RIGHT: 1
 }
 
-c = characterManager.makeCharacter("hero", LayerMgr\getLayer('characters'), R.WORLD)\add()
-
-for i = 1, 3
-  characterManager.makeCharacter("unit", LayerMgr\getLayer('characters'), R.WORLD)\add()
-
-btn = MOAIProp2D.new()
-button = SimpleButton LayerMgr\getLayer("ui"), R.BUTTON, Rectangle(-64, -64, 64, 64), -> print 'derp'
-button\add()
+characterManager.setLayerAndWorld(LayerMgr\getLayer('characters'), R.WORLD)
+c = characterManager.makeCharacter("hero")\add()
+u = characterManager.makeCharacter("ufo")\add()
 
 threadFunc = ->
   while true
 
-    characterManager.updateCharacters()
+    x = c.body\getPosition()
+    camera\setLoc((x + 180))
+    staticBody\setTransform(x,-100)
+
+    u.body\setTransform((x + 360), -35)
 
     coroutine.yield()
 
@@ -84,10 +87,6 @@ performWithDelay = (delay, func, repeats, ...) ->
         performWithDelay( delay, func, 0, unpack( arg ) ))
   t\start()
 
-performWithDelay( 400, -> characterManager.removeCharacters((char) -> return char != c))
-
-otherChars = characterManager.selectCharacters((i) -> return i != c)
-
-print "OTHER CHARACTERS"
-for oChar in *otherChars do
-  print oChar
+btn = MOAIProp2D.new()
+button = SimpleButton LayerMgr\getLayer("ui"), R.BUTTON, Rectangle(-16, -16, 16, 16), (200), (-120), -> characterManager.makeCharacter("unit")\add()
+button\add()
