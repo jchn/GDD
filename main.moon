@@ -35,7 +35,7 @@ LayerMgr\createLayer('ufo', 1, true)\render!
 LayerMgr\createLayer('characters', 1, true)\render!
 
 LayerMgr\createLayer('ui', 2, true, false)\render!
-LayerMgr\createLayer('box2d', 3, false)\render!
+LayerMgr\createLayer('box2d', 3, false)
 LayerMgr\createLayer('powerups', 4, true)\render!
 
 LayerMgr\createLayer('foreground', 6, false)\render!\setParallax 1.5, 1
@@ -53,15 +53,15 @@ staticBody\setTransform(0,-100)
 
 -- De voorgrond
 fggrid = MOAIGrid.new()
-fggrid\initRectGrid 8, 1, 279, 27
+fggrid\initRectGrid 8, 1, 279, 279
 fggrid\setRow 1, 1, 1, 1, 1, 1, 1, 1, 1
 
 bggrid = MOAIGrid.new()
-bggrid\initRectGrid 8, 1, 280, 144
+bggrid\initRectGrid 8, 1, 279, 279
 bggrid\setRow 1, 1, 1, 1, 1, 1, 1, 1, 1
 
 ggrid = MOAIGrid.new()
-ggrid\initRectGrid 8, 1, 279, 45
+ggrid\initRectGrid 8, 1, 279, 279
 ggrid\setRow 1, 1, 1, 1, 1, 1, 1, 1, 1
 
 -- Voorgrond deck
@@ -83,17 +83,17 @@ gdeck\setSize 1, 1
 fgprop = MOAIProp2D.new()
 fgprop\setDeck fgdeck
 fgprop\setGrid fggrid
-fgprop\setLoc 0, -110
+fgprop\setLoc 0, -120
 
 bgprop = MOAIProp2D.new()
 bgprop\setDeck bgdeck
 bgprop\setGrid bggrid
-bgprop\setLoc 0, -60
+bgprop\setLoc 0, -80
 
 gprop = MOAIProp2D.new()
 gprop\setDeck gdeck
 gprop\setGrid ggrid
-gprop\setLoc 0, -90
+gprop\setLoc 0, -100
 
 LayerMgr\getLayer('foreground')\insertProp fgprop
 LayerMgr\getLayer('background')\insertProp bgprop
