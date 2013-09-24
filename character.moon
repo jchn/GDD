@@ -104,6 +104,10 @@ class Hero extends PowerupUser
 
   name: 'hero'
 
+  alterHealth: (deltaHealth) =>
+    updateHealthBar(@stats.health)
+    super deltaHealth
+
 class Unit extends PowerupUser
 
   name: 'unit'

@@ -4,6 +4,9 @@ class Resource
     @WRESTLER_IDLE = MOAIImage.new()
     @WRESTLER_WALK = MOAIImage.new()
     @MUSHROOM = MOAIImage.new()
+    @RED = MOAIImage.new()
+    @GREEN = MOAIImage.new()
+    @YELLOW = MOAIImage.new()
 
     @SCREEN_WIDTH = 480
     @SCREEN_HEIGHT = 320
@@ -22,7 +25,7 @@ class Resource
     @UFO = MOAIImage.new()
 
     @FONT = MOAIFont.new()
-    @CHARCODES = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz .!01234567890:"
+    @CHARCODES = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz .!0123456789:"
     @STYLE = MOAITextStyle.new()
 
   load: () =>
@@ -38,6 +41,10 @@ class Resource
     @FONT\preloadGlyphs(@CHARCODES, 20)
     @STYLE\setFont(@FONT)
     @STYLE\setSize(20)
+
+    @RED\load("resources/red_health.png")
+    @GREEN\load("resources/green_health.png")
+    @YELLOW\load("resources/yellow_health.png")
 
   loadJson: () =>
     @databuffer = MOAIDataBuffer.new()

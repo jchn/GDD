@@ -91,3 +91,22 @@ performWithDelay = (delay, func, repeats, ...) ->
 btn = MOAIProp2D.new()
 button = SimpleButton LayerMgr\getLayer("ui"), R.BUTTON, Rectangle(-16, -16, 16, 16), (200), (-120), -> characterManager.makeCharacter("unit")\add()
 button\add()
+
+
+texture = MOAIGfxQuad2D.new()
+texture\setTexture R.GREEN
+texture\setRect 0, 0, 100, 10
+
+healthBar = MOAIProp2D.new()
+healthBar\setDeck texture
+healthBar\setLoc(-200,-120)
+healthBar\setBlendMode(MOAIProp2D.GL_SRC_ALPHA, MOAIProp2D.GL_ONE_MINUS_SRC_ALPHA)
+
+uiLayer = LayerMgr\getLayer("ui")
+uiLayer\insertProp(healthBar)
+
+
+export updateHealthBar = (percentage) ->
+  if percentage < 0
+    percentage = 0
+  texture\setRect 0, 0, percentage, 10
