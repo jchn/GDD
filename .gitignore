@@ -1,2 +1,4 @@
 *.lua
 !/lib/*
+!/android/*.lua
+/android/build
