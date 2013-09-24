@@ -11,6 +11,7 @@ class Pointer
     @layers = {}
     MOAIInputMgr.device.pointer\setCallback ( @\callback )
     MOAIInputMgr.device.mouseLeft\setCallback ( @\onClick )
+    -- MOAIInputMgr.device.touch\setCallback( @\touchcallback )
 
   listenTo: (layer) =>
     layer.x = 0
@@ -45,7 +46,9 @@ class Pointer
   handlePick: (layer) =>
     if @pick
       if @pick.draggable
+        print 'draggable start'
         @mouseJoint = @world\addMouseJoint @mouseBody, @pick.body, layer.x, layer.y, 10000.0 * @pick.body\getMass()
+        print 'draggable end'
       if @pick.clickable
         @pick.parent.onClick()
 
@@ -54,5 +57,18 @@ class Pointer
       layer.x, layer.y = layer\wndToWorld x, y
       if @pick and @pick.draggable
         @mouseJoint\setTarget layer.x, layer.y
+
+  touchcallback: (eventType, idx, x, y, tapCount) =>
+    if eventType == MOAITouchSensor.TOUCH_DOWN
+      for priority, layer in pairs @layers
+        if not @pick
+          partition = layer\getPartition!
+          if partition
+            layer.x, layer.y = layer\wndToWorld x, y
+            @pick = partition\propForPoint layer.x, layer.y
+            @mouseBody = @world\addBody MOAIBox2DBody.DYNAMIC
+            @handlePick(layer)
+    else
+      @clear()
 
 export Pntr = Pointer(R.WORLD)

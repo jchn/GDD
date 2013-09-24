@@ -5,12 +5,6 @@ class Resource
     @WRESTLER_WALK = MOAIImage.new()
     @MUSHROOM = MOAIImage.new()
 
-    @SCREEN_WIDTH = 480
-    @SCREEN_HEIGHT = 320
-    @VIEWPORT = MOAIViewport.new()
-    @VIEWPORT\setSize @SCREEN_WIDTH, @SCREEN_HEIGHT
-    @VIEWPORT\setScale @SCREEN_WIDTH, @SCREEN_HEIGHT
-
     @WORLD = MOAIBox2DWorld.new()
     @WORLD\setGravity( 0, -10 ) -- Zwaartekracht
     @WORLD\setUnitsToMeters( 1/30 ) -- Hoeveel units in een meter. Let op dat Units niet per se pixels zijn, dat hangt af van de scale van de viewport
@@ -24,6 +18,8 @@ class Resource
     @FONT = MOAIFont.new()
     @CHARCODES = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz .!01234567890:"
     @STYLE = MOAITextStyle.new()
+
+    @setupViewport()
 
   load: () =>
     @WRESTLER_IDLE\load('resources/wrestler_idle.png')
@@ -41,5 +37,21 @@ class Resource
 
   loadJson: () =>
     @databuffer = MOAIDataBuffer.new()
+
+  setupViewport: () =>
+
+    @DEVICE_WIDTH = MOAIEnvironment.horizontalResolution or 480
+    @DEVICE_HEIGHT = MOAIEnvironment.verticalResolution or 320
+
+    units_y = 320
+    units_x = units_y * @DEVICE_WIDTH/@DEVICE_HEIGHT
+
+    print "DEVICE_WIDTH #{@DEVICE_WIDTH}"
+    print "DEVICE_HEIGHT #{@DEVICE_HEIGHT}"
+
+    @VIEWPORT = MOAIViewport.new()
+    @VIEWPORT\setSize @DEVICE_WIDTH, @DEVICE_HEIGHT
+    @VIEWPORT\setScale units_x, units_y
+
 
 export R = Resource()
