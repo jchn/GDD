@@ -19,6 +19,8 @@ class LayerManager
     if attachedToCamera
       layer\setCamera @camera
 
+    layer\setSortMode priority
+
     layer.render = ->
       MOAIRenderMgr.pushRenderPass layer
       layer
