@@ -20,6 +20,11 @@ class Resource
 
     @ALIEN = MOAIImage.new()
     @UFO = MOAIImage.new()
+
+    @FONT = MOAIFont.new()
+    @CHARCODES = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz .!01234567890:"
+    @STYLE = MOAITextStyle.new()
+
   load: () =>
     @WRESTLER_IDLE\load('resources/wrestler_idle.png')
     @WRESTLER_WALK\load('resources/wrestler_walk.png')
@@ -28,6 +33,11 @@ class Resource
     @UFO\load('resources/ufo.png')
 
     @BUTTON\load "resources/button_alien_rank1.png"
+
+    @FONT\load("resources/arial-rounded.TTF")
+    @FONT\preloadGlyphs(@CHARCODES, 20)
+    @STYLE\setFont(@FONT)
+    @STYLE\setSize(20)
 
   loadJson: () =>
     @databuffer = MOAIDataBuffer.new()

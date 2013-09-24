@@ -17,3 +17,9 @@ export class Rectangle
     @xMax += xMax
     @yMax += yMax
     @get()
+
+  getWidth: () =>
+    math.abs(@xMin) + math.abs(@xMax)
+
+  getHeight: () =>
+    math.abs(@yMin) + math.abs(@yMax)

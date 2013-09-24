@@ -198,10 +198,33 @@ class JumpwalkAction extends Action
     otherCharacters = @selectCharacters()
 
     if #otherCharacters > 0
-      @character\forceDeath()
-      @\stop()
+      @character\alterHealth(-5)
+      @character.body\setLinearVelocity(0, 0)
       for char in *otherCharacters do
-        char\alterHealth(-5)
+        char\alterHealth(-1)
+      @timer\stop()
+      @anim\stop()
+      @x, @y = @character\getLocation()
+
+      deltaX = 160 / 24
+      deltaY = (@y + 3 - (-70)) / 18
+      @counter = 1
+
+      @timer = MOAITimer.new()
+      @timer\setSpan(1/24)
+      @timer\setMode(MOAITimer.LOOP)
+      @timer\setListener(MOAITimer.EVENT_TIMER_END_SPAN, ->
+        @x += deltaX
+        if @counter > 6
+          @y -= deltaY
+        else
+          @y += 0.5
+        @character.body\setTransform(@x , @y)
+        @counter += 1
+        if @counter  == 24
+          @\stop())
+      @timer\start()
+
 
   selectCharacters: () =>
     characterManager.selectCharacters((char) ->

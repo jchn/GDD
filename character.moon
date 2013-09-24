@@ -122,7 +122,7 @@ class UFO extends Character
     if other.name == 'powerup'
       other\remove()
       other\destroy()
-      own\colorBlink(0.0, 1.0, 0.0, 0.80)
+      own\colorBlink(0.0, 1.0, 0.0, 1.00)
       characterManager.collectPowerup(other.specificName)
       Pntr\clear()
 
@@ -136,6 +136,7 @@ class CharacterManager
   collectedPowerups = {}
   lastTimestamp = 0
   comboCounter = 0
+  powerupInfobox =  nil
 
   collectPowerup: (powerupSpecificName) ->
     if collectedPowerups[powerupSpecificName] == nil
@@ -152,6 +153,8 @@ class CharacterManager
     lastTimestamp = time
 
     collectedPowerups[powerupSpecificName] += aantal
+
+    powerupInfobox\setText("x " .. collectedPowerups[powerupSpecificName])
     
     print "Powerup collection: #{collectedPowerups[powerupSpecificName]} with combo counter #{comboCounter}"
 
@@ -167,6 +170,7 @@ class CharacterManager
   setLayerAndWorld: (newLayer, newWorld) ->
     layer = newLayer
     world = newWorld
+    powerupInfobox = PowerupInfobox(R.MUSHROOM, Rectangle(-10,-10, 10, 10), "x 0", Rectangle(0, 0, 50, 25), R.STYLE, LayerMgr\getLayer("ui"), 170, 130)
 
   makeCharacter: (characterID) ->
     characterID = characterID\lower()

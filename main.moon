@@ -6,9 +6,10 @@ require 'character'
 require 'action'
 require 'powerup'
 require 'pointer'
-require 'ai'
+require 'AI'
 require 'simplebutton'
 require 'layermanager'
+require 'PowerupInfobox'
 
 export _ = require 'lib/underscore'
 
@@ -27,7 +28,7 @@ R\load()
 
 -- 2. Toevoegen van een layer
 
-LayerMgr\createLayer('characters', 1, true)\render!
+LayerMgr\createLayer('characters', 1, false)\render!
 LayerMgr\createLayer('ui', 2, true, false)\render!
 LayerMgr\createLayer('box2d', 3, false)
 LayerMgr\createLayer('powerups', 4, true)\render!
