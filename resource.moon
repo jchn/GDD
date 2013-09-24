@@ -5,11 +5,11 @@ class Resource
     @WRESTLER_WALK = MOAIImage.new()
     @MUSHROOM = MOAIImage.new()
 
-    @SCREEN_WIDTH = 480
-    @SCREEN_HEIGHT = 320
+    @SCREEN_WIDTH = 480*2
+    @SCREEN_HEIGHT = 320*2
     @VIEWPORT = MOAIViewport.new()
     @VIEWPORT\setSize @SCREEN_WIDTH, @SCREEN_HEIGHT
-    @VIEWPORT\setScale @SCREEN_WIDTH, @SCREEN_HEIGHT
+    @VIEWPORT\setScale @SCREEN_WIDTH/2, @SCREEN_HEIGHT/2
 
     @WORLD = MOAIBox2DWorld.new()
     @WORLD\setGravity( 0, -10 ) -- Zwaartekracht

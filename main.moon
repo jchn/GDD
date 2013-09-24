@@ -16,8 +16,8 @@ export mouseX = 0
 export mouseY = 0
 
 -- Openen window
-screenWidth = 480
-screenHeight = 320
+screenWidth = R.SCREEN_WIDTH
+screenHeight = R.SCREEN_HEIGHT
 MOAISim.openWindow "wrestlers vs aliens", screenWidth, screenHeight
 R\load()
 
@@ -27,10 +27,17 @@ R\load()
 
 -- 2. Toevoegen van een layer
 
+LayerMgr\createLayer('background', 7, false)\render!\setParallax 0.5, 1
+LayerMgr\createLayer('ground', 5, false)\render!
+
+LayerMgr\createLayer('ufo', 1, true)\render!
 LayerMgr\createLayer('characters', 1, true)\render!
 LayerMgr\createLayer('ui', 2, true, false)\render!
-LayerMgr\createLayer('box2d', 3, false)
+LayerMgr\createLayer('box2d', 3, false)\render!
 LayerMgr\createLayer('powerups', 4, true)\render!
+
+LayerMgr\createLayer('foreground', 6, false)\render!\setParallax 1.5, 1
+
 
 -- 3. Achtergrondkleur instellen
 MOAIGfxDevice\getFrameBuffer()\setClearColor 0, 0, 0, 1
@@ -41,6 +48,54 @@ LayerMgr\getLayer('box2d')\setBox2DWorld( R.WORLD )
 -- De grond
 staticBody = R.WORLD\addBody( MOAIBox2DBody.STATIC )
 staticBody\setTransform(0,-100)
+
+-- De voorgrond
+fggrid = MOAIGrid.new()
+fggrid\initRectGrid 8, 1, 279, 27
+fggrid\setRow 1, 1, 1, 1, 1, 1, 1, 1, 1
+
+bggrid = MOAIGrid.new()
+bggrid\initRectGrid 8, 1, 280, 144
+bggrid\setRow 1, 1, 1, 1, 1, 1, 1, 1, 1
+
+ggrid = MOAIGrid.new()
+ggrid\initRectGrid 8, 1, 279, 45
+ggrid\setRow 1, 1, 1, 1, 1, 1, 1, 1, 1
+
+-- Voorgrond deck
+fgdeck = MOAITileDeck2D.new()
+fgdeck\setTexture 'resources/fg.png'
+fgdeck\setSize 1, 1
+
+bgdeck = MOAITileDeck2D.new()
+bgdeck\setTexture 'resources/bg.png'
+bgdeck\setSize 1, 1
+
+-- bgdeck\setUVRect -10, -10, 10, 10
+
+gdeck = MOAITileDeck2D.new()
+gdeck\setTexture 'resources/ground.png'
+gdeck\setSize 1, 1
+
+-- Voorgrond prop
+fgprop = MOAIProp2D.new()
+fgprop\setDeck fgdeck
+fgprop\setGrid fggrid
+fgprop\setLoc 0, -110
+
+bgprop = MOAIProp2D.new()
+bgprop\setDeck bgdeck
+bgprop\setGrid bggrid
+bgprop\setLoc 0, -60
+
+gprop = MOAIProp2D.new()
+gprop\setDeck gdeck
+gprop\setGrid ggrid
+gprop\setLoc 0, -90
+
+LayerMgr\getLayer('foreground')\insertProp fgprop
+LayerMgr\getLayer('background')\insertProp bgprop
+LayerMgr\getLayer('ground')\insertProp gprop
 
 rectFixture   = staticBody\addRect( -512, -15, 512, 15 )
 
