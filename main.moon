@@ -34,7 +34,7 @@ LayerMgr\createLayer('box2d', 3, false)
 LayerMgr\createLayer('powerups', 4, true)\render!
 
 -- 3. Achtergrondkleur instellen
-MOAIGfxDevice\getFrameBuffer()\setClearColor 0, 0, 0, 1
+MOAIGfxDevice\getFrameBuffer()\setClearColor 1, 1, 0, 1
 
 -- Box2d WORLD
 LayerMgr\getLayer('box2d')\setBox2DWorld( R.WORLD )
