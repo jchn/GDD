@@ -9,9 +9,11 @@ class Pointer
   new: (@world) =>
     -- TODO dit implementeren voor touch
     @layers = {}
-    MOAIInputMgr.device.pointer\setCallback ( @\callback )
-    MOAIInputMgr.device.mouseLeft\setCallback ( @\onClick )
-    -- MOAIInputMgr.device.touch\setCallback( @\touchcallback )
+    if MOAIInputMgr.device.pointer
+      MOAIInputMgr.device.pointer\setCallback ( @\callback )
+      MOAIInputMgr.device.mouseLeft\setCallback ( @\onClick )
+    else
+      MOAIInputMgr.device.touch\setCallback( @\touchcallback )
 
   listenTo: (layer) =>
     layer.x = 0
@@ -26,48 +28,58 @@ class Pointer
     if down
       print "number of layers: #{#@layers}"
       for priority, layer in pairs @layers
-        if not @pick
+        if not @pick and layer.interactive
           partition = layer\getPartition!
           if partition
             @pick = partition\propForPoint layer.x, layer.y
-            @mouseBody = @world\addBody MOAIBox2DBody.DYNAMIC
-            @handlePick(layer)
+            if @pick
+              @handlePick(layer)
     else
       @clear()
 
   clear: () =>
     if @pick
-      @mouseBody\destroy()
-      @mouseBody = nil
-      @pick = nil
-    else if @pick
-      @pick = nil
+      print "CLEAR #{@pick}"
+      if @mouseBody
+        @mouseBody\destroy()
+      if @mouseJoint
+        @mouseJoint\destroy()
+      @pick.isDragged = false
+
+    @pick = nil
 
   handlePick: (layer) =>
-    if @pick
-      if @pick.draggable
-        print 'draggable start'
-        @mouseJoint = @world\addMouseJoint @mouseBody, @pick.body, layer.x, layer.y, 10000.0 * @pick.body\getMass()
-        print 'draggable end'
-      if @pick.clickable
-        @pick.parent.onClick()
+    if @pick and @pick.draggable
+      @mouseBody = @world\addBody MOAIBox2DBody.DYNAMIC
+      @mouseJoint = @world\addMouseJoint @mouseBody, @pick.body, layer.x, layer.y, 10000.0 * @pick.body\getMass()
+      @mouseBody\setTransform layer.x, layer.y 
+    if @pick and @pick.clickable
+      @pick.parent.onClick()
 
   callback: (x, y) =>
     for priority, layer in pairs @layers
-      layer.x, layer.y = layer\wndToWorld x, y
-      if @pick and @pick.draggable
-        @mouseJoint\setTarget layer.x, layer.y
+        @prevX, @prevY = layer.x, layer.y
+        layer.x, layer.y = layer\wndToWorld x, y
+        if @pick and @pick.draggable and @mouseJoint
+          @mouseJoint\setTarget layer.x, layer.y
 
   touchcallback: (eventType, idx, x, y, tapCount) =>
     if eventType == MOAITouchSensor.TOUCH_DOWN
       for priority, layer in pairs @layers
-        if not @pick
+        print "x and y: #{x} #{y}"
+        layer.x, layer.y = layer\wndToWorld x, y
+        if layer.interactive and not @pick
           partition = layer\getPartition!
           if partition
-            layer.x, layer.y = layer\wndToWorld x, y
             @pick = partition\propForPoint layer.x, layer.y
-            @mouseBody = @world\addBody MOAIBox2DBody.DYNAMIC
-            @handlePick(layer)
+            if @pick
+              @handlePick(layer)
+    else if eventType == MOAITouchSensor.TOUCH_MOVE
+      for priority, layer in pairs @layers
+        -- @prevX, @prevY = layer.x, layer.y
+        layer.x, layer.y = layer\wndToWorld x, y
+        if @pick and @pick.draggable
+          @mouseJoint\setTarget layer.x, layer.y
     else
       @clear()
 
