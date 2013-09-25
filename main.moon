@@ -33,7 +33,7 @@ LayerMgr\createLayer('ground', 5, false)\render!
 
 LayerMgr\createLayer('characters', 1, false)\render!
 
-LayerMgr\createLayer('box2d', 3, false)
+LayerMgr\createLayer('box2d', 3, false)\render!
 
 LayerMgr\createLayer('foreground', 6, false)\render!\setParallax 1.5, 1
 LayerMgr\createLayer('ui', 7, true, false)\render!
@@ -103,6 +103,16 @@ powerupManager.setLayerAndWorld(LayerMgr\getLayer('powerups'), R.WORLD)
 powerupManager.makePowerup("health", 170, 0, R.MUSROOM)
 powerupManager.makePowerup("health", 200, 0, R.MUSROOM)
 powerupManager.makePowerup("health", 230, 0, R.MUSROOM)
+powerupManager.makePowerup("health", 260, 0, R.MUSROOM)
+powerupManager.makePowerup("health", 260, 0, R.MUSROOM)
+powerupManager.makePowerup("health", 260, 0, R.MUSROOM)
+powerupManager.makePowerup("health", 260, 0, R.MUSROOM)
+powerupManager.makePowerup("health", 260, 0, R.MUSROOM)
+powerupManager.makePowerup("health", 260, 0, R.MUSROOM)
+powerupManager.makePowerup("health", 260, 0, R.MUSROOM)
+powerupManager.makePowerup("health", 260, 0, R.MUSROOM)
+powerupManager.makePowerup("health", 260, 0, R.MUSROOM)
+powerupManager.makePowerup("health", 260, 0, R.MUSROOM)
 powerupManager.makePowerup("health", 260, 0, R.MUSROOM)
 
 export direction = {
