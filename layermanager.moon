@@ -19,7 +19,7 @@ class LayerManager
     if attachedToCamera
       layer\setCamera @camera
 
-    layer\setSortMode priority
+    layer\setSortMode MOAILayer2D.SORT_NONE
 
     layer.render = ->
       MOAIRenderMgr.pushRenderPass layer

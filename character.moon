@@ -96,7 +96,6 @@ class PowerupUser extends Character
     if other.name == 'powerup'
       other\remove()
       other\destroy()
-      Pntr\clear()
       other\execute(own)
       own\colorBlink(0.0, 1.0, 0.0)
 
@@ -124,7 +123,7 @@ class UFO extends Character
       other\destroy()
       own\colorBlink(0.0, 1.0, 0.0, 1.00)
       characterManager.collectPowerup(other.specificName)
-      Pntr\clear()
+      
 
 class CharacterManager
 
