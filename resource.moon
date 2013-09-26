@@ -19,9 +19,11 @@ class Resource
 
     @BUTTON = MOAITexture.new()
     @BUTTON2 = MOAITexture.new()
+    @BUTTON3 = MOAITexture.new()
 
     @ALIEN = MOAIImage.new()
     @ALIEN2 = MOAIImage.new()
+    @ALIEN3 = MOAIImage.new()
     @UFO = MOAIImage.new()
 
     @FONT = MOAIFont.new()
@@ -37,10 +39,12 @@ class Resource
     @MUSHROOM2\load('resources/mushroom2.png')
     @ALIEN\load('resources/alien_rank1.png')
     @ALIEN2\load('resources/alien_rank2.png')
+    @ALIEN3\load('resources/alien_rank3.png')
     @UFO\load('resources/ufo.png')
 
     @BUTTON\load "resources/button_alien_rank1.png"
     @BUTTON2\load "resources/button_alien_rank2.png"
+    @BUTTON3\load "resources/button_alien_rank3.png"
 
     @FONT\load("resources/arial-rounded.TTF")
     @FONT\preloadGlyphs(@CHARCODES, 20)

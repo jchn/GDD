@@ -255,6 +255,14 @@ class EliteJumpwalkAction extends JumpwalkAction
     @tileLib\setTexture(texture)
     print "Elite Jumpwalker!"    
 
+class SupremeJumpwalkAction extends JumpwalkAction
+
+  execute: (otherCharacters = {}) =>
+    super @character
+    texture = R.ALIEN3
+    @tileLib\setTexture(texture)
+    print "Elite Jumpwalker!"   
+
 class ActionManager
   makeAction: (actionID, character) ->
     actionID = actionID\lower()
@@ -274,6 +282,9 @@ class ActionManager
 
       when "elite_jumpwalk"
         EliteJumpwalkAction(character)
+
+      when "supreme_jumpwalk"
+        SupremeJumpwalkAction(character)
 
       when "fly"
         FlyAction(character)
