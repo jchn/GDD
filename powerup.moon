@@ -7,12 +7,12 @@ class Powerup
     @body = @world\addBody( MOAIBox2DBody.DYNAMIC )
     @body\setTransform(@x, @y)
 
-    @fixture = @body\addRect( -10, -10, 10, 10 )
+    @fixture = @body\addRect( -12, -12, 12, 12 )
     @fixture.character = @
 
     @texture = MOAIGfxQuad2D.new()
     @texture\setTexture @image
-    @texture\setRect -10, -10, 10, 10
+    @texture\setRect -16, -16, 16, 16
 
     @prop = MOAIProp2D.new()
     @prop\setDeck @texture

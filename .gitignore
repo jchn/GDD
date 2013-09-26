@@ -1,2 +1,5 @@
-*.lua
+/*.lua
 !/lib/*
+!/android/*
+/android/build
+/android/settings-local.sh
