@@ -11,6 +11,7 @@ require 'ai'
 require 'simplebutton'
 require 'layermanager'
 require 'PowerupInfobox'
+require 'floatingnumber'
 
 export _ = require 'lib/underscore'
 
@@ -38,7 +39,7 @@ LayerMgr\createLayer('ui', 7, true, false)\render!
 LayerMgr\createLayer('powerups', 6, true)\render!
 
 -- 3. Achtergrondkleur instellen
-MOAIGfxDevice\getFrameBuffer()\setClearColor 1, 1, 0, 1
+MOAIGfxDevice\getFrameBuffer()\setClearColor 0, 0, 0, 1
 
 -- Box2d WORLD
 LayerMgr\getLayer('box2d')\setBox2DWorld( R.WORLD )
@@ -141,12 +142,11 @@ export performWithDelay = (delay, func, repeats, ...) ->
   t\start()
 
 btn = MOAIProp2D.new()
-button = CoolDownButton LayerMgr\getLayer("ui"), R.BUTTON, Rectangle(-16, -16, 16, 16), (200), (-120), 2, -> characterManager.makeCharacter("jumpwalker")
+button = CoolDownButton LayerMgr\getLayer("ui"), R.BUTTON, Rectangle(-16, -16, 16, 16), (200), (-120), 1, -> characterManager.makeCharacter("jumpwalker")
 button\add()
 
-button = CoolDownButton LayerMgr\getLayer("ui"), R.BUTTON2, Rectangle(-16, -16, 16, 16), (160), (-120), 5, -> characterManager.makeCharacter("elite_jumpwalker")
+button = CoolDownButton LayerMgr\getLayer("ui"), R.BUTTON2, Rectangle(-16, -16, 16, 16), (160), (-120), 2, -> characterManager.makeCharacter("elite_jumpwalker")
 button\add()
 
-button = CoolDownButton LayerMgr\getLayer("ui"), R.BUTTON3, Rectangle(-16, -16, 16, 16), (120), (-120), 4, -> characterManager.makeCharacter("supreme_jumpwalker")
+button = CoolDownButton LayerMgr\getLayer("ui"), R.BUTTON3, Rectangle(-16, -16, 16, 16), (120), (-120), 2, -> characterManager.makeCharacter("supreme_jumpwalker")
 button\add()
-

@@ -27,8 +27,10 @@ class Resource
     @UFO = MOAIImage.new()
 
     @FONT = MOAIFont.new()
-    @CHARCODES = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz .!0123456789:"
+    @CHARCODES = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz .!0123456789:-+"
     @STYLE = MOAITextStyle.new()
+    @REDSTYLE = MOAITextStyle.new()
+    @GREENSTYLE = MOAITextStyle.new()
 
     @setupViewport()
 
@@ -50,6 +52,12 @@ class Resource
     @FONT\preloadGlyphs(@CHARCODES, 20)
     @STYLE\setFont(@FONT)
     @STYLE\setSize(20)
+
+    @REDSTYLE\setFont(@FONT)
+    @REDSTYLE\setColor(1, 0, 0)
+
+    @GREENSTYLE\setFont(@FONT)
+    @GREENSTYLE\setColor(0, 1, 0)
 
     @RED\load("resources/red_health.png")
     @GREEN\load("resources/green_health.png")

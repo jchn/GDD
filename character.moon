@@ -30,6 +30,18 @@ class Character
   getLocation: () =>
     return @body\getPosition()
 
+  showFloatingNumber: (text, length, style) =>
+    x, y = @getLocation()
+    floatingNumber = FloatingNumber(text, Rectangle(0, 0, 100, 50), style, length, x, y)
+
+    @timer = MOAITimer.new()
+    @timer\setSpan(length)
+    @timer\setMode(MOAITimer.NORMAL)
+    @timer\setListener(MOAITimer.EVENT_TIMER_END_SPAN, ->
+      floatingNumber\destroy()
+      floatingNumber = nil)
+    @timer\start()
+
   alterHealth: (deltaHealth) =>
     if deltaHealth < 0
       if @stats.shield
@@ -118,6 +130,11 @@ class Hero extends PowerupUser
 
   alterHealth: (deltaHealth) =>
     super deltaHealth
+    if deltaHealth >= 0
+      @showFloatingNumber("+#{deltaHealth}", 2, R.GREENSTYLE)
+    else
+      @showFloatingNumber("#{deltaHealth}", 2, R.REDSTYLE)
+    
 
 class Unit extends PowerupUser
 
@@ -159,7 +176,12 @@ class UFO extends Character
       other\remove()
       other\destroy()
       own\colorBlink(0.0, 1.0, 0.0, 1.00)
-      characterManager.collectPowerup(other.specificName)
+      amount = characterManager.collectPowerup(other.specificName)
+      if amount >= 0
+        own\showFloatingNumber("+#{amount}", 2, R.GREENSTYLE)
+      else
+        style = R.REDSTYLE
+        own\showFloatingNumber("#{amount}", 2, R.REDSTYLE)
       
 
 class CharacterManager
@@ -237,6 +259,7 @@ class CharacterManager
     collectedPowerups[powerupSpecificName] += aantal
     characterManager.updatePowerupCounters()
     print "Powerup collection: #{collectedPowerups[powerupSpecificName]} with combo counter #{comboCounter}"
+    return aantal
 
   getSpawnableUnits: () ->
     -- foo
@@ -339,7 +362,7 @@ class CharacterManager
         rectangle = Rectangle(-20,-20,20,20)
         stats = {
           health: 10,
-          attack: 10
+          attack: 15
         }
 
         actionIDs = {
