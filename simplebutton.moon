@@ -21,7 +21,6 @@ export class SimpleButton extends Clickable
     @prop\setDeck( @gfxQuad )
 
     super @prop, @layer
-    ''
 
   add: () =>
     @layer\insertProp @prop

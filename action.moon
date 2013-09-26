@@ -201,7 +201,7 @@ class JumpwalkAction extends Action
       @character\alterHealth(-5)
       @character.body\setLinearVelocity(0, 0)
       for char in *otherCharacters do
-        char\alterHealth(-1)
+        char\alterHealth(-@character.stats.attack)
       @timer\stop()
       @anim\stop()
       @x, @y = @character\getLocation()
@@ -247,6 +247,13 @@ class JumpwalkAction extends Action
   poll: (otherCharacters = {}) =>
     return true, math.random(0,800)
 
+class EliteJumpwalkAction extends JumpwalkAction
+
+  execute: (otherCharacters = {}) =>
+    super @character
+    texture = R.ALIEN2
+    @tileLib\setTexture(texture)
+    print "Elite Jumpwalker!"    
 
 class ActionManager
   makeAction: (actionID, character) ->
@@ -264,6 +271,9 @@ class ActionManager
 
       when "jumpwalk"
         JumpwalkAction(character)
+
+      when "elite_jumpwalk"
+        EliteJumpwalkAction(character)
 
       when "fly"
         FlyAction(character)
