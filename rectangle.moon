@@ -19,6 +19,12 @@ export class Rectangle
     @get()
 
   getWidth: () =>
+    @yMax - @yMin
+
+  setWidth: (width) =>
+    
+
+  getWidth: () =>
     math.abs(@xMin) + math.abs(@xMax)
 
   getHeight: () =>

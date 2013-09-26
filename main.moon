@@ -2,6 +2,7 @@ io.stdout\setvbuf("no")
 export camera = MOAICamera2D.new()
 require 'resource'
 require 'rectangle'
+require 'healthbar'
 require 'character'
 require 'action'
 require 'powerup'
@@ -33,12 +34,13 @@ LayerMgr\createLayer('ground', 5, false)\render!
 
 LayerMgr\createLayer('characters', 1, false)\render!
 
-LayerMgr\createLayer('ui', 2, true, false)\render!
-
 LayerMgr\createLayer('box2d', 3, false)
-LayerMgr\createLayer('powerups', 4, true)\render!
 
 LayerMgr\createLayer('foreground', 6, false)\render!\setParallax 1.5, 1
+
+LayerMgr\createLayer('ui', 2, true, false)\render!
+
+LayerMgr\createLayer('powerups', 4, true)\render!
 
 -- 3. Achtergrondkleur instellen
 MOAIGfxDevice\getFrameBuffer()\setClearColor 1, 1, 0, 1
