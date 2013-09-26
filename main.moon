@@ -126,9 +126,9 @@ threadFunc = ->
 thread = MOAIThread.new()
 thread\run(threadFunc)
 
-performWithDelay = (delay, func, repeats, ...) ->
+export performWithDelay = (delay, func, repeats, ...) ->
   t = MOAITimer.new()
-  t\setSpan delay/100
+  t\setSpan delay
   t\setListener(MOAITimer.EVENT_TIMER_END_SPAN, ->
     t\stop()
     t = nil
@@ -141,8 +141,8 @@ performWithDelay = (delay, func, repeats, ...) ->
   t\start()
 
 btn = MOAIProp2D.new()
-button = SimpleButton LayerMgr\getLayer("ui"), R.BUTTON, Rectangle(-16, -16, 16, 16), (200), (-120), -> characterManager.makeCharacter("jumpwalker")
+button = CoolDownButton LayerMgr\getLayer("ui"), R.BUTTON, Rectangle(-16, -16, 16, 16), (200), (-120), 2, -> characterManager.makeCharacter("jumpwalker")
 button\add()
 
-button = SimpleButton LayerMgr\getLayer("ui"), R.BUTTON2, Rectangle(-16, -16, 16, 16), (160), (-120), -> characterManager.makeCharacter("elite_jumpwalker")
+button = CoolDownButton LayerMgr\getLayer("ui"), R.BUTTON2, Rectangle(-16, -16, 16, 16), (160), (-120), 5, -> characterManager.makeCharacter("elite_jumpwalker")
 button\add()
