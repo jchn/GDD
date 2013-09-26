@@ -31,11 +31,16 @@ class Character
     return @body\getPosition()
 
   alterHealth: (deltaHealth) =>
-    print "Health was #{@stats.health}"
     @stats.health += deltaHealth
-    print "Health is #{@stats.health}"
+    if @healthbar
+      print "health is #{@stats.health}"
+      @healthbar\update(@stats.health)
     if deltaHealth < 0
       @colorBlink(1.0, 0.0, 0.0)
+
+  setHealthbar: (healthbar) =>
+    @healthbar = healthbar
+    @
 
   forceDeath: () =>
     @stats.health = 0
@@ -104,7 +109,6 @@ class Hero extends PowerupUser
   name: 'hero'
 
   alterHealth: (deltaHealth) =>
-    updateHealthBar(@stats.health)
     super deltaHealth
 
 class Unit extends PowerupUser
@@ -202,6 +206,7 @@ class CharacterManager
         }
 
         newCharacter = Hero(characterID, prop, layer, world, direction.RIGHT, rectangle, stats, actionIDs, 0, -55)
+        newCharacter\setHealthbar(Healthbar(LayerMgr\getLayer("ui")))
 
       when "unit"
         print "Basic Unit Character"
