@@ -19,6 +19,7 @@ class Character
       @fixture\setCollisionHandler(@onCollide, MOAIBox2DArbiter.BEGIN)
     @prop\setParent @body
     @prop.body = @body
+    @currentAction = {}
 
     @actions = {}
     for actionID in *actionIDs do
@@ -27,20 +28,26 @@ class Character
     @add()
     @update()
 
+  setFilter: (category, mask) =>
+    @fixture\setFilter(category, mask)
+
   getLocation: () =>
     return @body\getPosition()
 
-  showFloatingNumber: (text, length, style) =>
+  showFloatingNumber: (text, length, style, xOffset = 0) =>
     x, y = @getLocation()
+    randomOffset = math.random(-xOffset, xOffset)
+    print "Random x offset: #{randomOffset}"
+    x += randomOffset
     floatingNumber = FloatingNumber(text, Rectangle(0, 0, 100, 50), style, length, x, y)
 
-    @timer = MOAITimer.new()
-    @timer\setSpan(length)
-    @timer\setMode(MOAITimer.NORMAL)
-    @timer\setListener(MOAITimer.EVENT_TIMER_END_SPAN, ->
+    timer = MOAITimer.new()
+    timer\setSpan(length)
+    timer\setMode(MOAITimer.NORMAL)
+    timer\setListener(MOAITimer.EVENT_TIMER_END_SPAN, ->
       floatingNumber\destroy()
       floatingNumber = nil)
-    @timer\start()
+    timer\start()
 
   alterHealth: (deltaHealth) =>
     if deltaHealth < 0
@@ -52,8 +59,12 @@ class Character
     print "Health was #{@stats.health}"
     @stats.health += deltaHealth
     print "Health is #{@stats.health}"
+    
     if @healthbar
       @healthbar\update(@stats.health)
+    if @stats.health <= 0
+      @die()
+      return true
 
   setHealthbar: (healthbar) =>
     @healthbar = healthbar
@@ -66,13 +77,11 @@ class Character
     @prop\seekColor red, green, blue, 1.0, 0.10
     @prop\moveColor 1.0, 1.0, 1.0, 1.0, length
 
-  die: =>
-    print "character died"
-    if @beforeDeath
-      @beforeDeath()
-    characterManager.removeCharacters((c) -> return c == @)
+  die: () =>
+    @currentAction\beforeStop()
     @remove()
     @destroy()
+    characterManager.removeCharacters((c) -> return c == @)
 
   addAction: (actionID) =>
     if @actions[actionID] == nil
@@ -82,18 +91,15 @@ class Character
 
   update: () =>
     if @stats.health > 0 and @state == Characterstate.IDLE
-      doSomething, currentAction = ai.think(@)
+      doSomething, @currentAction = ai.think(@)
       if doSomething
-        currentAction\execute()
-    elseif @stats.health <= 0
-      @die()
+        @currentAction\execute()
 
   add: =>
     @layer\insertProp @prop
     @
 
   remove: =>
-    print "REMOVED CHARACTER"
     @layer\removeProp @prop
     @
 
@@ -102,6 +108,7 @@ class Character
     @state = nil
     @prop = nil
     @fixture\destroy()
+    @fixture = nil
     @actions = nil
     @stats = nil
     @rectangle = nil
@@ -109,6 +116,7 @@ class Character
     @world = nil
     @direction = nil
     @body\destroy()
+    @body = nil
 
 class PowerupUser extends Character
 
@@ -142,8 +150,9 @@ class Unit extends PowerupUser
 
   setPowerupDrops: (@minDrops, @maxDrops, @possibleDrops) =>
 
-
-  beforeDeath: () =>
+  die: () =>
+    x, y = @getLocation()
+    super super
     if not @minDrops
       @minDrops = 1
 
@@ -153,15 +162,20 @@ class Unit extends PowerupUser
     if not @possibleDrops
       @possibleDrops = { "health" }
 
-    x, y = @getLocation()
+    
     print "Drops between #{@minDrops}  and #{@maxDrops} items"
     drops = math.random(@minDrops, @maxDrops)
 
     for i  = 1, drops do
       dropping = math.random(#@possibleDrops)
-      powerupManager.makePowerup(@possibleDrops[dropping], x + 20 , y + 150 , R.MUSROOM)
-
-    --powerupManager.makePowerup("health", x + 20 , y + 150 , R.MUSROOM)
+      powerup = powerupManager.makePowerup(@possibleDrops[dropping], x , y , R.MUSROOM)
+      powerup.body\applyLinearImpulse(100,100)
+      timer = MOAITimer.new()
+      timer\setSpan(1)
+      timer\setMode(MOAITimer.NORMAL)
+      timer\setListener(MOAITimer.EVENT_TIMER_END_SPAN, ->
+        powerup\activate!)
+      timer\start()
 
 class UFO extends Character
 
@@ -178,10 +192,10 @@ class UFO extends Character
       own\colorBlink(0.0, 1.0, 0.0, 1.00)
       amount = characterManager.collectPowerup(other.specificName)
       if amount >= 0
-        own\showFloatingNumber("+#{amount}", 2, R.GREENSTYLE)
+        own\showFloatingNumber("+#{amount}", 4, R.GREENSTYLE, 40)
       else
         style = R.REDSTYLE
-        own\showFloatingNumber("#{amount}", 2, R.REDSTYLE)
+        own\showFloatingNumber("#{amount}", 4, R.REDSTYLE, 40)
       
 
 class CharacterManager
@@ -300,6 +314,7 @@ class CharacterManager
 
         newCharacter = Hero(characterID, prop, layer, world, direction.RIGHT, rectangle, stats, actionIDs, 0, -55)
         newCharacter\setHealthbar(Healthbar(LayerMgr\getLayer("ui")))
+        newCharacter\setFilter(entityCategory.CHARACTER, entityCategory.POWERUP + entityCategory.BOUNDARY)
 
       when "jumpwalker"
         print "Basic Unit Character"
@@ -317,6 +332,7 @@ class CharacterManager
         print "New location: #{x}"
 
         newCharacter = Unit(characterID, prop, layer, world, direction.LEFT, rectangle, stats, actionIDs, x, -70)
+        newCharacter\setFilter(entityCategory.CHARACTER, entityCategory.BOUNDARY)
 
       when "elite_jumpwalker"
 
@@ -335,7 +351,7 @@ class CharacterManager
         stats = {
           health: 10,
           attack: 1,
-          shield: 3
+          shield: 2
         }
 
         actionIDs = {
@@ -346,6 +362,7 @@ class CharacterManager
 
         newCharacter = Unit(characterID, prop, layer, world, direction.LEFT, rectangle, stats, actionIDs, x, -70)
         newCharacter\setPowerupDrops(1, 2, { "health", "shield" })
+        newCharacter\setFilter(entityCategory.CHARACTER, entityCategory.BOUNDARY )
 
       when "supreme_jumpwalker"
   
@@ -373,6 +390,7 @@ class CharacterManager
 
         newCharacter = Unit(characterID, prop, layer, world, direction.LEFT, rectangle, stats, actionIDs, x, -70)
         newCharacter\setPowerupDrops(0, 0, {})
+        newCharacter\setFilter(entityCategory.CHARACTER, entityCategory.POWERUP + entityCategory.BOUNDARY)
 
       when "ufo"
         print "UFO Character"
@@ -388,6 +406,7 @@ class CharacterManager
 
         newCharacter = UFO(characterID, prop, layer, world, direction.RIGHT, rectangle, stats, actionIDs, 0, 20)
         ufo = newCharacter
+        newCharacter\setFilter(entityCategory.CHARACTER, entityCategory.POWERUP + entityCategory.BOUNDARY)
 
       else
         print "Generic Character"

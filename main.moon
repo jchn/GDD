@@ -18,6 +18,13 @@ export _ = require 'lib/underscore'
 export mouseX = 0
 export mouseY = 0
 
+export entityCategory = {
+  BOUNDARY: 0x0001,
+  CHARACTER: 0x0002,
+  POWERUP: 0x0004
+  INACTIVEPOWERUP: 0x0010
+}
+
 -- Openen window
 screenWidth = R.DEVICE_WIDTH
 screenHeight = R.DEVICE_HEIGHT
@@ -99,10 +106,10 @@ LayerMgr\getLayer('ground')\insertProp gprop
 rectFixture   = staticBody\addRect( -512, -15, 512, 15 )
 
 powerupManager.setLayerAndWorld(LayerMgr\getLayer('powerups'), R.WORLD)
-powerupManager.makePowerup("health", 170, 0, R.MUSROOM)
-powerupManager.makePowerup("health", 200, 0, R.MUSROOM)
-powerupManager.makePowerup("health", 230, 0, R.MUSROOM)
-powerupManager.makePowerup("health", 260, 0, R.MUSROOM)
+powerupManager.makePowerup("shield", 170, 0, R.MUSROOM)\activate!
+powerupManager.makePowerup("health", 200, 0, R.MUSROOM)\activate!
+powerupManager.makePowerup("shield", 230, 0, R.MUSROOM)\activate!
+powerupManager.makePowerup("health", 260, 0, R.MUSROOM)\activate!
 
 export direction = {
   LEFT: -1,

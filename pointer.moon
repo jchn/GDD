@@ -54,7 +54,7 @@ class Pointer
       @pick.isDragged = true
       @mouseBody = @world\addBody MOAIBox2DBody.DYNAMIC
       @mouseJoint = @world\addMouseJoint @mouseBody, @pick.body, layer.x, layer.y, 10000.0 * @pick.body\getMass()
-      @mouseBody\setTransform layer.x, layer.y 
+      @mouseBody\setTransform layer.x, layer.y
     if @pick and @pick.clickable
       @pick.parent\triggerClick!
 

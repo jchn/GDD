@@ -8,8 +8,8 @@ export class FloatingNumber
 		@textbox\setLoc(@x, @y)
 		@textbox\setAlignment ( MOAITextBox.LEFT_JUSTIFY)
 
-		@textbox\moveLoc(0, 150, 0, @length)
-		@textbox\moveColor(1, 1, 1, 0, @length)
+		@textbox\moveLoc(0, 80, 0, @length, MOAIEaseType.SMOOTH)
+		@textbox\seekColor(1, 1, 1, 0, @length, MOAIEaseType.SMOOTH)
 
         @layer = LayerMgr\getLayer("characters")
         @layer\insertProp @textbox
