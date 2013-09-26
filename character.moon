@@ -137,10 +137,6 @@ class Unit extends PowerupUser
 
     --powerupManager.makePowerup("health", x + 20 , y + 150 , R.MUSROOM)
 
-class EliteUnit extends Unit
-
-  name: 'unit'
-
 class UFO extends Character
 
   name: 'ufo'
@@ -169,6 +165,22 @@ class CharacterManager
   comboCounter = 0
   powerupInfoboxes =  {}
 
+  checkEnemySpawnable: (characterID) ->
+    characterID = characterID\lower()
+    switch characterID
+      when "jumpwalker"
+        return true
+      when "elite_jumpwalker"
+        if collectedPowerups["health"]
+          if collectedPowerups["health"] >= 1
+            return true
+        return false
+      when "supreme_jumpwalker"
+        if collectedPowerups["shield"]
+          if collectedPowerups["shield"] >= 4
+            return true
+        return false
+
   updatePowerupCounters: () ->
     x, y = 170, 130
     offsetX, offsetY = -90, 0
@@ -178,7 +190,7 @@ class CharacterManager
 
     for powerUpID, amount in pairs collectedPowerups do
       graphic = powerupManager.getGraphic(powerUpID)
-      print "USING THE GRAPHIC : #{graphic}"
+      print "USING THE GRAPHIC : #{powerUpID} and #{amount}"
       powerupInfobox = PowerupInfobox(graphic, Rectangle(-10, -10, 10, 10), "x #{amount}", Rectangle(0, 0, 60, 25), R.STYLE, LayerMgr\getLayer("ui"), x, y)
       x += offsetX
       y += offsetY
@@ -201,6 +213,10 @@ class CharacterManager
     collectedPowerups[powerupSpecificName] += aantal
     characterManager.updatePowerupCounters()
     print "Powerup collection: #{collectedPowerups[powerupSpecificName]} with combo counter #{comboCounter}"
+
+    print characterManager.checkEnemySpawnable("jumpwalker")
+    print characterManager.checkEnemySpawnable("elite_jumpwalker")
+    print characterManager.checkEnemySpawnable("supreme_jumpwalker")
 
   getSpawnableUnits: () ->
     -- foo
@@ -284,8 +300,36 @@ class CharacterManager
         x = ufo\getLocation()
         print "New location: #{x}"
 
-        newCharacter = EliteUnit(characterID, prop, layer, world, direction.LEFT, rectangle, stats, actionIDs, x, -70)
+        newCharacter = Unit(characterID, prop, layer, world, direction.LEFT, rectangle, stats, actionIDs, x, -70)
         newCharacter\setPowerupDrops(1, 2, { "health", "shield" })
+
+      when "supreme_jumpwalker"
+
+        if collectedPowerups["shield"]
+          if collectedPowerups["shield"] >= 4
+            collectedPowerups["shield"] -= 4
+            characterManager.updatePowerupCounters()
+          else
+            return
+        else
+          return
+
+        print "Supreme Unit Character"
+        rectangle = Rectangle(-20,-20,20,20)
+
+        stats = {
+          health: 10,
+          attack: 10
+        }
+
+        actionIDs = {
+          "supreme_jumpwalk"
+        }
+        x = ufo\getLocation()
+        print "New location: #{x}"
+
+        newCharacter = Unit(characterID, prop, layer, world, direction.LEFT, rectangle, stats, actionIDs, x, -70)
+        newCharacter\setPowerupDrops(0, 0, {})
 
       when "ufo"
         print "UFO Character"

@@ -145,3 +145,6 @@ button\add()
 
 button = SimpleButton LayerMgr\getLayer("ui"), R.BUTTON2, Rectangle(-16, -16, 16, 16), (160), (-120), -> characterManager.makeCharacter("elite_jumpwalker")
 button\add()
+
+button = SimpleButton LayerMgr\getLayer("ui"), R.BUTTON3, Rectangle(-16, -16, 16, 16), (120), (-120), -> characterManager.makeCharacter("supreme_jumpwalker")
+button\add()
