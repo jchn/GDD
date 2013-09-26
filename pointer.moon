@@ -56,7 +56,7 @@ class Pointer
       @mouseJoint = @world\addMouseJoint @mouseBody, @pick.body, layer.x, layer.y, 10000.0 * @pick.body\getMass()
       @mouseBody\setTransform layer.x, layer.y 
     if @pick and @pick.clickable
-      @pick.parent.onClick()
+      @pick.parent\triggerClick!
 
   callback: (x, y) =>
     for priority, layer in pairs @layers

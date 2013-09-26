@@ -37,9 +37,15 @@ class Character
           @stats.shield -= 1
           return
       @colorBlink(1.0, 0.0, 0.0)
-      print "Health was #{@stats.health}"
-      @stats.health += deltaHealth
-      print "Health is #{@stats.health}"
+    print "Health was #{@stats.health}"
+    @stats.health += deltaHealth
+    print "Health is #{@stats.health}"
+    if @healthbar
+      @healthbar\update(@stats.health)
+
+  setHealthbar: (healthbar) =>
+    @healthbar = healthbar
+    @
 
   forceDeath: () =>
     @stats.health = 0
@@ -109,6 +115,9 @@ class PowerupUser extends Character
 class Hero extends PowerupUser
 
   name: 'hero'
+
+  alterHealth: (deltaHealth) =>
+    super deltaHealth
 
 class Unit extends PowerupUser
 
@@ -256,6 +265,7 @@ class CharacterManager
         }
 
         newCharacter = Hero(characterID, prop, layer, world, direction.RIGHT, rectangle, stats, actionIDs, 0, -55)
+        newCharacter\setHealthbar(Healthbar(LayerMgr\getLayer("ui")))
 
       when "jumpwalker"
         print "Basic Unit Character"
