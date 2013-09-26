@@ -4,9 +4,13 @@ class Resource
     @WRESTLER_IDLE = MOAIImage.new()
     @WRESTLER_WALK = MOAIImage.new()
     @MUSHROOM = MOAIImage.new()
+
     @RED = MOAIImage.new()
     @GREEN = MOAIImage.new()
     @YELLOW = MOAIImage.new()
+
+    @MUSHROOM2 = MOAIImage.new()
+
 
     @WORLD = MOAIBox2DWorld.new()
     @WORLD\setGravity( 0, -10 ) -- Zwaartekracht
@@ -14,8 +18,10 @@ class Resource
     @WORLD\start()
 
     @BUTTON = MOAITexture.new()
+    @BUTTON2 = MOAITexture.new()
 
     @ALIEN = MOAIImage.new()
+    @ALIEN2 = MOAIImage.new()
     @UFO = MOAIImage.new()
 
     @FONT = MOAIFont.new()
@@ -28,10 +34,13 @@ class Resource
     @WRESTLER_IDLE\load('resources/wrestler_idle.png')
     @WRESTLER_WALK\load('resources/wrestler_walk.png')
     @MUSHROOM\load('resources/mushroom.png')
-    @ALIEN\load('resources/alien.png')
+    @MUSHROOM2\load('resources/mushroom2.png')
+    @ALIEN\load('resources/alien_rank1.png')
+    @ALIEN2\load('resources/alien_rank2.png')
     @UFO\load('resources/ufo.png')
 
     @BUTTON\load "resources/button_alien_rank1.png"
+    @BUTTON2\load "resources/button_alien_rank2.png"
 
     @FONT\load("resources/arial-rounded.TTF")
     @FONT\preloadGlyphs(@CHARCODES, 20)

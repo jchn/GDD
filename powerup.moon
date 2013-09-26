@@ -18,6 +18,7 @@ class Powerup
     @prop\setDeck @texture
     @prop.body = @body
     @prop.draggable = true
+    @prop.isDragged = false
     @prop\setParent @body
     @prop\setBlendMode(MOAIProp2D.GL_SRC_ALPHA, MOAIProp2D.GL_ONE_MINUS_SRC_ALPHA)
 
@@ -38,19 +39,20 @@ class Powerup
 
 class HealthPowerup extends Powerup
 
-    specificName: 'health_powerup'
+    specificName: 'health'
 
     execute: (character) =>
         character\alterHealth(5)
 
 class ShieldPowerup extends Powerup
 
-    specificName: 'shield_powerup'
+    specificName: 'shield'
 
     execute: (character) =>
-        print "Defense was #{character.stats.defense}"
-        character.stats.defense += 5
-        print "Defense is #{character.stats.defense}"
+      if character.stats.shield
+        character.stats.shield += 1
+      else
+        character.stats.shield = 1
 
 class PowerUpManager
 
@@ -68,16 +70,26 @@ class PowerUpManager
 
     switch powerupID
       when "health"
-        newPowerup = HealthPowerup(world, layer, x, y, R.MUSHROOM)
+        newPowerup = HealthPowerup(world, layer, x, y, powerupManager.getGraphic(powerupID))
 
       when "shield"
-        newPowerup = ShieldPowerup(world, layer, x, y, R.MUSHROOM)
+        newPowerup = ShieldPowerup(world, layer, x, y, powerupManager.getGraphic(powerupID))
 
       else
         print "Generic Powerup"
         newPowerup = Powerup(world, layer, x, y, R.MUSHROOM)
 
     return newPowerup
+
+  getGraphic: (powerupID) ->
+    powerupID = powerupID\lower()
+
+    switch powerupID
+      when "health"
+        return R.MUSHROOM
+
+      when "shield"
+        return R.MUSHROOM2
 
 
 export powerupManager = PowerUpManager()

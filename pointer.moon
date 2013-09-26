@@ -35,21 +35,23 @@ class Pointer
             if @pick
               @handlePick(layer)
     else
+      print "About to clear"
       @clear()
 
   clear: () =>
     if @pick
-      print "CLEAR #{@pick}"
       if @mouseBody
         @mouseBody\destroy()
+        @mouseBody = nil
       if @mouseJoint
         @mouseJoint\destroy()
+        @mouseBody = nil
       @pick.isDragged = false
-
-    @pick = nil
+      @pick = nil
 
   handlePick: (layer) =>
     if @pick and @pick.draggable
+      @pick.isDragged = true
       @mouseBody = @world\addBody MOAIBox2DBody.DYNAMIC
       @mouseJoint = @world\addMouseJoint @mouseBody, @pick.body, layer.x, layer.y, 10000.0 * @pick.body\getMass()
       @mouseBody\setTransform layer.x, layer.y 

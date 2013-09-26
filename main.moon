@@ -29,18 +29,13 @@ R\load()
 
 -- 2. Toevoegen van een layer
 
-LayerMgr\createLayer('background', 7, false)\render!\setParallax 0.5, 1
-LayerMgr\createLayer('ground', 5, false)\render!
-
-LayerMgr\createLayer('characters', 1, false)\render!
-
-LayerMgr\createLayer('box2d', 3, false)
-
-LayerMgr\createLayer('foreground', 6, false)\render!\setParallax 1.5, 1
-
-LayerMgr\createLayer('ui', 2, true, false)\render!
-
-LayerMgr\createLayer('powerups', 4, true)\render!
+LayerMgr\createLayer('background', 1, false)\render!\setParallax 0.5, 1
+LayerMgr\createLayer('ground', 2, false)\render!
+LayerMgr\createLayer('characters', 3, false)\render!
+LayerMgr\createLayer('box2d', 4, false)
+LayerMgr\createLayer('foreground', 5, false)\render!\setParallax 1.5, 1
+LayerMgr\createLayer('ui', 7, true, false)\render!
+LayerMgr\createLayer('powerups', 6, true)\render!
 
 -- 3. Achtergrondkleur instellen
 MOAIGfxDevice\getFrameBuffer()\setClearColor 1, 1, 0, 1
@@ -107,16 +102,6 @@ powerupManager.makePowerup("health", 170, 0, R.MUSROOM)
 powerupManager.makePowerup("health", 200, 0, R.MUSROOM)
 powerupManager.makePowerup("health", 230, 0, R.MUSROOM)
 powerupManager.makePowerup("health", 260, 0, R.MUSROOM)
-powerupManager.makePowerup("health", 260, 0, R.MUSROOM)
-powerupManager.makePowerup("health", 260, 0, R.MUSROOM)
-powerupManager.makePowerup("health", 260, 0, R.MUSROOM)
-powerupManager.makePowerup("health", 260, 0, R.MUSROOM)
-powerupManager.makePowerup("health", 260, 0, R.MUSROOM)
-powerupManager.makePowerup("health", 260, 0, R.MUSROOM)
-powerupManager.makePowerup("health", 260, 0, R.MUSROOM)
-powerupManager.makePowerup("health", 260, 0, R.MUSROOM)
-powerupManager.makePowerup("health", 260, 0, R.MUSROOM)
-powerupManager.makePowerup("health", 260, 0, R.MUSROOM)
 
 export direction = {
   LEFT: -1,
@@ -156,5 +141,8 @@ performWithDelay = (delay, func, repeats, ...) ->
   t\start()
 
 btn = MOAIProp2D.new()
-button = SimpleButton LayerMgr\getLayer("ui"), R.BUTTON, Rectangle(-16, -16, 16, 16), (200), (-120), -> characterManager.makeCharacter("unit")\add()
+button = SimpleButton LayerMgr\getLayer("ui"), R.BUTTON, Rectangle(-16, -16, 16, 16), (200), (-120), -> characterManager.makeCharacter("jumpwalker")
+button\add()
+
+button = SimpleButton LayerMgr\getLayer("ui"), R.BUTTON2, Rectangle(-16, -16, 16, 16), (160), (-120), -> characterManager.makeCharacter("elite_jumpwalker")
 button\add()

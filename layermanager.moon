@@ -4,6 +4,19 @@ class LayerManager
 
   addLayer: (layer) =>
     @layers[layer.name] = layer
+    
+  renderLayers: () =>
+
+    tempLayerTable = {}
+    for layerName, layer in pairs @layers do
+      if layer.render == true
+        tempLayerTable[layer.priority] = layer
+
+    layersByPriority = {}
+    for layerPriority, layer in pairs tempLayerTable do
+      layersByPriority[#layersByPriority + 1] = layer
+
+    MOAIRenderMgr.setRenderTable(layersByPriority)
 
   removeLayer: (layer) =>
     @layers[layer.name] = nil
@@ -16,18 +29,21 @@ class LayerManager
     layer.name = name
     layer.priority = priority
     layer.interactive = interactive
+    layer.render = false
     if attachedToCamera
       layer\setCamera @camera
 
     layer\setSortMode MOAILayer2D.SORT_NONE
 
     layer.render = ->
-      MOAIRenderMgr.pushRenderPass layer
-      layer
+      layer.render = true
+      @renderLayers()
+      return layer
 
     layer.unrender = ->
-      LayerManager.popRenderPass layer
-      layer
+      layer.render = false
+      @renderLayers()
+      return layer
 
     @addLayer layer
     layer\setViewport R.VIEWPORT
