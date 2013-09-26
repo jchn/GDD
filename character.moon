@@ -31,12 +31,17 @@ class Character
     return @body\getPosition()
 
   alterHealth: (deltaHealth) =>
-    @stats.health += deltaHealth
-    if @healthbar
-      print "health is #{@stats.health}"
-      @healthbar\update(@stats.health)
     if deltaHealth < 0
+      if @stats.shield
+        if @stats.shield > 0
+          @stats.shield -= 1
+          return
       @colorBlink(1.0, 0.0, 0.0)
+    print "Health was #{@stats.health}"
+    @stats.health += deltaHealth
+    print "Health is #{@stats.health}"
+    if @healthbar
+      @healthbar\update(@stats.health)
 
   setHealthbar: (healthbar) =>
     @healthbar = healthbar
@@ -99,9 +104,12 @@ class PowerupUser extends Character
     own = own.character
     other = other.character
     if other.name == 'powerup'
+      if other.prop.isDragged
+        Pntr\clear()
       other\remove()
       other\destroy()
       other\execute(own)
+      print "CHECK IF POWERUP IS BEING DRAGGED #{other.isDragged}"
       own\colorBlink(0.0, 1.0, 0.0)
 
 class Hero extends PowerupUser
@@ -115,9 +123,32 @@ class Unit extends PowerupUser
 
   name: 'unit'
 
+  setPowerupDrops: (@minDrops, @maxDrops, @possibleDrops) =>
+
+
   beforeDeath: () =>
+    if not @minDrops
+      @minDrops = 1
+
+    if not @maxDrops
+      @maxDrops = 1
+
+    if not @possibleDrops
+      @possibleDrops = { "health" }
+
     x, y = @getLocation()
-    powerupManager.makePowerup("health", x + 20 , y + 150 , R.MUSROOM)
+    print "Drops between #{@minDrops}  and #{@maxDrops} items"
+    drops = math.random(@minDrops, @maxDrops)
+
+    for i  = 1, drops do
+      dropping = math.random(#@possibleDrops)
+      powerupManager.makePowerup(@possibleDrops[dropping], x + 20 , y + 150 , R.MUSROOM)
+
+    --powerupManager.makePowerup("health", x + 20 , y + 150 , R.MUSROOM)
+
+class EliteUnit extends Unit
+
+  name: 'unit'
 
 class UFO extends Character
 
@@ -127,6 +158,8 @@ class UFO extends Character
     own = own.character
     other = other.character
     if other.name == 'powerup'
+      if other.prop.isDragged
+        Pntr\clear()
       other\remove()
       other\destroy()
       own\colorBlink(0.0, 1.0, 0.0, 1.00)
@@ -143,7 +176,22 @@ class CharacterManager
   collectedPowerups = {}
   lastTimestamp = 0
   comboCounter = 0
-  powerupInfobox =  nil
+  powerupInfoboxes =  {}
+
+  updatePowerupCounters: () ->
+    x, y = 170, 130
+    offsetX, offsetY = -90, 0
+
+    for powerupInfobox in *powerupInfoboxes do
+      powerupInfobox\remove()
+
+    for powerUpID, amount in pairs collectedPowerups do
+      graphic = powerupManager.getGraphic(powerUpID)
+      print "USING THE GRAPHIC : #{graphic}"
+      powerupInfobox = PowerupInfobox(graphic, Rectangle(-10, -10, 10, 10), "x #{amount}", Rectangle(0, 0, 60, 25), R.STYLE, LayerMgr\getLayer("ui"), x, y)
+      x += offsetX
+      y += offsetY
+      table.insert(powerupInfoboxes, powerupInfobox)
 
   collectPowerup: (powerupSpecificName) ->
     if collectedPowerups[powerupSpecificName] == nil
@@ -160,9 +208,7 @@ class CharacterManager
     lastTimestamp = time
 
     collectedPowerups[powerupSpecificName] += aantal
-
-    powerupInfobox\setText("x " .. collectedPowerups[powerupSpecificName])
-    
+    characterManager.updatePowerupCounters()
     print "Powerup collection: #{collectedPowerups[powerupSpecificName]} with combo counter #{comboCounter}"
 
   getSpawnableUnits: () ->
@@ -177,7 +223,6 @@ class CharacterManager
   setLayerAndWorld: (newLayer, newWorld) ->
     layer = newLayer
     world = newWorld
-    powerupInfobox = PowerupInfobox(R.MUSHROOM, Rectangle(-10,-10, 10, 10), "x 0", Rectangle(0, 0, 50, 25), R.STYLE, LayerMgr\getLayer("ui"), 170, 130)
 
   makeCharacter: (characterID) ->
     characterID = characterID\lower()
@@ -196,9 +241,7 @@ class CharacterManager
         rectangle = Rectangle(-32,-32,32,32)
 
         stats = {
-          health: 100,
-          attack: 8,
-          defense: 7
+          health: 100
         }
 
         actionIDs = {
@@ -208,14 +251,13 @@ class CharacterManager
         newCharacter = Hero(characterID, prop, layer, world, direction.RIGHT, rectangle, stats, actionIDs, 0, -55)
         newCharacter\setHealthbar(Healthbar(LayerMgr\getLayer("ui")))
 
-      when "unit"
+      when "jumpwalker"
         print "Basic Unit Character"
         rectangle = Rectangle(-20,-20,20,20)
 
         stats = {
           health: 10,
-          attack: 8,
-          defense: 7
+          attack: 1
         }
 
         actionIDs = {
@@ -225,6 +267,35 @@ class CharacterManager
         print "New location: #{x}"
 
         newCharacter = Unit(characterID, prop, layer, world, direction.LEFT, rectangle, stats, actionIDs, x, -70)
+
+      when "elite_jumpwalker"
+
+        if collectedPowerups["health"]
+          if collectedPowerups["health"] >= 1
+            collectedPowerups["health"] -= 1
+            characterManager.updatePowerupCounters()
+          else
+            return
+        else
+          return
+
+        print "Shielded Unit Character"
+        rectangle = Rectangle(-20,-20,20,20)
+
+        stats = {
+          health: 10,
+          attack: 1,
+          shield: 3
+        }
+
+        actionIDs = {
+          "elite_jumpwalk"
+        }
+        x = ufo\getLocation()
+        print "New location: #{x}"
+
+        newCharacter = EliteUnit(characterID, prop, layer, world, direction.LEFT, rectangle, stats, actionIDs, x, -70)
+        newCharacter\setPowerupDrops(1, 2, { "health", "shield" })
 
       when "ufo"
         print "UFO Character"
@@ -246,9 +317,7 @@ class CharacterManager
         rectangle = Rectangle(-32,-32,32,32)
 
         stats = {
-          health: 100,
-          attack: 8,
-          defense: 7
+          health: 100
         }
 
         actionIDs = {
@@ -257,7 +326,7 @@ class CharacterManager
 
         newCharacter = Character(characterID, prop, layer, world, direction.LEFT, rectangle, stats, actionIDs)
     table.insert(characters, newCharacter)
+    newCharacter\add()
     return newCharacter
-
 
 export characterManager = CharacterManager()
