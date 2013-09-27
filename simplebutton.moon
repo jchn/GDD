@@ -5,8 +5,6 @@ class Clickable
 
   triggerClick: () =>
 
-
-
 class ButtonManager
   buttons = {}
   forcefullyDisabled = false
@@ -61,7 +59,7 @@ export class SimpleButton extends Clickable
     buttonManager.registerButton(@)
     super @prop, @layer
     @
-  
+
   add: () =>
     @layer\insertProp @prop
 
@@ -86,7 +84,7 @@ export class SimpleButton extends Clickable
 export class CoolDownButton extends SimpleButton
   new: (@layer, @texture, @rectangle, @x, @y, @cooldown, @onClick, @enableFunction) =>
     print "Cooldown of #{@cooldown}"
-    super @layer, @texture, @rectangle, @x, @y, @onClick, @enableFunction  
+    super @layer, @texture, @rectangle, @x, @y, @onClick, @enableFunction     
 
   triggerClick: () =>
     -- Start cooldown
@@ -95,4 +93,6 @@ export class CoolDownButton extends SimpleButton
       buttonManager.forcefullyDisableButtons()
       performWithDelay(@cooldown, ->
         buttonManager.enableButtons(true))
+
+
 
