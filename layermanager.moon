@@ -11,14 +11,17 @@ class LayerManager
     for layerName, layer in pairs @layers do
       if layer.render == true
         tempLayerTable[layer.priority] = layer
+        print "Now knows #{layerName}"
 
     layersByPriority = {}
     for layerPriority, layer in pairs tempLayerTable do
       layersByPriority[#layersByPriority + 1] = layer
+    print "Now rendering #{#layersByPriority} layers"
 
     MOAIRenderMgr.setRenderTable(layersByPriority)
 
   removeLayer: (layer) =>
+    print "Removing layer: #{layer.name}"
     @layers[layer.name] = nil
 
   getLayer: (name) =>
@@ -65,5 +68,12 @@ class LayerManager
     Pntr\stopListeningTo layer
 
     @removeLayer layer
+
+  destroyAllLayers: () =>
+    for ID, layer in pairs @layers do
+      layer\clear!
+      layer\unrender!
+      @destroyLayer layer
+    MOAIRenderMgr.setRenderTable({})
 
 export LayerMgr = LayerManager R.VIEWPORT, R.CAMERA

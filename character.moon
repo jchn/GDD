@@ -78,7 +78,6 @@ class Character
     @prop\moveColor 1.0, 1.0, 1.0, 1.0, length
 
   die: () =>
-    @currentAction\beforeStop()
     @remove()
     @destroy()
     characterManager.removeCharacters((c) -> return c == @)
@@ -112,6 +111,9 @@ class Character
 
   destroy: =>
     print "DESTROY CHARACTER"
+    if @currentAction != nil
+      @currentAction\beforeStop()
+    @currentAction = nil
     @state = nil
     @prop = nil
     @fixture\destroy()
@@ -122,6 +124,7 @@ class Character
     @layer = nil
     @world = nil
     @direction = nil
+    @actions = nil
     @body\destroy()
     @body = nil
 
@@ -150,6 +153,9 @@ class Hero extends PowerupUser
     else
       @showFloatingNumber("#{deltaHealth}", 2, R.REDSTYLE)
       R.HIT\play!
+
+  die: () =>
+    gameManager.openScreen("mainMenu")
     
 
 class Unit extends PowerupUser
@@ -218,6 +224,17 @@ class CharacterManager
   lastTimestamp = 0
   comboCounter = 0
   powerupInfoboxes =  {}
+
+  clear: () ->
+    for character in *characters do
+      character\destroy()
+      print "Cleared character"
+    characters = {}
+    ufo = nil
+    collectedPowerups = {}
+    lastTimestamp = 0
+    comboCounter = 0
+    powerupInfoboxes =  {}
 
   updatePowerupCounters: () ->
     x, y = 170, 130

@@ -86,3 +86,6 @@ class Pointer
       @clear()
 
 export Pntr = Pointer(R.WORLD)
+
+export clearPointer = () ->
+  Pntr = Pointer(R.WORLD)

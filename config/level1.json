@@ -2,6 +2,15 @@
   "Level": {
     "length": 1000,
     "hero" : "standard",
+
+    "spawnableUnits" : [
+      "jumpwalker", "elite_jumpwalker", "supreme_jumpwalker"
+    ],
+
+    "startingPowerups" : [
+      { "ID" : "health", "X": 170, "Y": 0 }
+    ],
+
     "assets" : {
       "images": {
         "HEALTH" : "resources/mushroom.png",
@@ -17,9 +26,9 @@
         "YELLOW" : "resources/yellow_health.png"
       },
       "textures": {
-        "BTN_ALIEN_RANK1" : "resources/button_alien_rank1.png",
-        "BTN_ALIEN_RANK2" : "resources/button_alien_rank2.png",
-        "BTN_ALIEN_RANK3" : "resources/button_alien_rank3.png",
+        "JUMPWALKER_BUTTON" : "resources/button_alien_rank1.png",
+        "ELITE_JUMPWALKER_BUTTON" : "resources/button_alien_rank2.png",
+        "SUPREME_JUMPWALKER_BUTTON" : "resources/button_alien_rank3.png",
         "INDICATOR_BASE" : "resources/indicator_base.png",
         "INDICATOR" : "resources/indicator.png",
         "GAME_OVER" : "resources/game_over.png"
