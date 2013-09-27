@@ -372,7 +372,7 @@ class CharacterManager
         print "New location: #{x}"
 
         newCharacter = Unit(characterID, prop, layer, world, direction.LEFT, rectangle, stats, actionIDs, x, -70)
-        newCharacter\setPowerupDrops(1, 2, { "health", "shield" })
+        newCharacter\setPowerupDrops(1, 2, { "health", "shield", "shield" })
         newCharacter\setFilter(entityCategory.CHARACTER, entityCategory.BOUNDARY )
         ufo\doAction("spawn")
 
