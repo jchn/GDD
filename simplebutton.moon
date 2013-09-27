@@ -5,8 +5,34 @@ class Clickable
 
   triggerClick: () =>
 
+class ButtonManager
+  buttons = {}
+  forcefullyDisabled = false
+
+  enableButtons: (force = false) ->
+    if force
+      forcefullyDisabled = false
+    print "Enabling the buttons!"
+    print "Forcefully disabled = #{forcefullyDisabled}"
+    if not forcefullyDisabled
+      print "For loop: #{#buttons}"
+      for button in *buttons do
+        print "enable"
+        button\enable()
+
+  forcefullyDisableButtons: () ->
+    for button in *buttons do
+      button\disable()
+    forcefullyDisabled = true
+
+  registerButton: (button) ->
+    print "Registering button: #{button}"
+    table.insert(buttons, button)
+
+export buttonManager = ButtonManager()
+
 export class SimpleButton extends Clickable
-  new: (@layer, @texture, @rectangle, @x, @y, @onClick = ->) =>
+  new: (@layer, @texture, @rectangle, @x, @y, @onClick, @enableFunction) =>
     @prop = MOAIProp2D.new()
     @prop\setLoc(@x, @y)
     @prop\setColor 1.0, 1.0, 1.0, 1.0
@@ -21,7 +47,18 @@ export class SimpleButton extends Clickable
 
     @prop\setDeck( @gfxQuad )
 
+    if @enableFunction
+      print "Checking enable function1!!! "
+      if @enableFunction()
+        print "enable tha button"
+        @enable()
+      else
+        print "disable tha button"
+        @disable()
+
+    buttonManager.registerButton(@)
     super @prop, @layer
+    @
 
   add: () =>
     @layer\insertProp @prop
@@ -38,20 +75,24 @@ export class SimpleButton extends Clickable
     @clickable = false
 
   enable: () =>
+    if @enableFunction
+      if not @enableFunction()
+        return
     @prop\setColor 1, 1, 1, 1
     @clickable = true
 
 export class CoolDownButton extends SimpleButton
-  new: (@layer, @texture, @rectangle, @x, @y, @cooldown, @onClick = ->) =>
-    super @layer, @texture, @rectangle, @x, @y, @onClick
-    @clickable = true
-    print "cooldown: #{cooldown}"    
+  new: (@layer, @texture, @rectangle, @x, @y, @cooldown, @onClick, @enableFunction) =>
+    print "Cooldown of #{@cooldown}"
+    super @layer, @texture, @rectangle, @x, @y, @onClick, @enableFunction     
 
   triggerClick: () =>
     -- Start cooldown
     if @clickable
       @onClick!
-      @disable!
-      performWithDelay(@cooldown, @\enable)
+      buttonManager.forcefullyDisableButtons()
+      performWithDelay(@cooldown, ->
+        buttonManager.enableButtons(true))
+
 
 

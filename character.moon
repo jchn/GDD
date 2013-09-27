@@ -34,11 +34,11 @@ class Character
   getLocation: () =>
     return @body\getPosition()
 
-  showFloatingNumber: (text, length, style, xOffset = 0) =>
+  showFloatingNumber: (text, length, style, offsetX = 0, offsetY = 0) =>
     x, y = @getLocation()
-    randomOffset = math.random(-xOffset, xOffset)
     print "Random x offset: #{randomOffset}"
-    x += randomOffset
+    x += math.random(-offsetX, offsetX)
+    y += math.random(-offsetY, offsetY)
     floatingNumber = FloatingNumber(text, Rectangle(0, 0, 100, 50), style, length, x, y)
 
     timer = MOAITimer.new()
@@ -88,6 +88,13 @@ class Character
       @actions[actionID] = actionManager.makeAction(actionID, @)
       print "added Action"
       print @actions[actionID]
+
+  doAction: (actionID) =>
+    @currentAction\beforeStop()
+    @state = Characterstate.IDLE
+    @currentAction = actionManager.makeAction(actionID, @)
+    print "Doing action: #{@currentAction}"
+    @currentAction\execute()
 
   update: () =>
     if @stats.health > 0 and @state == Characterstate.IDLE
@@ -194,10 +201,10 @@ class UFO extends Character
       own\colorBlink(0.0, 1.0, 0.0, 1.00)
       amount = characterManager.collectPowerup(other.specificName)
       if amount >= 0
-        own\showFloatingNumber("+#{amount}", 4, R.GREENSTYLE, 40)
+        own\showFloatingNumber("+#{amount}", 4, R.GREENSTYLE, 40, 20)
       else
         style = R.REDSTYLE
-        own\showFloatingNumber("#{amount}", 4, R.REDSTYLE, 40)
+        own\showFloatingNumber("#{amount}", 4, R.REDSTYLE, 40, 20)
       
 
 class CharacterManager
@@ -275,6 +282,7 @@ class CharacterManager
     collectedPowerups[powerupSpecificName] += aantal
     characterManager.updatePowerupCounters()
     print "Powerup collection: #{collectedPowerups[powerupSpecificName]} with combo counter #{comboCounter}"
+    buttonManager.enableButtons()
     return aantal
 
   getSpawnableUnits: () ->
@@ -335,6 +343,7 @@ class CharacterManager
 
         newCharacter = Unit(characterID, prop, layer, world, direction.LEFT, rectangle, stats, actionIDs, x, -70)
         newCharacter\setFilter(entityCategory.CHARACTER, entityCategory.BOUNDARY)
+        ufo\doAction("spawn")
 
       when "elite_jumpwalker"
 
@@ -409,7 +418,6 @@ class CharacterManager
         newCharacter = UFO(characterID, prop, layer, world, direction.RIGHT, rectangle, stats, actionIDs, 0, 20)
         ufo = newCharacter
         newCharacter\setFilter(entityCategory.CHARACTER, entityCategory.POWERUP + entityCategory.BOUNDARY)
-
       else
         print "Generic Character"
         rectangle = Rectangle(-32,-32,32,32)

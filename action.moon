@@ -144,6 +144,50 @@ class FlyAction extends Action
     @curve = nil
 
   poll: (otherCharacters = {}) =>
+    return true, 1
+
+class SpawnAction extends Action
+
+  execute: (otherCharacters = {}) =>
+    if @character.state == Characterstate.IDLE
+
+      print "EXECUTING THE SPAWN ACTION!!!!!!!!!!!!!!!!!!!!!!!!!"
+
+      texture = R.ASSETS.IMAGES.UFO
+
+      rect = @character.rectangle
+
+      @tileLib = MOAITileDeck2D\new()
+      @tileLib\setTexture(texture)
+      @tileLib\setSize(8, 1)
+      @tileLib\setRect(rect\get())
+
+      @character.prop\setDeck @tileLib
+
+      @curve = MOAIAnimCurve.new()
+      @curve\reserveKeys(4)
+
+      @curve\setKey(1, 0.2, 5)
+      @curve\setKey(2, 0.4, 6)
+      @curve\setKey(3, 0.6, 7)
+      @curve\setKey(4, 0.8, 8)
+
+      @anim = MOAIAnim\new()
+      @anim\reserveLinks(1)
+      @anim\setLink(1, @curve, @character.prop, MOAIProp2D.ATTR_INDEX)
+      @anim\setMode(MOAITimer.LOOP)
+      @anim\setListener(MOAITimer.EVENT_TIMER_END_SPAN, @\stop)
+      @anim\setSpan(1)
+      @anim\start()
+
+    super @character
+
+  beforeStop: (otherCharacters = {}) =>
+    @anim\stop()
+    @anim = nil
+    @curve = nil
+
+  poll: (otherCharacters = {}) =>
     return true, math.random(0,1000)
 
 class JumpwalkAction extends Action
@@ -288,6 +332,12 @@ class ActionManager
 
       when "supreme_jumpwalk"
         SupremeJumpwalkAction(character)
+
+      when "spawn"
+        SpawnAction(character)
+
+      when "spawned"
+        SpawnedAction(character)
 
       when "fly"
         FlyAction(character)

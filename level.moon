@@ -24,7 +24,7 @@ export class Level
     LayerMgr\createLayer('background', 1, false)\render!\setParallax 0.5, 1
     LayerMgr\createLayer('ground', 2, false)\render!
     LayerMgr\createLayer('characters', 3, false)\render!
-    LayerMgr\createLayer('box2d', 4, false)\render!
+    LayerMgr\createLayer('box2d', 4, false)
     LayerMgr\createLayer('foreground', 5, false)\render!\setParallax 1.5, 1
     LayerMgr\createLayer('ui', 7, true, false)\render!
     LayerMgr\createLayer('powerups', 6, true)\render!
@@ -90,9 +90,9 @@ export class Level
     powerupManager.setLayerAndWorld(LayerMgr\getLayer('powerups'), R.WORLD)
 
     powerupManager.makePowerup("health", 170, 0)\activate!
-    powerupManager.makePowerup("shield", 200, 0)\activate!
+    powerupManager.makePowerup("health", 200, 0)\activate!
     powerupManager.makePowerup("health", 230, 0)\activate!
-    powerupManager.makePowerup("shield", 260, 0)\activate!
+    powerupManager.makePowerup("health", 260, 0)\activate!
 
 
     export direction = {
@@ -104,14 +104,13 @@ export class Level
     @c = characterManager.makeCharacter("hero")\add()
     @u = characterManager.makeCharacter("ufo")\add()
 
-    btn = MOAIProp2D.new()
-    button = CoolDownButton LayerMgr\getLayer("ui"), R.ASSETS.TEXTURES.BTN_ALIEN_RANK1, Rectangle(-16, -16, 16, 16), (200), (-120), 2, -> characterManager.makeCharacter("jumpwalker")
+    button = CoolDownButton LayerMgr\getLayer("ui"), R.ASSETS.TEXTURES.BTN_ALIEN_RANK1, Rectangle(-16, -16, 16, 16), (200), (-120), 2, (-> characterManager.makeCharacter("jumpwalker")), -> return characterManager.checkEnemySpawnable("jumpwalker")
     button\add()
 
-    button = CoolDownButton LayerMgr\getLayer("ui"), R.ASSETS.TEXTURES.BTN_ALIEN_RANK2, Rectangle(-16, -16, 16, 16), (160), (-120), 5, -> characterManager.makeCharacter("elite_jumpwalker")
+    button = CoolDownButton LayerMgr\getLayer("ui"), R.ASSETS.TEXTURES.BTN_ALIEN_RANK2, Rectangle(-16, -16, 16, 16), (160), (-120), 2, (-> characterManager.makeCharacter("elite_jumpwalker")), -> return characterManager.checkEnemySpawnable("elite_jumpwalker")
     button\add()
 
-    button = CoolDownButton LayerMgr\getLayer("ui"), R.ASSETS.TEXTURES.BTN_ALIEN_RANK3, Rectangle(-16, -16, 16, 16), (120), (-120), 4, -> characterManager.makeCharacter("supreme_jumpwalker")
+    button = CoolDownButton LayerMgr\getLayer("ui"), R.ASSETS.TEXTURES.BTN_ALIEN_RANK3, Rectangle(-16, -16, 16, 16), (120), (-120), 2, (-> characterManager.makeCharacter("supreme_jumpwalker")), -> return characterManager.checkEnemySpawnable("supreme_jumpwalker")
     button\add()
 
     @startX = @c.body\getPosition()

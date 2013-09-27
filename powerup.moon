@@ -9,7 +9,7 @@ class Powerup
 
     @fixture = @body\addRect( -12, -12, 12, 12 )
     @fixture.character = @
-    @fixture\setFilter(entityCategory.INACTIVEPOWERUP, entityCategory.BOUNDARY + entityCategory.INACTIVEPOWERUP)
+    @fixture\setFilter(entityCategory.INACTIVEPOWERUP, entityCategory.BOUNDARY + entityCategory.INACTIVEPOWERUP + entityCategory.POWERUP)
 
     @texture = MOAIGfxQuad2D.new()
     @texture\setTexture @image
@@ -41,7 +41,7 @@ class Powerup
     @prop = nil
 
   activate: () =>
-    @fixture\setFilter(entityCategory.POWERUP, entityCategory.BOUNDARY + entityCategory.CHARACTER + entityCategory.POWERUP)
+    @fixture\setFilter(entityCategory.POWERUP, entityCategory.BOUNDARY + entityCategory.CHARACTER + entityCategory.POWERUP + entityCategory.INACTIVEPOWERUP)
 
 class HealthPowerup extends Powerup
 
