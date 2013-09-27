@@ -374,6 +374,7 @@ class CharacterManager
         newCharacter = Unit(characterID, prop, layer, world, direction.LEFT, rectangle, stats, actionIDs, x, -70)
         newCharacter\setPowerupDrops(1, 2, { "health", "shield" })
         newCharacter\setFilter(entityCategory.CHARACTER, entityCategory.BOUNDARY )
+        ufo\doAction("spawn")
 
       when "supreme_jumpwalker"
   
@@ -402,6 +403,7 @@ class CharacterManager
         newCharacter = Unit(characterID, prop, layer, world, direction.LEFT, rectangle, stats, actionIDs, x, -70)
         newCharacter\setPowerupDrops(0, 0, {})
         newCharacter\setFilter(entityCategory.CHARACTER, entityCategory.POWERUP + entityCategory.BOUNDARY)
+        ufo\doAction("spawn")
 
       when "ufo"
         print "UFO Character"
