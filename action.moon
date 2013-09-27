@@ -20,7 +20,7 @@ class IdleAction extends Action
   execute: (otherCharacters = {}) =>
     if @character.state == Characterstate.IDLE
 
-      texture = R.WRESTLER_IDLE
+      texture = R.ASSETS.IMAGES.WRESTLER_IDLE
 
       rect = @character.rectangle
 
@@ -59,7 +59,7 @@ class WalkAction extends Action
   execute: (otherCharacters = {}) =>
     if @character.state == Characterstate.IDLE
 
-      texture = R.WRESTLER_WALK
+      texture = R.ASSETS.IMAGES.WRESTLER_WALK
 
       rect = @character.rectangle
 
@@ -111,7 +111,7 @@ class FlyAction extends Action
   execute: (otherCharacters = {}) =>
     if @character.state == Characterstate.IDLE
 
-      texture = R.UFO
+      texture = R.ASSETS.IMAGES.UFO
 
       rect = @character.rectangle
 
@@ -151,7 +151,7 @@ class JumpwalkAction extends Action
   execute: (otherCharacters = {}) =>
     if @character.state == Characterstate.IDLE
 
-      texture = R.ALIEN
+      texture = R.ASSETS.IMAGES.ALIEN
 
       rect = @character.rectangle
 
@@ -251,7 +251,7 @@ class EliteJumpwalkAction extends JumpwalkAction
 
   execute: (otherCharacters = {}) =>
     super @character
-    texture = R.ALIEN2
+    texture = R.ASSETS.IMAGES.ALIEN2
     @tileLib\setTexture(texture)
     print "Elite Jumpwalker!"    
 
@@ -259,7 +259,7 @@ class SupremeJumpwalkAction extends JumpwalkAction
 
   execute: (otherCharacters = {}) =>
     super @character
-    texture = R.ALIEN3
+    texture = R.ASSETS.IMAGES.ALIEN3
     @tileLib\setTexture(texture)
     print "Elite Jumpwalker!"   
 
