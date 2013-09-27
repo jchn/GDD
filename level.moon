@@ -24,7 +24,7 @@ export class Level
     LayerMgr\createLayer('background', 1, false)\render!\setParallax 0.5, 1
     LayerMgr\createLayer('ground', 2, false)\render!
     LayerMgr\createLayer('characters', 3, false)\render!
-    LayerMgr\createLayer('box2d', 4, false)
+    LayerMgr\createLayer('box2d', 4, false)\render!
     LayerMgr\createLayer('foreground', 5, false)\render!\setParallax 1.5, 1
     LayerMgr\createLayer('ui', 7, true, false)\render!
     LayerMgr\createLayer('powerups', 6, true)\render!
@@ -89,10 +89,10 @@ export class Level
 
     powerupManager.setLayerAndWorld(LayerMgr\getLayer('powerups'), R.WORLD)
 
-    powerupManager.makePowerup("health", 170, 0)
-    powerupManager.makePowerup("health", 200, 0)
-    powerupManager.makePowerup("health", 230, 0)
-    powerupManager.makePowerup("health", 260, 0)
+    powerupManager.makePowerup("health", 170, 0)\activate!
+    powerupManager.makePowerup("shield", 200, 0)\activate!
+    powerupManager.makePowerup("health", 230, 0)\activate!
+    powerupManager.makePowerup("shield", 260, 0)\activate!
 
 
     export direction = {
