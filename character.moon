@@ -142,6 +142,7 @@ class Hero extends PowerupUser
       @showFloatingNumber("+#{deltaHealth}", 2, R.GREENSTYLE)
     else
       @showFloatingNumber("#{deltaHealth}", 2, R.REDSTYLE)
+      R.HIT\play!
     
 
 class Unit extends PowerupUser

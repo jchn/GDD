@@ -37,6 +37,9 @@ class Resource
     @CHARCODES = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz .!0123456789:"
     @STYLE = MOAITextStyle.new()
 
+    MOAIUntzSystem.initialize()
+    @HIT = MOAIUntzSound.new()
+
 
     @setupViewport()
 
@@ -69,6 +72,8 @@ class Resource
     @RED\load("resources/red_health.png")
     @GREEN\load("resources/green_health.png")
     @YELLOW\load("resources/yellow_health.png")
+
+    @HIT\load "resources/snare.wav"
 
     -- @WRESTLER_IDLE\load('resources/wrestler_idle.png')
     -- @WRESTLER_WALK\load('resources/wrestler_walk.png')
