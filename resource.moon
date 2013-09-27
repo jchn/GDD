@@ -33,10 +33,6 @@ class Resource
     @REDSTYLE = MOAITextStyle.new()
     @GREENSTYLE = MOAITextStyle.new()
 
-    @FONT = MOAIFont.new()
-    @CHARCODES = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz .!0123456789:"
-    @STYLE = MOAITextStyle.new()
-
     MOAIUntzSystem.initialize()
     @HIT = MOAIUntzSound.new()
 

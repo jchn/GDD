@@ -34,11 +34,11 @@ class Character
   getLocation: () =>
     return @body\getPosition()
 
-  showFloatingNumber: (text, length, style, xOffset = 0) =>
+  showFloatingNumber: (text, length, style, offset = 0) =>
     x, y = @getLocation()
-    randomOffset = math.random(-xOffset, xOffset)
     print "Random x offset: #{randomOffset}"
-    x += randomOffset
+    x += math.random(-offset, offset)
+    y += math.random(-offset, offset)
     floatingNumber = FloatingNumber(text, Rectangle(0, 0, 100, 50), style, length, x, y)
 
     timer = MOAITimer.new()
@@ -275,6 +275,7 @@ class CharacterManager
     collectedPowerups[powerupSpecificName] += aantal
     characterManager.updatePowerupCounters()
     print "Powerup collection: #{collectedPowerups[powerupSpecificName]} with combo counter #{comboCounter}"
+    buttonManager.enableButtons()
     return aantal
 
   getSpawnableUnits: () ->
