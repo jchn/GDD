@@ -114,7 +114,7 @@ export class Level
     button\add()
 
     @startX = @c.body\getPosition()
-    @indicator = Indicator(@startX, @length, LayerMgr\getLayer("ui"), 0, 150, -> print "game over")
+    @indicator = Indicator(@startX, @length, LayerMgr\getLayer("ui"), 0, 150, @\gameOver)
     @indicator\add!
 
     @thread = MOAIThread.new()
@@ -144,5 +144,34 @@ export class Level
 
   pause: () =>
     -- Pause game
+    -- @thread\stop!
+    -- R.WORLD\pause!
+    oldRoot = MOAIActionMgr.getRoot() -- get the root 
+
+    MOAIActionMgr.setRoot() -- clear out the old root; will be automatically recreated 
+
+    -- thread = MOAIThread.new() 
+
+
+  gameOver: () =>
+    @pause!
+    -- Add gameover graphic
+    prop = MOAIProp2D.new()
+    prop\setLoc(0, 0)
+    prop\setColor 1.0, 1.0, 1.0, 1.0
+    prop\setBlendMode(MOAIProp2D.GL_SRC_ALPHA, MOAIProp2D.GL_ONE_MINUS_SRC_ALPHA)
+    clickable = true
+
+    -- @rectangle\wndToWorld!
+    rectangle = Rectangle( -128, -32, 128, 32 )
+
+    gfxQuad = MOAIGfxQuad2D.new()
+    gfxQuad\setTexture( R.ASSETS.TEXTURES.GAME_OVER )
+    gfxQuad\setRect( rectangle\get() )
+
+    prop\setDeck( gfxQuad )
+
+    LayerMgr\getLayer("ui")\insertProp prop
+    buttonManager.forcefullyDisableButtons!
 
   end: () =>

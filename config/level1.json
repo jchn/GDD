@@ -21,7 +21,8 @@
         "BTN_ALIEN_RANK2" : "resources/button_alien_rank2.png",
         "BTN_ALIEN_RANK3" : "resources/button_alien_rank3.png",
         "INDICATOR_BASE" : "resources/indicator_base.png",
-        "INDICATOR" : "resources/indicator.png"
+        "INDICATOR" : "resources/indicator.png",
+        "GAME_OVER" : "resources/game_over.png"
       },
       "fonts": {
         "ARIAL" : {
