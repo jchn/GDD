@@ -66,4 +66,4 @@ class LayerManager
 
     @removeLayer layer
 
-export LayerMgr = LayerManager R.VIEWPORT, camera
+export LayerMgr = LayerManager R.VIEWPORT, R.CAMERA

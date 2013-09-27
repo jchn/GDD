@@ -168,6 +168,7 @@ class Unit extends PowerupUser
 
     for i  = 1, drops do
       dropping = math.random(#@possibleDrops)
+
       powerup = powerupManager.makePowerup(@possibleDrops[dropping], x , y , R.MUSROOM)
       powerup.body\applyLinearImpulse(100,100)
       timer = MOAITimer.new()
@@ -251,7 +252,7 @@ class CharacterManager
     for powerUpID, amount in pairs collectedPowerups do
       graphic = powerupManager.getGraphic(powerUpID)
       print "USING THE GRAPHIC : #{powerUpID} and #{amount}"
-      powerupInfobox = PowerupInfobox(graphic, Rectangle(-10, -10, 10, 10), "x #{amount}", Rectangle(0, 0, 60, 25), R.STYLE, LayerMgr\getLayer("ui"), x, y)
+      powerupInfobox = PowerupInfobox(graphic, Rectangle(-10, -10, 10, 10), "x #{amount}", Rectangle(0, 0, 60, 25), R.ASSETS.STYLES.ARIAL, LayerMgr\getLayer("ui"), x, y)
       x += offsetX
       y += offsetY
       table.insert(powerupInfoboxes, powerupInfobox)
