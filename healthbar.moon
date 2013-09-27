@@ -2,7 +2,7 @@ export class Healthbar
 
   new: (@layer, @dimensions = Rectangle(0, 0, 100, 10), @x = -200, @y = -140) =>
     @texture = MOAIGfxQuad2D.new()
-    @texture\setTexture R.GREEN
+    @texture\setTexture R.ASSETS.IMAGES.GREEN
     @texture\setRect @dimensions\get!
 
     @maxWidth = @dimensions\getWidth()

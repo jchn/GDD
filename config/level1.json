@@ -1,0 +1,52 @@
+{
+  "Level": {
+    "length": 1000,
+    "hero" : "standard",
+    "assets" : {
+      "images": {
+        "HEALTH" : "resources/mushroom.png",
+        "SHIELD" : "resources/mushroom2.png",
+        "WRESTLER_IDLE" : "resources/wrestler_idle.png",
+        "WRESTLER_WALK" : "resources/wrestler_walk.png",
+        "ALIEN" : "resources/alien_rank1.png",
+        "ALIEN2" : "resources/alien_rank2.png",
+        "ALIEN3" : "resources/alien_rank3.png",
+        "UFO" : "resources/ufo.png",
+        "RED" : "resources/red_health.png",
+        "GREEN" : "resources/green_health.png",
+        "YELLOW" : "resources/yellow_health.png"
+      },
+      "textures": {
+        "BTN_ALIEN_RANK1" : "resources/button_alien_rank1.png",
+        "BTN_ALIEN_RANK2" : "resources/button_alien_rank2.png",
+        "BTN_ALIEN_RANK3" : "resources/button_alien_rank3.png",
+        "INDICATOR_BASE" : "resources/indicator_base.png",
+        "INDICATOR" : "resources/indicator.png"
+      },
+      "fonts": {
+        "ARIAL" : {
+          "location" : "resources/arial-rounded.TTF",
+          "size" : 20,
+          "glyphs" : "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+        }
+      },
+      "environment": {
+        "foreground": {
+            "grid": {
+
+            }
+          },
+          "ground": {
+              "grid": {
+
+              }
+            },
+          "background": {
+            "grid": {
+
+            }
+          }
+      }
+    }
+  }
+}

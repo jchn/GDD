@@ -64,20 +64,21 @@ class PowerUpManager
     world = newWorld
 
   makePowerup: (powerupID, x, y) ->
+    print powerupID
     powerupID = powerupID\lower()
     print "Powerup Factory: " .. powerupID
     newPowerup = {}
 
     switch powerupID
       when "health"
-        newPowerup = HealthPowerup(world, layer, x, y, powerupManager.getGraphic(powerupID))
+        newPowerup = HealthPowerup(world, layer, x, y, R.ASSETS.IMAGES[powerupID\upper!])
 
       when "shield"
-        newPowerup = ShieldPowerup(world, layer, x, y, powerupManager.getGraphic(powerupID))
+        newPowerup = ShieldPowerup(world, layer, x, y, R.ASSETS.IMAGES[powerupID\upper!])
 
       else
         print "Generic Powerup"
-        newPowerup = Powerup(world, layer, x, y, R.MUSHROOM)
+        newPowerup = Powerup(world, layer, x, y, R.ASSETS.IMAGES[HEALTH])
 
     return newPowerup
 
@@ -86,10 +87,10 @@ class PowerUpManager
 
     switch powerupID
       when "health"
-        return R.MUSHROOM
+        return R.ASSETS.IMAGES[powerupID\upper!]
 
       when "shield"
-        return R.MUSHROOM2
+        return R.ASSETS.IMAGES[powerupID\upper!]
 
 
 export powerupManager = PowerUpManager()
