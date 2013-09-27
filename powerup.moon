@@ -9,6 +9,7 @@ class Powerup
 
     @fixture = @body\addRect( -12, -12, 12, 12 )
     @fixture.character = @
+    @fixture\setFilter(entityCategory.INACTIVEPOWERUP, entityCategory.BOUNDARY + entityCategory.INACTIVEPOWERUP)
 
     @texture = MOAIGfxQuad2D.new()
     @texture\setTexture @image
@@ -19,6 +20,8 @@ class Powerup
     @prop.body = @body
     @prop.draggable = true
     @prop.isDragged = false
+    @prop.isPowerup = true
+    @prop.character = @
     @prop\setParent @body
     @prop\setBlendMode(MOAIProp2D.GL_SRC_ALPHA, MOAIProp2D.GL_ONE_MINUS_SRC_ALPHA)
 
@@ -36,6 +39,9 @@ class Powerup
     @body\destroy()
     @fixture\destroy()
     @prop = nil
+
+  activate: () =>
+    @fixture\setFilter(entityCategory.POWERUP, entityCategory.BOUNDARY + entityCategory.CHARACTER + entityCategory.POWERUP)
 
 class HealthPowerup extends Powerup
 

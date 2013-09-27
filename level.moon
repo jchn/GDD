@@ -30,7 +30,7 @@ export class Level
     LayerMgr\createLayer('powerups', 6, true)\render!
 
     -- Background color
-    MOAIGfxDevice\getFrameBuffer()\setClearColor 1, 1, 0, 1
+    MOAIGfxDevice\getFrameBuffer()\setClearColor .5, .5, .5, 1
 
     -- Connect box2d to layer
     LayerMgr\getLayer('box2d')\setBox2DWorld( R.WORLD )

@@ -10,15 +10,22 @@ require 'ai'
 require 'simplebutton'
 require 'layermanager'
 require 'PowerupInfobox'
+require 'floatingnumber'
 require 'assetLoader'
 require 'indicator'
 require 'level'
-
 
 export _ = require 'lib/underscore'
 
 export mouseX = 0
 export mouseY = 0
+
+export entityCategory = {
+  BOUNDARY: 0x0001,
+  CHARACTER: 0x0002,
+  POWERUP: 0x0004
+  INACTIVEPOWERUP: 0x0010
+}
 
 -- Openen window
 screenWidth = R.DEVICE_WIDTH
@@ -30,6 +37,7 @@ level = Level('config/level1.json')
 level\load(-> print 'done loading')
 level\initialize()
 level\start()
+
 
 export performWithDelay = (delay, func, repeats, ...) ->
   t = MOAITimer.new()
