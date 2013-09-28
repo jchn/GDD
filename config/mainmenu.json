@@ -1,9 +1,0 @@
-{
-	"Screen" : {
-		"assets" : {
-      		"images": {
-        		"HEALTH" : "resources/mushroom.png"
-			}
-		}
-	}
-}

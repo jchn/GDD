@@ -14,8 +14,6 @@ require 'floatingnumber'
 require 'assetLoader'
 require 'indicator'
 require 'level'
-require 'screen'
-require 'gamemanager'
 
 export _ = require 'lib/underscore'
 
@@ -32,24 +30,13 @@ export entityCategory = {
 -- Openen window
 screenWidth = R.DEVICE_WIDTH
 screenHeight = R.DEVICE_HEIGHT
-MOAISim.openWindow "Pygo", screenWidth, screenHeight
+MOAISim.openWindow "wrestlers vs aliens", screenWidth, screenHeight
 R\load()
 
--- screen = MainMenuScreen('config/level1.json')
--- screen\load(-> print 'done loading')
--- screen\open()
-
-mainMenu = MainMenuScreen('config/level1.json')
-gameManager.registerScreen("mainMenu", mainMenu)
-gameManager.openScreen("mainMenu")
-
-firstLevel = Level('config/level1.json')
-gameManager.registerLevel(1, firstLevel)
-
--- level = Level('config/level1.json')
--- level\load(-> print 'done loading')
--- level\initialize()
--- level\start()
+level = Level('config/level1.json')
+level\load(-> print 'done loading')
+level\initialize()
+level\start()
 
 
 export performWithDelay = (delay, func, repeats, ...) ->

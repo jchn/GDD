@@ -10,8 +10,6 @@ export class Level
 
     @length = @configTable.Level.length
     print "length #{@length}"
-    @spawnableUnits = @configTable.Level.spawnableUnits
-    @startingPowerups = @configTable.Level.startingPowerups
 
     assets = AssetLoader(@configTable.Level.assets)
     assets\load(onComplete)
@@ -21,13 +19,12 @@ export class Level
   initialize: () =>
     print 'initializing'
     print 'creating layers'
-    R\loadWorld!
 
     -- Generate layers
     LayerMgr\createLayer('background', 1, false)\render!\setParallax 0.5, 1
     LayerMgr\createLayer('ground', 2, false)\render!
     LayerMgr\createLayer('characters', 3, false)\render!
-    LayerMgr\createLayer('box2d', 4, false)\render!
+    LayerMgr\createLayer('box2d', 4, false)
     LayerMgr\createLayer('foreground', 5, false)\render!\setParallax 1.5, 1
     LayerMgr\createLayer('ui', 7, true, false)\render!
     LayerMgr\createLayer('powerups', 6, true)\render!
@@ -92,9 +89,11 @@ export class Level
 
     powerupManager.setLayerAndWorld(LayerMgr\getLayer('powerups'), R.WORLD)
 
-    print "No of starting powerups: #{#@startingPowerups}"
-    for startingPowerup in *@startingPowerups
-        powerupManager.makePowerup(startingPowerup.ID, startingPowerup.X, startingPowerup.Y)\activate!
+    powerupManager.makePowerup("health", 170, 0)\activate!
+    powerupManager.makePowerup("health", 200, 0)\activate!
+    powerupManager.makePowerup("health", 230, 0)\activate!
+    powerupManager.makePowerup("health", 260, 0)\activate!
+
 
     export direction = {
       LEFT: -1,
@@ -105,13 +104,14 @@ export class Level
     @c = characterManager.makeCharacter("hero")\add()
     @u = characterManager.makeCharacter("ufo")\add()
 
-    buttonX = 200
-    buttonY = -120
-    buttonXOffset = -40
-    for spawnableUnit in *@spawnableUnits 
-      button = CoolDownButton LayerMgr\getLayer("ui"), R.ASSETS.TEXTURES["#{spawnableUnit}_button"\upper!], Rectangle(-16, -16, 16, 16), buttonX, buttonY, 2, (-> characterManager.makeCharacter(spawnableUnit)), (-> return characterManager.checkEnemySpawnable(spawnableUnit))
-      button\add()
-      buttonX += buttonXOffset
+    button = CoolDownButton LayerMgr\getLayer("ui"), R.ASSETS.TEXTURES.BTN_ALIEN_RANK1, Rectangle(-16, -16, 16, 16), (200), (-120), 2, (-> characterManager.makeCharacter("jumpwalker")), -> return characterManager.checkEnemySpawnable("jumpwalker")
+    button\add()
+
+    button = CoolDownButton LayerMgr\getLayer("ui"), R.ASSETS.TEXTURES.BTN_ALIEN_RANK2, Rectangle(-16, -16, 16, 16), (160), (-120), 2, (-> characterManager.makeCharacter("elite_jumpwalker")), -> return characterManager.checkEnemySpawnable("elite_jumpwalker")
+    button\add()
+
+    button = CoolDownButton LayerMgr\getLayer("ui"), R.ASSETS.TEXTURES.BTN_ALIEN_RANK3, Rectangle(-16, -16, 16, 16), (120), (-120), 2, (-> characterManager.makeCharacter("supreme_jumpwalker")), -> return characterManager.checkEnemySpawnable("supreme_jumpwalker")
+    button\add()
 
     @startX = @c.body\getPosition()
     @indicator = Indicator(@startX, @length, LayerMgr\getLayer("ui"), 0, 150, @\gameOver)
@@ -123,7 +123,7 @@ export class Level
     while true
 
       x = @c.body\getPosition()
-      R.\setLoc((x + 180))
+      R.CAMERA\setLoc((x + 180))
       @staticBody\setTransform(x,-100)
 
       @u.body\setTransform((x + 360), -35)
@@ -131,7 +131,7 @@ export class Level
       @indicator\update x
 
       -- print R.CAMERA\getLoc!
-      print "Garbage collection _-------------_____------------: #{collectgarbage('count')}"
+
       coroutine.yield()
 
   destroy: () =>
@@ -174,12 +174,4 @@ export class Level
     LayerMgr\getLayer("ui")\insertProp prop
     buttonManager.forcefullyDisableButtons!
 
-  close: () =>
-    @staticBody = nil
-    @c = nil
-    @u = nil
-    @startX = nil
-    @indicator = nil
-    @thread = nil
-    characterManager.clear()
-    LayerMgr\destroyAllLayers!
+  end: () =>

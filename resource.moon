@@ -10,6 +10,13 @@ class Resource
     @YELLOW = MOAIImage.new()
 
     -- @MUSHROOM2 = MOAIImage.new()
+
+
+    @WORLD = MOAIBox2DWorld.new()
+    @WORLD\setGravity( 0, -10 ) -- Zwaartekracht
+    @WORLD\setUnitsToMeters( 1/30 ) -- Hoeveel units in een meter. Let op dat Units niet per se pixels zijn, dat hangt af van de scale van de viewport
+    @WORLD\start()
+
     -- @BUTTON = MOAITexture.new()
     -- @BUTTON2 = MOAITexture.new()
     -- @BUTTON3 = MOAITexture.new()
@@ -85,13 +92,6 @@ class Resource
     -- @RED\load("resources/red_health.png")
     -- @GREEN\load("resources/green_health.png")
     -- @YELLOW\load("resources/yellow_health.png")
-    @loadWorld!
-
-  loadWorld: () =>
-    @WORLD = MOAIBox2DWorld.new()
-    @WORLD\setGravity( 0, -10 ) -- Zwaartekracht
-    @WORLD\setUnitsToMeters( 1/30 ) -- Hoeveel units in een meter. Let op dat Units niet per se pixels zijn, dat hangt af van de scale van de viewport
-    @WORLD\start()
 
 
   loadJson: () =>
@@ -116,5 +116,6 @@ class Resource
 
   setAssets: (assets) =>
     @ASSETS = assets
+
 
 export R = Resource()

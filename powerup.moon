@@ -89,6 +89,14 @@ class PowerUpManager
     return newPowerup
 
   getGraphic: (powerupID) ->
-    return R.ASSETS.IMAGES[powerupID\upper!]
+    powerupID = powerupID\lower()
+
+    switch powerupID
+      when "health"
+        return R.ASSETS.IMAGES[powerupID\upper!]
+
+      when "shield"
+        return R.ASSETS.IMAGES[powerupID\upper!]
+
 
 export powerupManager = PowerUpManager()
