@@ -120,7 +120,7 @@ export class Level
     @thread = MOAIThread.new()
 
   loop: () =>
-    while true
+    while @running
 
       x = @c.body\getPosition()
       R.CAMERA\setLoc((x + 180))

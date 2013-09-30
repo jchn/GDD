@@ -66,4 +66,11 @@ class LayerManager
 
     @removeLayer layer
 
+  destroyAllLayers: () =>
+    for ID, layer in pairs @layers do
+      layer\clear!
+      layer\unrender!
+      @destroyLayer layer
+      MOAIRenderMgr.setRenderTable({})
+
 export LayerMgr = LayerManager R.VIEWPORT, R.CAMERA

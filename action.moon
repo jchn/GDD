@@ -52,7 +52,7 @@ class IdleAction extends Action
     @curve = nil
 
   poll: (otherCharacters = {}) =>
-    return true, math.random(0,1000)
+    return true, math.random(0,600)
 
 class WalkAction extends Action
 
@@ -90,7 +90,7 @@ class WalkAction extends Action
       @anim\setListener(MOAITimer.EVENT_TIMER_END_SPAN, @\test)
       -- @anim\stop(otherCharacters)
 
-      @character.body\setLinearVelocity(40 * @character.direction, 0)
+      @character.body\setLinearVelocity(@character.stats.speed * @character.direction, 0)
     super @character
 
   test: =>
@@ -104,7 +104,13 @@ class WalkAction extends Action
     @curve = nil
 
   poll: (otherCharacters = {}) =>
-    return true, math.random(0,800)
+    return true, math.random(0,900)
+
+class RunAction extends WalkAction
+
+  execute: () =>
+    super @character
+    @character.body\setLinearVelocity((@character.stats.speed * 1.5) * @character.direction, 0)
 
 class FlyAction extends Action
 
@@ -237,7 +243,7 @@ class JumpwalkAction extends Action
     super @character
 
   update: () =>
-    @character.body\setLinearVelocity(60 * @character.direction, @jumpTable[@counter])
+    @character.body\setLinearVelocity(@character.stats.speed * @character.direction, @jumpTable[@counter])
     @counter += 1
     otherCharacters = @selectCharacters()
 
@@ -252,7 +258,7 @@ class JumpwalkAction extends Action
         @anim\stop()
         @x, @y = @character\getLocation()
 
-        deltaX = 160 / 24
+        deltaX = (120 + @character.stats.speed) / 24
         deltaY = (@y + 3 - (-70)) / 18
         @counter = 1
 
@@ -317,12 +323,13 @@ class ActionManager
 
     switch actionID
       when "idle"
-        print "Idle Action"
         IdleAction(character)
 
       when "walk"
-        print "Walk Action"
         WalkAction(character)
+
+      when "run"
+        RunAction(character)
 
       when "jumpwalk"
         JumpwalkAction(character)
