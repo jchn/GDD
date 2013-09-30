@@ -150,6 +150,10 @@ class Hero extends PowerupUser
     else
       @showFloatingNumber("#{deltaHealth}", 2, R.REDSTYLE)
       R.HIT\play!
+
+  die: () =>
+    super
+    R.LEVEL\win!
     
 
 class Unit extends PowerupUser

@@ -35,6 +35,9 @@ R\load()
 
 level = Level('config/level1.json')
 level\load(-> print 'done loading')
+
+R\setLevel level
+
 level\initialize()
 level\start()
 
