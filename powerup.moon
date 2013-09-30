@@ -65,6 +65,17 @@ class PowerUpManager
   layer = nil
   world = nil
 
+  powerups = {}
+
+  getAmountOfPowerups: () ->
+    return #powerups
+
+  selectPowerups: (queryFunction) ->
+    _.select(powerups, queryFunction)
+
+  removePowerups: (queryFunction) ->
+    powerups = _.reject(powerups, queryFunction)
+
   setLayerAndWorld: (newLayer, newWorld) ->
     layer = newLayer
     world = newWorld
@@ -86,6 +97,7 @@ class PowerUpManager
         print "Generic Powerup"
         newPowerup = Powerup(world, layer, x, y, R.ASSETS.IMAGES[HEALTH])
 
+    table.insert(powerups, newPowerup)
     return newPowerup
 
   getGraphic: (powerupID) ->

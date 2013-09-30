@@ -52,7 +52,7 @@ class IdleAction extends Action
     @curve = nil
 
   poll: (otherCharacters = {}) =>
-    return true, math.random(0,600)
+    return true, 100
 
 class WalkAction extends Action
 
@@ -104,13 +104,25 @@ class WalkAction extends Action
     @curve = nil
 
   poll: (otherCharacters = {}) =>
-    return true, math.random(0,900)
+    return true, 200
 
 class RunAction extends WalkAction
 
   execute: () =>
     super @character
-    @character.body\setLinearVelocity((@character.stats.speed * 1.5) * @character.direction, 0)
+    @character.body\setLinearVelocity((@character.stats.speed * 2) * @character.direction, 0)
+
+  selectCharacters: () =>
+    powerupManager.selectPowerups((powerup) ->
+      x1, y1 = powerup.body\getPosition()
+      x2, y2 = @character\getLocation()
+
+      return (x1 >= x2 and x1 <= x2 + 100) )
+
+  poll: () =>
+    otherCharacters = @selectCharacters()
+    print "Run action: #{#otherCharacters}"
+    return true, 150 + (#otherCharacters * 100)
 
 class FlyAction extends Action
 

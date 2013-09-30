@@ -111,7 +111,7 @@ class Character
 
   destroy: =>
     print "DESTROY CHARACTER"
-    if @currentAction != nil
+    if @currentAction != nil and @state == Characterstate.EXECUTING
       @currentAction\beforeStop()
     @currentAction = nil
     @state = nil
@@ -136,11 +136,13 @@ class PowerupUser extends Character
     if other.name == 'powerup'
       if other.prop.isDragged
         Pntr\clear()
+      powerupManager.removePowerups((p) -> return p == other)
       other\remove()
       other\destroy()
       other\execute(own)
       print "CHECK IF POWERUP IS BEING DRAGGED #{other.isDragged}"
       own\colorBlink(0.0, 1.0, 0.0)
+      
 
 class Hero extends PowerupUser
 
@@ -211,6 +213,7 @@ class UFO extends Character
       else
         style = R.REDSTYLE
         own\showFloatingNumber("#{amount}", 4, R.REDSTYLE, 40, 20)
+      powerupManager.removePowerups((p) -> return p == other)
       
 
 class CharacterManager

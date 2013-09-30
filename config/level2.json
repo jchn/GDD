@@ -1,6 +1,6 @@
 {
   "Config": {
-    "length": 1000,
+    "length": 2500,
     "wrestler" : "hero",
 
     "spawnableUnits" : [
