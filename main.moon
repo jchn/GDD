@@ -72,6 +72,7 @@ mainMenu = GameScreen('config/mainmenu.json')
 screenManager.registerScreen("mainMenu", mainMenu)
 
 level = Level('config/level1.json')
+
 screenManager.registerScreen("level_1", level)
 
 level = Level('config/level2.json')

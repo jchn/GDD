@@ -117,5 +117,8 @@ class Resource
   setAssets: (assets) =>
     @ASSETS = assets
 
+  setLevel: (level) =>
+    @LEVEL = level
+
 
 export R = Resource()

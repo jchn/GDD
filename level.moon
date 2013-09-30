@@ -174,4 +174,25 @@ export class Level
     LayerMgr\getLayer("ui")\insertProp prop
     buttonManager.forcefullyDisableButtons!
 
+  win: () =>
+    @pause!
+    -- Add win graphic
+    prop = MOAIProp2D.new()
+    prop\setLoc(0, 0)
+    prop\setColor 1.0, 1.0, 1.0, 1.0
+    prop\setBlendMode(MOAIProp2D.GL_SRC_ALPHA, MOAIProp2D.GL_ONE_MINUS_SRC_ALPHA)
+    clickable = true
+
+    -- @rectangle\wndToWorld!
+    rectangle = Rectangle( -128, -32, 128, 32 )
+
+    gfxQuad = MOAIGfxQuad2D.new()
+    gfxQuad\setTexture( R.ASSETS.TEXTURES.WIN_GAME )
+    gfxQuad\setRect( rectangle\get() )
+
+    prop\setDeck( gfxQuad )
+
+    LayerMgr\getLayer("ui")\insertProp prop
+    buttonManager.forcefullyDisableButtons!
+
   end: () =>
