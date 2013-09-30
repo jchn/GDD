@@ -1,0 +1,11 @@
+{
+	"Config" : {
+	
+		"Screens" : [
+			{ "NAME": "mainMenu", "FILE" : "mainmenu.json", "TYPE" : "GameScreen", "DEFAULTOPEN" : true },
+			{ "NAME": "level_1", "FILE" : "level1.json", "TYPE" : "Level" },
+			{ "NAME": "level_2", "FILE" : "level2.json", "TYPE" : "Level" },
+			{ "NAME": "level_3", "FILE" : "level3.json", "TYPE" : "Level" }
+		]
+	}
+}

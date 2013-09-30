@@ -7,27 +7,31 @@ export class AssetLoader
 
   load: (@onLoadComplete) =>
     -- Load images
-    images = @config.images
-    for k, v in pairs(images)
-      @IMAGES[k] = MOAIImage.new()
-      @IMAGES[k]\load(v)
+
+    if @config.images != nil
+      images = @config.images
+      for k, v in pairs(images)
+        @IMAGES[k] = MOAIImage.new()
+        @IMAGES[k]\load(v)
 
     -- Load textures
-    textures = @config.textures
-    for k, v in pairs(textures)
-      @TEXTURES[k] = MOAITexture.new()
-      @TEXTURES[k]\load(v)
+    if @config.textures != nil
+      textures = @config.textures
+      for k, v in pairs(textures)
+        @TEXTURES[k] = MOAITexture.new()
+        @TEXTURES[k]\load(v)
 
     -- Load fonts
-    fonts = @config.fonts
-    for k, v in pairs(fonts)
-      @FONTS[k] = MOAIFont.new()
-      @FONTS[k]\load(v.location)
-      @FONTS[k]\preloadGlyphs(v.glyphs, v.size)
+    if @config.fonts  != nil
+      fonts = @config.fonts
+      for k, v in pairs(fonts)
+        @FONTS[k] = MOAIFont.new()
+        @FONTS[k]\load(v.location)
+        @FONTS[k]\preloadGlyphs(v.glyphs, v.size)
 
-      @STYLES[k] = MOAITextStyle.new()
-      @STYLES[k]\setFont @FONTS[k]
-      @STYLES[k]\setSize v.size
+        @STYLES[k] = MOAITextStyle.new()
+        @STYLES[k]\setFont @FONTS[k]
+        @STYLES[k]\setSize v.size
 
     @onLoadComplete!
 

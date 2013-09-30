@@ -78,7 +78,6 @@ class Character
     @prop\moveColor 1.0, 1.0, 1.0, 1.0, length
 
   die: () =>
-    @currentAction\beforeStop()
     @remove()
     @destroy()
     characterManager.removeCharacters((c) -> return c == @)
@@ -112,6 +111,9 @@ class Character
 
   destroy: =>
     print "DESTROY CHARACTER"
+    if @currentAction != nil and @state == Characterstate.EXECUTING
+      @currentAction\beforeStop()
+    @currentAction = nil
     @state = nil
     @prop = nil
     @fixture\destroy()
@@ -124,6 +126,7 @@ class Character
     @direction = nil
     @body\destroy()
     @body = nil
+    @actions = nil
 
 class PowerupUser extends Character
 
@@ -133,11 +136,13 @@ class PowerupUser extends Character
     if other.name == 'powerup'
       if other.prop.isDragged
         Pntr\clear()
+      powerupManager.removePowerups((p) -> return p == other)
       other\remove()
       other\destroy()
       other\execute(own)
       print "CHECK IF POWERUP IS BEING DRAGGED #{other.isDragged}"
       own\colorBlink(0.0, 1.0, 0.0)
+      
 
 class Hero extends PowerupUser
 
@@ -152,8 +157,7 @@ class Hero extends PowerupUser
       R.HIT\play!
 
   die: () =>
-    super
-    R.LEVEL\win!
+    screenManager.openScreen("mainMenu")
     
 
 class Unit extends PowerupUser
@@ -209,6 +213,7 @@ class UFO extends Character
       else
         style = R.REDSTYLE
         own\showFloatingNumber("#{amount}", 4, R.REDSTYLE, 40, 20)
+      powerupManager.removePowerups((p) -> return p == other)
       
 
 class CharacterManager
@@ -302,6 +307,16 @@ class CharacterManager
     layer = newLayer
     world = newWorld
 
+  clear: () ->
+    for character in *characters do
+      character\destroy()
+    characters = {}
+    ufo = nil
+    collectedPowerups = {}
+    lastTimestamp = 0
+    comboCounter = 0
+    powerupInfoboxes = {}
+
   makeCharacter: (characterID) ->
     characterID = characterID\lower()
     print "Character Factory: " .. characterID
@@ -319,11 +334,12 @@ class CharacterManager
         rectangle = Rectangle(-32,-32,32,32)
 
         stats = {
-          health: 100
+          health: 100,
+          speed: 40
         }
 
         actionIDs = {
-          "walk", "idle"
+          "walk", "run"
         }
 
         newCharacter = Hero(characterID, prop, layer, world, direction.RIGHT, rectangle, stats, actionIDs, 0, -55)
@@ -336,7 +352,8 @@ class CharacterManager
 
         stats = {
           health: 10,
-          attack: 1
+          attack: 1,
+          speed: 50
         }
 
         actionIDs = {
@@ -366,7 +383,8 @@ class CharacterManager
         stats = {
           health: 10,
           attack: 1,
-          shield: 2
+          shield: 2,
+          speed: 60
         }
 
         actionIDs = {
@@ -395,7 +413,8 @@ class CharacterManager
         rectangle = Rectangle(-20,-20,20,20)
         stats = {
           health: 10,
-          attack: 15
+          attack: 15,
+          speed: 70
         }
 
         actionIDs = {
@@ -414,7 +433,8 @@ class CharacterManager
         rectangle = Rectangle(-60,-50,60,50)
 
         stats = {
-          health: 100
+          health: 100,
+          speed: 0
         }
 
         actionIDs= {
@@ -429,7 +449,8 @@ class CharacterManager
         rectangle = Rectangle(-32,-32,32,32)
 
         stats = {
-          health: 100
+          health: 100,
+          speed 40
         }
 
         actionIDs = {

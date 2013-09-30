@@ -13,7 +13,7 @@ require 'PowerupInfobox'
 require 'floatingnumber'
 require 'assetLoader'
 require 'indicator'
-require 'level'
+require 'screens'
 
 export _ = require 'lib/underscore'
 
@@ -27,19 +27,68 @@ export entityCategory = {
   INACTIVEPOWERUP: 0x0010
 }
 
+export direction = {
+  LEFT: -1,
+  RIGHT: 1
+}
+
+export splitAtSpaces = (string) ->
+  words = {}
+  for word in string\gmatch("%S+") do
+    table.insert(words, word)
+  return words
+
 -- Openen window
 screenWidth = R.DEVICE_WIDTH
 screenHeight = R.DEVICE_HEIGHT
 MOAISim.openWindow "wrestlers vs aliens", screenWidth, screenHeight
 R\load()
 
+dataBuffer = MOAIDataBuffer.new()
+dataBuffer\load('config/config.json')
+config = dataBuffer\getString()
+configTable = MOAIJsonParser.decode config
+configTable = configTable.Config
+
+-- screenToOpen = ""
+
+-- for screen in *configTable.Screens do
+--   print "Making screen #{screen.NAME} from config.json"
+--   screenType = screen.TYPE\lower!
+--   newScreen = nil
+--   switch screenType
+--     when "Level"
+--       newScreen = Level(screen.FILE)
+--     else
+--       newScreen = GameScreen(screen.FILE)
+--   screenManager.registerScreen(screen.NAME, newScreen)
+--   if screen.DEFAULTOPEN == true
+--     screenToOpen = screen.NAME
+
+-- screenManager.openScreen(screenToOpen)
+
+
+mainMenu = GameScreen('config/mainmenu.json')
+screenManager.registerScreen("mainMenu", mainMenu)
+
 level = Level('config/level1.json')
-level\load(-> print 'done loading')
 
-R\setLevel level
+screenManager.registerScreen("level_1", level)
 
-level\initialize()
-level\start()
+level = Level('config/level2.json')
+screenManager.registerScreen("level_2", level)
+
+level = Level('config/level3.json')
+screenManager.registerScreen("level_3", level)
+
+screenManager.openScreen("mainMenu")
+
+-- screenManager
+
+-- level = Level('config/level1.json')
+-- level\load(-> print 'done loading')
+-- level\initialize()
+-- level\start()
 
 
 export performWithDelay = (delay, func, repeats, ...) ->

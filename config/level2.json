@@ -1,6 +1,6 @@
 {
   "Config": {
-    "length": 3000,
+    "length": 2500,
     "wrestler" : "hero",
 
     "spawnableUnits" : [
@@ -8,7 +8,6 @@
     ],
 
     "startingPowerups" : [
-      { "ID" : "health", "X" : 170, "Y": 0},
       { "ID" : "health", "X" : 200, "Y": 0},
       { "ID" : "health", "X" : 230, "Y": 0},
       { "ID" : "shield", "X" : 260, "Y": 0}
@@ -34,8 +33,7 @@
         "SUPREME_JUMPWALKER_BUTTON" : "resources/button_alien_rank3.png",
         "INDICATOR_BASE" : "resources/indicator_base.png",
         "INDICATOR" : "resources/indicator.png",
-        "GAME_OVER" : "resources/game_over.png",
-        "WIN_GAME" : "resources/win_game.png"
+        "GAME_OVER" : "resources/game_over.png"
       },
       "fonts": {
         "ARIAL" : {

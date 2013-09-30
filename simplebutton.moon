@@ -56,7 +56,6 @@ export class SimpleButton extends Clickable
         print "disable tha button"
         @disable()
 
-    buttonManager.registerButton(@)
     super @prop, @layer
     @
 
@@ -84,6 +83,7 @@ export class SimpleButton extends Clickable
 export class CoolDownButton extends SimpleButton
   new: (@layer, @texture, @rectangle, @x, @y, @cooldown, @onClick, @enableFunction) =>
     print "Cooldown of #{@cooldown}"
+    buttonManager.registerButton(@)
     super @layer, @texture, @rectangle, @x, @y, @onClick, @enableFunction     
 
   triggerClick: () =>
