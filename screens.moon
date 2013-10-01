@@ -209,18 +209,26 @@ export class Level extends Screen
 
 	loop: () =>
 		while @running
+			characterManager.updateCharacters()
 			switch @state
 				when levelState.RUNNING
+					
 					x = @wrestler.body\getPosition()
 					R.CAMERA\setLoc((x + 180))
 					@ground\setTransform(x,-100)
 					@ufo.body\setTransform((x + 360), -35)
 					@indicator\update x
-
-					characterManager.updateCharacters()
-
 					if @wrestler.stats.health <= 0
 						@win()
+				when levelState.LEVEL_LOST
+					@wrestler\removeIcon()
+					@ufo\doAction("crash")
+					@wrestler\doAction("idle")
+					@running = false
+					performWithDelay(4, ->
+						@pause!
+						screenManager.openScreen("mainMenu"))
+
 		
 			coroutine.yield()
 	
@@ -268,7 +276,9 @@ export class Level extends Screen
 	gameOver: () =>
 		if @state == levelState.RUNNING
 			@state = levelState.LEVEL_LOST
-			@pause!
+			characterManager.removeAndDestroyCharacters((char) -> char.name == 'unit')
+			powerupManager.removeAndDestroyAllPowerups!
+			Pntr\setWorld(@world)
 	    -- Add gameover graphic
 	    prop = MOAIProp2D.new()
 	    prop\setLoc(0, 0)
@@ -287,5 +297,3 @@ export class Level extends Screen
 
 	    LayerMgr\getLayer("ui")\insertProp prop
 	    buttonManager.forcefullyDisableButtons!
-
-	    performWithDelay(2, -> screenManager.openScreen("mainMenu"))

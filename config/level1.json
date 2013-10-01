@@ -1,6 +1,6 @@
 {
   "Config": {
-    "length": 3000,
+    "length": 3500,
     "wrestler" : "hero",
 
     "spawnableUnits" : [
@@ -25,7 +25,7 @@
         "ALIEN" : "resources/alien_rank1.png",
         "ALIEN2" : "resources/alien_rank2.png",
         "ALIEN3" : "resources/alien_rank3.png",
-        "UFO" : "resources/ufo.png",
+        "UFO" : "resources/ufo2.png",
         "RED" : "resources/red_health.png",
         "GREEN" : "resources/green_health.png",
         "YELLOW" : "resources/yellow_health.png"

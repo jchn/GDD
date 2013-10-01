@@ -77,6 +77,12 @@ class PowerUpManager
 
   powerups = {}
 
+  removeAndDestroyAllPowerups: () ->
+    for powerup in *powerups do
+      powerup\remove!
+      powerup\destroy!
+    powerups = {}
+
   makePowerupIcon: (powerupID) ->
     texture = MOAIGfxQuad2D.new()
     texture\setTexture R.ASSETS.IMAGES["#{powerupID}_ICON"\upper!]

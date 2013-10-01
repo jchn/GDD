@@ -64,7 +64,7 @@ class Character
           @stats.shield -= 1
 
           if @stats.shield <= 0
-            LayerMgr\getLayer('characters')\removeProp @icon
+            @layer\removeProp @icon
             @icon = nil
           return
       @colorBlink(1.0, 0.0, 0.0)
@@ -126,6 +126,11 @@ class Character
     @layer\removeProp @prop
     @
 
+  removeIcon: () =>
+    if @icon != nil
+      @layer\removeProp @icon
+      @icon = nil
+
   destroy: =>
     print "DESTROY CHARACTER"
     if @currentAction != nil and @state == Characterstate.EXECUTING
@@ -133,6 +138,7 @@ class Character
     if @healthbar != nil
       @healthbar\destroy!
       @healthbarFixedPosition = nil
+    @removeIcon()
     @healthbar = nil
     @currentAction = nil
     @state = nil
@@ -335,6 +341,13 @@ class CharacterManager
   removeCharacters: (queryFunction) ->
     characters = _.reject(characters, queryFunction)
 
+  removeAndDestroyCharacters: (queryFunction) ->
+    selectedCharacters = characterManager.selectCharacters(queryFunction)
+    for character in *selectedCharacters do
+      character\remove!
+      character\destroy!
+    characterManager.removeCharacters(queryFunction)
+
   setLayerAndWorld: (newLayer, newWorld) ->
     layer = newLayer
     world = newWorld
@@ -478,7 +491,7 @@ class CharacterManager
 
       when "ufo"
         print "UFO Character"
-        rectangle = Rectangle(-60,-50,60,50)
+        rectangle = Rectangle(-64,-64,64,64)
 
         stats = {
           health: 100,
