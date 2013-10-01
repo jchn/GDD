@@ -8,11 +8,11 @@ class Character
 
   name: 'character'
 
-  new: (@characterID, @prop, @layer, @world, @direction, @rectangle, @stats, actionIDs, x = 0, y = 0, @powerupStats = { health: 1, shield: 1, strength: 1 }) =>
+  new: (@characterID, @prop, @layer, @world, @direction, @rectangle, @stats, actionIDs, @x = 0, @y = 0, @powerupStats = { health: 1, shield: 1, strength: 1 }) =>
     @state = Characterstate.IDLE
 
     @body = @world\addBody( MOAIBox2DBody.KINEMATIC )
-    @body\setTransform x, y
+    @body\setTransform @x, @y
     @fixture = @body\addRect( @rectangle\get() )
     @fixture.character = @
     if @onCollide
@@ -224,6 +224,37 @@ class UFO extends Character
 
   name: 'ufo'
 
+  -- new: (@characterID, @prop, @layer, @world, @direction, @rectangle, @stats, actionIDs, @x = 0, @y = 0, @powerupStats = { health: 1, shield: 1, strength: 1 }) =>
+  --   @state = Characterstate.IDLE
+
+  --   @body = @world\addBody( MOAIBox2DBody.KINEMATIC )
+  --   @body\setTransform @x, @y
+  --   polygon = {
+  --     0, 45,
+  --     10, 30,
+  --     57, 0,
+  --     52, -5
+  --     -64, 0 
+  --   }
+  --   @fixture = @body\addPolygon( polygon )
+  --   @fixture.character = @
+
+  --   if @onCollide
+  --     @fixture\setCollisionHandler(@onCollide, MOAIBox2DArbiter.BEGIN)
+
+  --   @prop\setParent @body
+  --   @prop.body = @body
+  --   @currentAction = {}
+
+  --   @stats.maxHealth = @stats.health
+
+  --   @actions = {}
+  --   for actionID in *actionIDs do
+  --     @addAction(actionID)
+
+  --   @add()
+  --   @update()
+
   onCollide: (own, other, event) =>
     own = own.character
     other = other.character
@@ -276,7 +307,7 @@ class CharacterManager
     for powerUpID, amount in pairs collectedPowerups do
       graphic = powerupManager.getGraphic(powerUpID)
       print "USING THE GRAPHIC : #{graphic}"
-      powerupInfobox = PowerupInfobox(graphic, Rectangle(-10, -10, 10, 10), "x #{amount}", Rectangle(0, 0, 60, 25), R.STYLE, LayerMgr\getLayer("ui"), x, y)
+      powerupInfobox = PowerupInfobox(graphic, Rectangle(-16, -16, 16, 16), "x #{amount}", Rectangle(0, 0, 60, 25), R.STYLE, LayerMgr\getLayer("ui"), x, y)
       x += offsetX
       y += offsetY
       table.insert(powerupInfoboxes, powerupInfobox)

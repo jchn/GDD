@@ -15,8 +15,15 @@
 
     "assets" : {
       "images": {
-        "HEALTH" : "resources/mushroom.png",
-        "SHIELD" : "resources/mushroom2.png",
+        "HEALTH" : "resources/health.png",
+        "HEALTH_ANIM" : "resources/health_anim.png",
+        "SHIELD" : "resources/shield.png",
+        "SHIELD_ANIM" : "resources/shield_anim.png",
+        "STRENGTH" : "resources/strength.png",
+        "STRENGTH_ANIM" : "resources/strength_anim.png",
+        "SHIELD_ICON" : "resources/shield_icon.png",
+        "WRESTLER_IDLE" : "resources/wrestler_idle.png",
+        "WRESTLER_WALK" : "resources/wrestler_walk.png",
         "WRESTLER_IDLE" : "resources/wrestler_idle.png",
         "WRESTLER_WALK" : "resources/wrestler_walk.png",
         "ALIEN" : "resources/alien_rank1.png",

@@ -4,6 +4,7 @@ class Powerup
   specificName: 'powerup'
 
   new: (@world, @layer, @x, @y, @image) =>
+
     @body = @world\addBody( MOAIBox2DBody.DYNAMIC )
     @body\setTransform(@x, @y)
 
@@ -11,12 +12,7 @@ class Powerup
     @fixture.character = @
     @fixture\setFilter(entityCategory.INACTIVEPOWERUP, entityCategory.BOUNDARY + entityCategory.INACTIVEPOWERUP + entityCategory.POWERUP + entityCategory.CHARACTER)
 
-    @texture = MOAIGfxQuad2D.new()
-    @texture\setTexture @image
-    @texture\setRect -16, -16, 16, 16
-
     @prop = MOAIProp2D.new()
-    @prop\setDeck @texture
     @prop.body = @body
     @prop.draggable = true
     @prop.isDragged = false
@@ -24,6 +20,28 @@ class Powerup
     @prop.character = @
     @prop\setParent @body
     @prop\setBlendMode(MOAIProp2D.GL_SRC_ALPHA, MOAIProp2D.GL_ONE_MINUS_SRC_ALPHA)
+
+    rect = Rectangle(-32,-32,32,32)
+
+    @tileLib = MOAITileDeck2D\new()
+    @tileLib\setTexture(@image)
+    @tileLib\setSize(2, 1)
+    @tileLib\setRect(rect\get())
+
+    @prop\setDeck @tileLib
+
+    @curve = MOAIAnimCurve.new()
+    @curve\reserveKeys(2)
+
+    @curve\setKey(1, 0.25, 1)
+    @curve\setKey(2, 0.5, 2)
+
+    @anim = MOAIAnim\new()
+    @anim\reserveLinks(1)
+    @anim\setLink(1, @curve, @prop, MOAIProp2D.ATTR_INDEX)
+    @anim\setMode(MOAITimer.LOOP)
+    @anim\setSpan(1)
+    @anim\start()
 
     @layer\insertProp @prop
 
@@ -115,13 +133,13 @@ class PowerUpManager
 
     switch powerupID
       when "health"
-        newPowerup = HealthPowerup(world, layer, x, y, R.ASSETS.IMAGES[powerupID\upper!])
+        newPowerup = HealthPowerup(world, layer, x, y, R.ASSETS.IMAGES["#{powerupID}_ANIM"\upper!])
 
       when "shield"
-        newPowerup = ShieldPowerup(world, layer, x, y, R.ASSETS.IMAGES[powerupID\upper!])
+        newPowerup = ShieldPowerup(world, layer, x, y, R.ASSETS.IMAGES["#{powerupID}_ANIM"\upper!])
 
       when "strength"
-        newPowerup = StrengthPowerup(world, layer, x, y, R.ASSETS.IMAGES[powerupID\upper!])
+        newPowerup = StrengthPowerup(world, layer, x, y, R.ASSETS.IMAGES["#{powerupID}_ANIM"\upper!])
 
       else
         print "Generic Powerup"
