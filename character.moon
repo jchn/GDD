@@ -21,12 +21,20 @@ class Character
     @prop.body = @body
     @currentAction = {}
 
+    @stats.maxHealth = @stats.health
+
     @actions = {}
     for actionID in *actionIDs do
       @addAction(actionID)
 
     @add()
     @update()
+
+  getHeight: () =>
+    return @rectangle\getHeight()
+
+  getWidth: () =>
+    return @rectangle\getWidth()
 
   setFilter: (category, mask) =>
     @fixture\setFilter(category, mask)
@@ -54,20 +62,29 @@ class Character
       if @stats.shield
         if @stats.shield > 0
           @stats.shield -= 1
+
+          if @stats.shield <= 0
+            LayerMgr\getLayer('characters')\removeProp @icon
+            @icon = nil
           return
       @colorBlink(1.0, 0.0, 0.0)
     print "Health was #{@stats.health}"
     @stats.health += deltaHealth
+
+    if @stats.health > @stats.maxHealth
+      @stats.maxHealth = @stats.health
     print "Health is #{@stats.health}"
     
     if @healthbar
-      @healthbar\update(@stats.health)
+      print "Health % is now: #{@stats.health / @stats.maxHealth}"
+      @healthbar\update(@stats.health / @stats.maxHealth)
     if @stats.health <= 0
       @die()
       return true
 
-  setHealthbar: (healthbar) =>
+  setHealthbar: (healthbar, fixedPosition = true) =>
     @healthbar = healthbar
+    @healthbarFixedPosition = fixedPosition
     @
 
   forceDeath: () =>
@@ -113,6 +130,10 @@ class Character
     print "DESTROY CHARACTER"
     if @currentAction != nil and @state == Characterstate.EXECUTING
       @currentAction\beforeStop()
+    if @healthbar != nil
+      @healthbar\destroy!
+      @healthbarFixedPosition = nil
+    @healthbar = nil
     @currentAction = nil
     @state = nil
     @prop = nil
@@ -184,7 +205,7 @@ class Unit extends PowerupUser
     for i  = 1, drops do
       dropping = math.random(#@possibleDrops)
 
-      powerup = powerupManager.makePowerup(@possibleDrops[dropping], x , y , R.MUSROOM)
+      powerup = powerupManager.makePowerup(@possibleDrops[dropping], (x - 10 + (i * 10)) , y)
       powerup.body\applyLinearImpulse(100,100)
       timer = MOAITimer.new()
       timer\setSpan(1)
@@ -226,6 +247,18 @@ class CharacterManager
   lastTimestamp = 0
   comboCounter = 0
   powerupInfoboxes =  {}
+
+  updateCharacters: () ->
+    for character in *characters do
+      if character.icon != nil
+        x, y = character\getLocation()
+        y += (character\getHeight()/2 + 6)
+        character.icon\setLoc x, y
+      elseif character.healthbar != nil and character.healthbarFixedPosition == false
+        x, y = character\getLocation()
+        y += (character\getHeight()/2)
+        x -= (character\getWidth()/2)
+        character.healthbar\setLoc(x, y)
 
   updatePowerupCounters: () ->
     x, y = 170, 130
@@ -349,7 +382,7 @@ class CharacterManager
         }
 
         newCharacter = Hero(characterID, prop, layer, world, direction.RIGHT, rectangle, stats, actionIDs, 0, -55, powerupStats)
-        newCharacter\setHealthbar(Healthbar(LayerMgr\getLayer("ui")))
+        newCharacter\setHealthbar(Healthbar(LayerMgr\getLayer("ui"), 100, 10))
         newCharacter\setFilter(entityCategory.CHARACTER, entityCategory.POWERUP + entityCategory.BOUNDARY)
 
       when "jumpwalker"
@@ -402,6 +435,7 @@ class CharacterManager
         newCharacter = Unit(characterID, prop, layer, world, direction.LEFT, rectangle, stats, actionIDs, x, -70)
         newCharacter\setPowerupDrops(1, 2, { "health", "shield", "shield" })
         newCharacter\setFilter(entityCategory.CHARACTER, entityCategory.BOUNDARY )
+        newCharacter.icon = powerupManager.makePowerupIcon("shield")
         ufo\doAction("spawn")
 
       when "supreme_jumpwalker"
@@ -439,6 +473,7 @@ class CharacterManager
         newCharacter = Unit(characterID, prop, layer, world, direction.LEFT, rectangle, stats, actionIDs, x, -70, powerupStats)
         newCharacter\setPowerupDrops(0, 0, {})
         newCharacter\setFilter(entityCategory.CHARACTER, entityCategory.POWERUP + entityCategory.BOUNDARY)
+        newCharacter\setHealthbar(Healthbar(LayerMgr\getLayer("characters"), 40, 4), false)
         ufo\doAction("spawn")
 
       when "ufo"

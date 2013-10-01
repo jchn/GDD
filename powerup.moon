@@ -7,7 +7,7 @@ class Powerup
     @body = @world\addBody( MOAIBox2DBody.DYNAMIC )
     @body\setTransform(@x, @y)
 
-    @fixture = @body\addRect( -12, -12, 12, 12 )
+    @fixture = @body\addCircle( 0, 0, 16)
     @fixture.character = @
     @fixture\setFilter(entityCategory.INACTIVEPOWERUP, entityCategory.BOUNDARY + entityCategory.INACTIVEPOWERUP + entityCategory.POWERUP + entityCategory.CHARACTER)
 
@@ -60,6 +60,9 @@ class ShieldPowerup extends Powerup
     else
       character.stats.shield = character.powerupStats.shield
 
+    if character.icon == nil
+      character.icon = powerupManager.makePowerupIcon("shield")
+
 class StrengthPowerup extends Powerup
 
   specificName: 'strength'
@@ -73,6 +76,17 @@ class PowerUpManager
   world = nil
 
   powerups = {}
+
+  makePowerupIcon: (powerupID) ->
+    texture = MOAIGfxQuad2D.new()
+    texture\setTexture R.ASSETS.IMAGES["#{powerupID}_ICON"\upper!]
+    texture\setRect -10, -10, 10, 10
+
+    prop = MOAIProp2D.new()
+    prop\setDeck texture
+    prop\setBlendMode(MOAIProp2D.GL_SRC_ALPHA, MOAIProp2D.GL_ONE_MINUS_SRC_ALPHA)
+    LayerMgr\getLayer('characters')\insertProp(prop)
+    return prop
 
   getAmountOfPowerups: () ->
     return #powerups
