@@ -15,6 +15,8 @@ class Pointer
     else
       MOAIInputMgr.device.touch\setCallback( @\touchcallback )
 
+  setWorld: (@world) =>
+
   listenTo: (layer) =>
     layer.x = 0
     layer.y = 0
@@ -87,5 +89,5 @@ class Pointer
 
 export Pntr = Pointer(R.WORLD)
 
-export clearPointer = () =>
-  Pntr = Pointer(R.WORLD)
+export clearPointer = (world) =>
+  Pntr = Pointer(world)

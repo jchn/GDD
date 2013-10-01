@@ -4,19 +4,15 @@ class Powerup
   specificName: 'powerup'
 
   new: (@world, @layer, @x, @y, @image) =>
+
     @body = @world\addBody( MOAIBox2DBody.DYNAMIC )
     @body\setTransform(@x, @y)
 
-    @fixture = @body\addRect( -12, -12, 12, 12 )
+    @fixture = @body\addCircle( 0, 0, 16)
     @fixture.character = @
-    @fixture\setFilter(entityCategory.INACTIVEPOWERUP, entityCategory.BOUNDARY + entityCategory.INACTIVEPOWERUP + entityCategory.POWERUP)
-
-    @texture = MOAIGfxQuad2D.new()
-    @texture\setTexture @image
-    @texture\setRect -16, -16, 16, 16
+    @fixture\setFilter(entityCategory.INACTIVEPOWERUP, entityCategory.BOUNDARY + entityCategory.INACTIVEPOWERUP + entityCategory.POWERUP + entityCategory.CHARACTER)
 
     @prop = MOAIProp2D.new()
-    @prop\setDeck @texture
     @prop.body = @body
     @prop.draggable = true
     @prop.isDragged = false
@@ -24,6 +20,28 @@ class Powerup
     @prop.character = @
     @prop\setParent @body
     @prop\setBlendMode(MOAIProp2D.GL_SRC_ALPHA, MOAIProp2D.GL_ONE_MINUS_SRC_ALPHA)
+
+    rect = Rectangle(-32,-32,32,32)
+
+    @tileLib = MOAITileDeck2D\new()
+    @tileLib\setTexture(@image)
+    @tileLib\setSize(2, 1)
+    @tileLib\setRect(rect\get())
+
+    @prop\setDeck @tileLib
+
+    @curve = MOAIAnimCurve.new()
+    @curve\reserveKeys(2)
+
+    @curve\setKey(1, 0.25, 1)
+    @curve\setKey(2, 0.5, 2)
+
+    @anim = MOAIAnim\new()
+    @anim\reserveLinks(1)
+    @anim\setLink(1, @curve, @prop, MOAIProp2D.ATTR_INDEX)
+    @anim\setMode(MOAITimer.LOOP)
+    @anim\setSpan(1)
+    @anim\start()
 
     @layer\insertProp @prop
 
@@ -45,20 +63,30 @@ class Powerup
 
 class HealthPowerup extends Powerup
 
-    specificName: 'health'
+  specificName: 'health'
 
-    execute: (character) =>
-        character\alterHealth(5)
+  execute: (character) =>
+      character\alterHealth(character.powerupStats.health)
 
 class ShieldPowerup extends Powerup
 
-    specificName: 'shield'
+  specificName: 'shield'
 
-    execute: (character) =>
-      if character.stats.shield
-        character.stats.shield += 1
-      else
-        character.stats.shield = 1
+  execute: (character) =>
+    if character.stats.shield
+      character.stats.shield += character.powerupStats.shield
+    else
+      character.stats.shield = character.powerupStats.shield
+
+    if character.icon == nil
+      character.icon = powerupManager.makePowerupIcon("shield")
+
+class StrengthPowerup extends Powerup
+
+  specificName: 'strength'
+
+  execute: (character) =>
+    character.stats.attack += character.powerupStats.strength
 
 class PowerUpManager
 
@@ -66,6 +94,23 @@ class PowerUpManager
   world = nil
 
   powerups = {}
+
+  removeAndDestroyAllPowerups: () ->
+    for powerup in *powerups do
+      powerup\remove!
+      powerup\destroy!
+    powerups = {}
+
+  makePowerupIcon: (powerupID) ->
+    texture = MOAIGfxQuad2D.new()
+    texture\setTexture R.ASSETS.IMAGES["#{powerupID}_ICON"\upper!]
+    texture\setRect -10, -10, 10, 10
+
+    prop = MOAIProp2D.new()
+    prop\setDeck texture
+    prop\setBlendMode(MOAIProp2D.GL_SRC_ALPHA, MOAIProp2D.GL_ONE_MINUS_SRC_ALPHA)
+    LayerMgr\getLayer('characters')\insertProp(prop)
+    return prop
 
   getAmountOfPowerups: () ->
     return #powerups
@@ -88,14 +133,17 @@ class PowerUpManager
 
     switch powerupID
       when "health"
-        newPowerup = HealthPowerup(world, layer, x, y, R.ASSETS.IMAGES[powerupID\upper!])
+        newPowerup = HealthPowerup(world, layer, x, y, R.ASSETS.IMAGES["#{powerupID}_ANIM"\upper!])
 
       when "shield"
-        newPowerup = ShieldPowerup(world, layer, x, y, R.ASSETS.IMAGES[powerupID\upper!])
+        newPowerup = ShieldPowerup(world, layer, x, y, R.ASSETS.IMAGES["#{powerupID}_ANIM"\upper!])
+
+      when "strength"
+        newPowerup = StrengthPowerup(world, layer, x, y, R.ASSETS.IMAGES["#{powerupID}_ANIM"\upper!])
 
       else
         print "Generic Powerup"
-        newPowerup = Powerup(world, layer, x, y, R.ASSETS.IMAGES[HEALTH])
+        newPowerup = Powerup(world, layer, x, y, R.ASSETS.IMAGES.HEALTH)
 
     table.insert(powerups, newPowerup)
     return newPowerup

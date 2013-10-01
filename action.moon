@@ -20,6 +20,7 @@ class IdleAction extends Action
   execute: (otherCharacters = {}) =>
     if @character.state == Characterstate.IDLE
 
+      print "Loading WRESTLER_IDLE"
       texture = R.ASSETS.IMAGES.WRESTLER_IDLE
 
       rect = @character.rectangle
@@ -59,6 +60,7 @@ class WalkAction extends Action
   execute: (otherCharacters = {}) =>
     if @character.state == Characterstate.IDLE
 
+      print "Loading WRESTLER_WALK"
       texture = R.ASSETS.IMAGES.WRESTLER_WALK
 
       rect = @character.rectangle
@@ -129,13 +131,15 @@ class FlyAction extends Action
   execute: (otherCharacters = {}) =>
     if @character.state == Characterstate.IDLE
 
+      print "Loading image UFO"
+
       texture = R.ASSETS.IMAGES.UFO
 
       rect = @character.rectangle
 
       @tileLib = MOAITileDeck2D\new()
       @tileLib\setTexture(texture)
-      @tileLib\setSize(8, 1)
+      @tileLib\setSize(4, 5)
       @tileLib\setRect(rect\get())
 
       @character.prop\setDeck @tileLib
@@ -161,6 +165,55 @@ class FlyAction extends Action
     @anim = nil
     @curve = nil
 
+  stop: () =>
+
+  poll: (otherCharacters = {}) =>
+    return true, 1
+
+class CrashAction extends Action
+
+  execute: (otherCharacters = {}) =>
+    if @character.state == Characterstate.IDLE
+
+      texture = R.ASSETS.IMAGES.UFO
+
+      rect = @character.rectangle
+
+      @tileLib = MOAITileDeck2D\new()
+      @tileLib\setTexture(texture)
+      @tileLib\setSize(4, 5)
+      @tileLib\setRect(rect\get())
+
+      @character.prop\setDeck @tileLib
+
+      @curve = MOAIAnimCurve.new()
+      @curve\reserveKeys(9)
+
+      @curve\setKey(1, 0.25, 9)
+      @curve\setKey(2, 0.5, 10)
+      @curve\setKey(3, 0.75, 11)
+      @curve\setKey(4, 0.1, 12)
+      @curve\setKey(5, 1.25, 13)
+      @curve\setKey(6, 1.5, 14)
+      @curve\setKey(7, 1.75, 15)
+      @curve\setKey(8, 2.0, 16)
+      @curve\setKey(9, 2.25, 17)
+
+      @anim = MOAIAnim\new()
+      @anim\reserveLinks(1)
+      @anim\setLink(1, @curve, @character.prop, MOAIProp2D.ATTR_INDEX)
+      @anim\setMode(MOAITimer.NORMAL)
+      @anim\setListener(MOAITimer.EVENT_TIMER_END_SPAN)
+      @anim\setSpan(3)
+      @anim\start()
+
+    super @character
+
+  beforeStop: (otherCharacters = {}) =>
+    @anim\stop()
+    @anim = nil
+    @curve = nil
+
   poll: (otherCharacters = {}) =>
     return true, 1
 
@@ -177,7 +230,7 @@ class SpawnAction extends Action
 
       @tileLib = MOAITileDeck2D\new()
       @tileLib\setTexture(texture)
-      @tileLib\setSize(8, 1)
+      @tileLib\setSize(4, 5)
       @tileLib\setRect(rect\get())
 
       @character.prop\setDeck @tileLib
@@ -360,6 +413,9 @@ class ActionManager
 
       when "fly"
         FlyAction(character)
+
+      when "crash"
+        CrashAction(character)
 
 
 export actionManager = ActionManager()

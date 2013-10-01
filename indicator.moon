@@ -38,9 +38,8 @@ export class Indicator
     diff = currentX - @startX
     progress = diff/@length
     offset = @width * progress
-    offset -= @width / 2
 
     if progress > 1
       @onEndReached!
     else
-      @propIndicator\setLoc offset, @indicatorStartY
+      @propIndicator\setLoc offset + @indicatorStartX, @indicatorStartY

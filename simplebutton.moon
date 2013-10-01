@@ -9,6 +9,10 @@ class ButtonManager
   buttons = {}
   forcefullyDisabled = false
 
+  clear: () ->
+    buttons = {}
+    forcefullyDisabled = false
+
   enableButtons: (force = false) ->
     if force
       forcefullyDisabled = false

@@ -8,11 +8,11 @@ class Character
 
   name: 'character'
 
-  new: (@characterID, @prop, @layer, @world, @direction, @rectangle, @stats, actionIDs, x = 0, y = 0) =>
+  new: (@characterID, @prop, @layer, @world, @direction, @rectangle, @stats, actionIDs, @x = 0, @y = 0, @powerupStats = { health: 1, shield: 1, strength: 1 }) =>
     @state = Characterstate.IDLE
 
     @body = @world\addBody( MOAIBox2DBody.KINEMATIC )
-    @body\setTransform x, y
+    @body\setTransform @x, @y
     @fixture = @body\addRect( @rectangle\get() )
     @fixture.character = @
     if @onCollide
@@ -21,12 +21,20 @@ class Character
     @prop.body = @body
     @currentAction = {}
 
+    @stats.maxHealth = @stats.health
+
     @actions = {}
     for actionID in *actionIDs do
       @addAction(actionID)
 
     @add()
     @update()
+
+  getHeight: () =>
+    return @rectangle\getHeight()
+
+  getWidth: () =>
+    return @rectangle\getWidth()
 
   setFilter: (category, mask) =>
     @fixture\setFilter(category, mask)
@@ -54,20 +62,29 @@ class Character
       if @stats.shield
         if @stats.shield > 0
           @stats.shield -= 1
+
+          if @stats.shield <= 0
+            @layer\removeProp @icon
+            @icon = nil
           return
       @colorBlink(1.0, 0.0, 0.0)
     print "Health was #{@stats.health}"
     @stats.health += deltaHealth
+
+    if @stats.health > @stats.maxHealth
+      @stats.maxHealth = @stats.health
     print "Health is #{@stats.health}"
     
     if @healthbar
-      @healthbar\update(@stats.health)
+      print "Health % is now: #{@stats.health / @stats.maxHealth}"
+      @healthbar\update(@stats.health / @stats.maxHealth)
     if @stats.health <= 0
       @die()
       return true
 
-  setHealthbar: (healthbar) =>
+  setHealthbar: (healthbar, fixedPosition = true) =>
     @healthbar = healthbar
+    @healthbarFixedPosition = fixedPosition
     @
 
   forceDeath: () =>
@@ -109,10 +126,20 @@ class Character
     @layer\removeProp @prop
     @
 
+  removeIcon: () =>
+    if @icon != nil
+      @layer\removeProp @icon
+      @icon = nil
+
   destroy: =>
     print "DESTROY CHARACTER"
     if @currentAction != nil and @state == Characterstate.EXECUTING
       @currentAction\beforeStop()
+    if @healthbar != nil
+      @healthbar\destroy!
+      @healthbarFixedPosition = nil
+    @removeIcon()
+    @healthbar = nil
     @currentAction = nil
     @state = nil
     @prop = nil
@@ -157,7 +184,6 @@ class Hero extends PowerupUser
       R.HIT\play!
 
   die: () =>
-    screenManager.openScreen("mainMenu")
     
 
 class Unit extends PowerupUser
@@ -185,7 +211,7 @@ class Unit extends PowerupUser
     for i  = 1, drops do
       dropping = math.random(#@possibleDrops)
 
-      powerup = powerupManager.makePowerup(@possibleDrops[dropping], x , y , R.MUSROOM)
+      powerup = powerupManager.makePowerup(@possibleDrops[dropping], (x - 10 + (i * 10)) , y)
       powerup.body\applyLinearImpulse(100,100)
       timer = MOAITimer.new()
       timer\setSpan(1)
@@ -197,6 +223,37 @@ class Unit extends PowerupUser
 class UFO extends Character
 
   name: 'ufo'
+
+  -- new: (@characterID, @prop, @layer, @world, @direction, @rectangle, @stats, actionIDs, @x = 0, @y = 0, @powerupStats = { health: 1, shield: 1, strength: 1 }) =>
+  --   @state = Characterstate.IDLE
+
+  --   @body = @world\addBody( MOAIBox2DBody.KINEMATIC )
+  --   @body\setTransform @x, @y
+  --   polygon = {
+  --     0, 45,
+  --     10, 30,
+  --     57, 0,
+  --     52, -5
+  --     -64, 0 
+  --   }
+  --   @fixture = @body\addPolygon( polygon )
+  --   @fixture.character = @
+
+  --   if @onCollide
+  --     @fixture\setCollisionHandler(@onCollide, MOAIBox2DArbiter.BEGIN)
+
+  --   @prop\setParent @body
+  --   @prop.body = @body
+  --   @currentAction = {}
+
+  --   @stats.maxHealth = @stats.health
+
+  --   @actions = {}
+  --   for actionID in *actionIDs do
+  --     @addAction(actionID)
+
+  --   @add()
+  --   @update()
 
   onCollide: (own, other, event) =>
     own = own.character
@@ -228,6 +285,18 @@ class CharacterManager
   comboCounter = 0
   powerupInfoboxes =  {}
 
+  updateCharacters: () ->
+    for character in *characters do
+      if character.icon != nil
+        x, y = character\getLocation()
+        y += (character\getHeight()/2 + 6)
+        character.icon\setLoc x, y
+      elseif character.healthbar != nil and character.healthbarFixedPosition == false
+        x, y = character\getLocation()
+        y += (character\getHeight()/2)
+        x -= (character\getWidth()/2)
+        character.healthbar\setLoc(x, y)
+
   updatePowerupCounters: () ->
     x, y = 170, 130
     offsetX, offsetY = -90, 0
@@ -238,7 +307,7 @@ class CharacterManager
     for powerUpID, amount in pairs collectedPowerups do
       graphic = powerupManager.getGraphic(powerUpID)
       print "USING THE GRAPHIC : #{graphic}"
-      powerupInfobox = PowerupInfobox(graphic, Rectangle(-10, -10, 10, 10), "x #{amount}", Rectangle(0, 0, 60, 25), R.STYLE, LayerMgr\getLayer("ui"), x, y)
+      powerupInfobox = PowerupInfobox(graphic, Rectangle(-16, -16, 16, 16), "x #{amount}", Rectangle(0, 0, 60, 25), R.STYLE, LayerMgr\getLayer("ui"), x, y)
       x += offsetX
       y += offsetY
       table.insert(powerupInfoboxes, powerupInfobox)
@@ -303,6 +372,13 @@ class CharacterManager
   removeCharacters: (queryFunction) ->
     characters = _.reject(characters, queryFunction)
 
+  removeAndDestroyCharacters: (queryFunction) ->
+    selectedCharacters = characterManager.selectCharacters(queryFunction)
+    for character in *selectedCharacters do
+      character\remove!
+      character\destroy!
+    characterManager.removeCharacters(queryFunction)
+
   setLayerAndWorld: (newLayer, newWorld) ->
     layer = newLayer
     world = newWorld
@@ -335,15 +411,22 @@ class CharacterManager
 
         stats = {
           health: 100,
-          speed: 40
+          speed: 40,
+          attack: 5
+        }
+
+        powerupStats = {
+          health: 5,
+          shield: 1,
+          strength: 5
         }
 
         actionIDs = {
           "walk", "run"
         }
 
-        newCharacter = Hero(characterID, prop, layer, world, direction.RIGHT, rectangle, stats, actionIDs, 0, -55)
-        newCharacter\setHealthbar(Healthbar(LayerMgr\getLayer("ui")))
+        newCharacter = Hero(characterID, prop, layer, world, direction.RIGHT, rectangle, stats, actionIDs, 0, -55, powerupStats)
+        newCharacter\setHealthbar(Healthbar(LayerMgr\getLayer("ui"), 100, 10))
         newCharacter\setFilter(entityCategory.CHARACTER, entityCategory.POWERUP + entityCategory.BOUNDARY)
 
       when "jumpwalker"
@@ -353,7 +436,7 @@ class CharacterManager
         stats = {
           health: 10,
           attack: 1,
-          speed: 50
+          speed: 80
         }
 
         actionIDs = {
@@ -396,6 +479,7 @@ class CharacterManager
         newCharacter = Unit(characterID, prop, layer, world, direction.LEFT, rectangle, stats, actionIDs, x, -70)
         newCharacter\setPowerupDrops(1, 2, { "health", "shield", "shield" })
         newCharacter\setFilter(entityCategory.CHARACTER, entityCategory.BOUNDARY )
+        newCharacter.icon = powerupManager.makePowerupIcon("shield")
         ufo\doAction("spawn")
 
       when "supreme_jumpwalker"
@@ -411,10 +495,17 @@ class CharacterManager
 
         print "Supreme Unit Character"
         rectangle = Rectangle(-20,-20,20,20)
+
         stats = {
           health: 10,
           attack: 15,
-          speed: 70
+          speed: 40
+        }
+
+        powerupStats = {
+          health: 2,
+          shield: 1,
+          strength: 2
         }
 
         actionIDs = {
@@ -423,14 +514,15 @@ class CharacterManager
         x = ufo\getLocation()
         print "New location: #{x}"
 
-        newCharacter = Unit(characterID, prop, layer, world, direction.LEFT, rectangle, stats, actionIDs, x, -70)
+        newCharacter = Unit(characterID, prop, layer, world, direction.LEFT, rectangle, stats, actionIDs, x, -70, powerupStats)
         newCharacter\setPowerupDrops(0, 0, {})
         newCharacter\setFilter(entityCategory.CHARACTER, entityCategory.POWERUP + entityCategory.BOUNDARY)
+        newCharacter\setHealthbar(Healthbar(LayerMgr\getLayer("characters"), 40, 4), false)
         ufo\doAction("spawn")
 
       when "ufo"
         print "UFO Character"
-        rectangle = Rectangle(-60,-50,60,50)
+        rectangle = Rectangle(-64,-64,64,64)
 
         stats = {
           health: 100,
@@ -443,7 +535,7 @@ class CharacterManager
 
         newCharacter = UFO(characterID, prop, layer, world, direction.RIGHT, rectangle, stats, actionIDs, 0, 20)
         ufo = newCharacter
-        newCharacter\setFilter(entityCategory.CHARACTER, entityCategory.POWERUP + entityCategory.BOUNDARY)
+        newCharacter\setFilter(entityCategory.CHARACTER, entityCategory.POWERUP + entityCategory.BOUNDARY + entityCategory.INACTIVEPOWERUP)
       else
         print "Generic Character"
         rectangle = Rectangle(-32,-32,32,32)

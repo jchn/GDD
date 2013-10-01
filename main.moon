@@ -83,14 +83,6 @@ screenManager.registerScreen("level_3", level)
 
 screenManager.openScreen("mainMenu")
 
--- screenManager
-
--- level = Level('config/level1.json')
--- level\load(-> print 'done loading')
--- level\initialize()
--- level\start()
-
-
 export performWithDelay = (delay, func, repeats, ...) ->
   t = MOAITimer.new()
   t\setSpan delay
