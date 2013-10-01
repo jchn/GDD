@@ -24,7 +24,8 @@
         "UFO" : "resources/ufo.png",
         "RED" : "resources/red_health.png",
         "GREEN" : "resources/green_health.png",
-        "YELLOW" : "resources/yellow_health.png"
+        "YELLOW" : "resources/yellow_health.png",
+        "WIN_GAME" : "resources/win_game.png"
       },
       "textures": {
         "JUMPWALKER_BUTTON" : "resources/button_alien_rank1.png",

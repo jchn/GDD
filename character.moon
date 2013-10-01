@@ -8,7 +8,7 @@ class Character
 
   name: 'character'
 
-  new: (@characterID, @prop, @layer, @world, @direction, @rectangle, @stats, actionIDs, x = 0, y = 0) =>
+  new: (@characterID, @prop, @layer, @world, @direction, @rectangle, @stats, actionIDs, x = 0, y = 0, @powerupStats = { health: 1, shield: 1, strength: 1 }) =>
     @state = Characterstate.IDLE
 
     @body = @world\addBody( MOAIBox2DBody.KINEMATIC )
@@ -157,7 +157,6 @@ class Hero extends PowerupUser
       R.HIT\play!
 
   die: () =>
-    screenManager.openScreen("mainMenu")
     
 
 class Unit extends PowerupUser
@@ -335,14 +334,21 @@ class CharacterManager
 
         stats = {
           health: 100,
-          speed: 40
+          speed: 40,
+          attack: 5
+        }
+
+        powerupStats = {
+          health: 5,
+          shield: 1,
+          strength: 5
         }
 
         actionIDs = {
           "walk", "run"
         }
 
-        newCharacter = Hero(characterID, prop, layer, world, direction.RIGHT, rectangle, stats, actionIDs, 0, -55)
+        newCharacter = Hero(characterID, prop, layer, world, direction.RIGHT, rectangle, stats, actionIDs, 0, -55, powerupStats)
         newCharacter\setHealthbar(Healthbar(LayerMgr\getLayer("ui")))
         newCharacter\setFilter(entityCategory.CHARACTER, entityCategory.POWERUP + entityCategory.BOUNDARY)
 
@@ -353,7 +359,7 @@ class CharacterManager
         stats = {
           health: 10,
           attack: 1,
-          speed: 50
+          speed: 80
         }
 
         actionIDs = {
@@ -411,10 +417,17 @@ class CharacterManager
 
         print "Supreme Unit Character"
         rectangle = Rectangle(-20,-20,20,20)
+
         stats = {
           health: 10,
           attack: 15,
-          speed: 70
+          speed: 40
+        }
+
+        powerupStats = {
+          health: 2,
+          shield: 1,
+          strength: 2
         }
 
         actionIDs = {
@@ -423,7 +436,7 @@ class CharacterManager
         x = ufo\getLocation()
         print "New location: #{x}"
 
-        newCharacter = Unit(characterID, prop, layer, world, direction.LEFT, rectangle, stats, actionIDs, x, -70)
+        newCharacter = Unit(characterID, prop, layer, world, direction.LEFT, rectangle, stats, actionIDs, x, -70, powerupStats)
         newCharacter\setPowerupDrops(0, 0, {})
         newCharacter\setFilter(entityCategory.CHARACTER, entityCategory.POWERUP + entityCategory.BOUNDARY)
         ufo\doAction("spawn")
@@ -443,7 +456,7 @@ class CharacterManager
 
         newCharacter = UFO(characterID, prop, layer, world, direction.RIGHT, rectangle, stats, actionIDs, 0, 20)
         ufo = newCharacter
-        newCharacter\setFilter(entityCategory.CHARACTER, entityCategory.POWERUP + entityCategory.BOUNDARY)
+        newCharacter\setFilter(entityCategory.CHARACTER, entityCategory.POWERUP + entityCategory.BOUNDARY + entityCategory.INACTIVEPOWERUP)
       else
         print "Generic Character"
         rectangle = Rectangle(-32,-32,32,32)

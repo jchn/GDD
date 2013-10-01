@@ -33,7 +33,8 @@
         "SUPREME_JUMPWALKER_BUTTON" : "resources/button_alien_rank3.png",
         "INDICATOR_BASE" : "resources/indicator_base.png",
         "INDICATOR" : "resources/indicator.png",
-        "GAME_OVER" : "resources/game_over.png"
+        "GAME_OVER" : "resources/game_over.png",
+        "WIN_GAME" : "resources/win_game.png"
       },
       "fonts": {
         "ARIAL" : {

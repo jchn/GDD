@@ -9,7 +9,7 @@ class Powerup
 
     @fixture = @body\addRect( -12, -12, 12, 12 )
     @fixture.character = @
-    @fixture\setFilter(entityCategory.INACTIVEPOWERUP, entityCategory.BOUNDARY + entityCategory.INACTIVEPOWERUP + entityCategory.POWERUP)
+    @fixture\setFilter(entityCategory.INACTIVEPOWERUP, entityCategory.BOUNDARY + entityCategory.INACTIVEPOWERUP + entityCategory.POWERUP + entityCategory.CHARACTER)
 
     @texture = MOAIGfxQuad2D.new()
     @texture\setTexture @image
@@ -45,20 +45,27 @@ class Powerup
 
 class HealthPowerup extends Powerup
 
-    specificName: 'health'
+  specificName: 'health'
 
-    execute: (character) =>
-        character\alterHealth(5)
+  execute: (character) =>
+      character\alterHealth(character.powerupStats.health)
 
 class ShieldPowerup extends Powerup
 
-    specificName: 'shield'
+  specificName: 'shield'
 
-    execute: (character) =>
-      if character.stats.shield
-        character.stats.shield += 1
-      else
-        character.stats.shield = 1
+  execute: (character) =>
+    if character.stats.shield
+      character.stats.shield += character.powerupStats.shield
+    else
+      character.stats.shield = character.powerupStats.shield
+
+class StrengthPowerup extends Powerup
+
+  specificName: 'strength'
+
+  execute: (character) =>
+    character.stats.attack += character.powerupStats.strength
 
 class PowerUpManager
 
@@ -93,9 +100,12 @@ class PowerUpManager
       when "shield"
         newPowerup = ShieldPowerup(world, layer, x, y, R.ASSETS.IMAGES[powerupID\upper!])
 
+      when "strength"
+        newPowerup = StrengthPowerup(world, layer, x, y, R.ASSETS.IMAGES[powerupID\upper!])
+
       else
         print "Generic Powerup"
-        newPowerup = Powerup(world, layer, x, y, R.ASSETS.IMAGES[HEALTH])
+        newPowerup = Powerup(world, layer, x, y, R.ASSETS.IMAGES.HEALTH)
 
     table.insert(powerups, newPowerup)
     return newPowerup
