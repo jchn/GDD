@@ -199,7 +199,7 @@ export class Level extends Screen
 			powerupManager.makePowerup(startingPowerup.ID, startingPowerup.X, startingPowerup.Y)\activate!
  
 		@startX = @wrestler.body\getPosition()
-		@indicator = Indicator(@startX, @length, LayerMgr\getLayer("ui"), 0, 150, @\gameOver)
+		@indicator = Indicator(@startX, @length, LayerMgr\getLayer("ui"), -170, 150, @\gameOver)
 		@indicator\add!
 
 		@running = true
