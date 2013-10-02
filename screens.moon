@@ -69,6 +69,12 @@ class Screen
 	close: () =>
 		print "Closing Screen"
 
+	-- openOverlay: (config) =>
+	-- 	@overlay
+
+	-- closeOverlay: () =>
+		
+
 export class GameScreen extends Screen
 
 	load: (onComplete = -> print "Loading Complete") =>
