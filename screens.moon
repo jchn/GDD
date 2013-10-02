@@ -188,12 +188,19 @@ export class Level extends Screen
 		@ufo = characterManager.makeCharacter("ufo")\add()
 
 		buttonX = 200
-		buttonY = -120
-		buttonXOffset = -40
+		buttonXInitial = buttonX
+		buttonY = -90
+		buttonYOffset = -50
+		buttonXOffset = -50
+		buttonCount = 0
 		for spawnableUnit in *@spawnableUnits 
 			button = CoolDownButton LayerMgr\getLayer("ui"), R.ASSETS.TEXTURES["#{spawnableUnit}_button"\upper!], Rectangle(-16, -16, 16, 16), buttonX, buttonY, 2, (-> characterManager.makeCharacter(spawnableUnit)), (-> return characterManager.checkEnemySpawnable(spawnableUnit))
 			button\add()
 			buttonX += buttonXOffset
+			buttonCount += 1
+			if buttonCount % 9 == 0
+				buttonX = buttonXInitial
+				buttonY += buttonYOffset
 
 		for startingPowerup in *@startingPowerups
 			powerupManager.makePowerup(startingPowerup.ID, startingPowerup.X, startingPowerup.Y)\activate!

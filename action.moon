@@ -324,7 +324,7 @@ class JumpwalkAction extends Action
         @x, @y = @character\getLocation()
 
         deltaX = (120 + @character.stats.speed) / 24
-        deltaY = (@y + 3 - (-70)) / 18
+        deltaY = (@y + 3 - (-50)) / 18
         @counter = 1
 
         @timer = MOAITimer.new()
