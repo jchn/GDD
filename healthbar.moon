@@ -1,6 +1,6 @@
 export class Healthbar
 
-  new: (@layer, @width, @height, x = -200, y = -140) =>
+  new: (@layer, @width, @height, x = -220, y = 110) =>
     @texture = MOAIGfxQuad2D.new()
     @texture\setTexture R.ASSETS.IMAGES.GREEN
     @texture\setRect 0, 0, @width, @height
@@ -19,7 +19,7 @@ export class Healthbar
     elseif percentage > 1
       percentage = 1
 
-    if percentage <= 0.34
+    if percentage <= 0.33
       @texture\setTexture R.ASSETS.IMAGES.RED
       @healthBar\setDeck @texture
     elseif percentage <= 0.5
