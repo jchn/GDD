@@ -8,17 +8,20 @@ class Character
 
   name: 'character'
 
-  new: (@characterID, @prop, @layer, @world, @direction, @rectangle, @stats, actionIDs, @x = 0, @y = 0, @powerupStats = { health: 1, shield: 1, strength: 1 }) =>
+  new: (@characterID, @prop, @layer, @world, @direction, @rectangle, @stats, actionIDs, @x = 0, @y = 0, @powerupStats = { health: 1, shield: 1, strength: 1 }, makeDefaultBody = true) =>
     @state = Characterstate.IDLE
+    @body = nil
+    @fixture = nil
 
-    @body = @world\addBody( MOAIBox2DBody.KINEMATIC )
-    @body\setTransform @x, @y
-    @fixture = @body\addRect( @rectangle\get() )
-    @fixture.character = @
-    if @onCollide
-      @fixture\setCollisionHandler(@onCollide, MOAIBox2DArbiter.BEGIN)
-    @prop\setParent @body
-    @prop.body = @body
+    if makeDefaultBody
+      @body = @world\addBody( MOAIBox2DBody.KINEMATIC )
+      @body\setTransform @x, @y
+      @fixture = @body\addRect( @rectangle\get() )
+      @fixture.parent = @
+      if @onCollide
+        @fixture\setCollisionHandler(@onCollide, MOAIBox2DArbiter.BEGIN)
+      @prop\setParent @body
+      @prop.body = @body
     @currentAction = {}
 
     @stats.maxHealth = @stats.health
@@ -158,8 +161,8 @@ class Character
 class PowerupUser extends Character
 
   onCollide: (own, other) =>
-    own = own.character
-    other = other.character
+    own = own.parent
+    other = other.parent
     if other.name == 'powerup'
       if other.prop.isDragged
         Pntr\clear()
@@ -212,7 +215,7 @@ class Unit extends PowerupUser
       dropping = math.random(#@possibleDrops)
 
       powerup = powerupManager.makePowerup(@possibleDrops[dropping], (x - 10 + (i * 10)) , y)
-      powerup.body\applyLinearImpulse(100,100)
+      powerup.body\applyLinearImpulse(140,100)
       timer = MOAITimer.new()
       timer\setSpan(1)
       timer\setMode(MOAITimer.NORMAL)
@@ -256,8 +259,8 @@ class UFO extends Character
   --   @update()
 
   onCollide: (own, other, event) =>
-    own = own.character
-    other = other.character
+    own = own.parent
+    other = other.parent
     if other.name == 'powerup'
       if other.prop.isDragged
         Pntr\clear()
@@ -291,11 +294,14 @@ class CharacterManager
         x, y = character\getLocation()
         y += (character\getHeight()/2 + 6)
         character.icon\setLoc x, y
+        if character.healthbar != nil and character.healthbarFixedPosition == false
+          character.healthbar\setVisible(false)
       elseif character.healthbar != nil and character.healthbarFixedPosition == false
         x, y = character\getLocation()
         y += (character\getHeight()/2)
         x -= (character\getWidth()/2)
         character.healthbar\setLoc(x, y)
+        character.healthbar\setVisible(true)
 
   updatePowerupCounters: () ->
     x, y = 170, 130
@@ -338,7 +344,7 @@ class CharacterManager
     for powerUpID, amount in pairs collectedPowerups do
       graphic = powerupManager.getGraphic(powerUpID)
       print "USING THE GRAPHIC : #{powerUpID} and #{amount}"
-      powerupInfobox = PowerupInfobox(graphic, Rectangle(-10, -10, 10, 10), "x #{amount}", Rectangle(0, 0, 60, 25), R.ASSETS.STYLES.ARIAL, LayerMgr\getLayer("ui"), x, y)
+      powerupInfobox = PowerupInfobox(graphic, Rectangle(-10, -10, 10, 10), "x #{amount}", Rectangle(0, 0, 60, 25), R.ASSETS.STYLES.ARIAL, LayerMgr\getLayer("ui"), x, y, powerUpID)
       x += offsetX
       y += offsetY
       table.insert(powerupInfoboxes, powerupInfobox)
@@ -348,20 +354,30 @@ class CharacterManager
       collectedPowerups[powerupSpecificName] = 0
 
     aantal = 1
-    time = os.time()
-    if time - lastTimestamp <= 1
-      comboCounter += 1
-      aantal = 1 + comboCounter
-    else
-      comboCounter = 0
+    -- time = os.time()
+    -- if time - lastTimestamp <= 1
+    --   comboCounter += 1
+    --   aantal = 1 + comboCounter
+    -- else
+    --   comboCounter = 0
 
-    lastTimestamp = time
+    -- lastTimestamp = time
 
     collectedPowerups[powerupSpecificName] += aantal
     characterManager.updatePowerupCounters()
     print "Powerup collection: #{collectedPowerups[powerupSpecificName]} with combo counter #{comboCounter}"
     buttonManager.enableButtons()
     return aantal
+
+  useCollectedPowerup: (powerupSpecificName) ->
+    collectedPowerups[powerupSpecificName] -= 1
+    characterManager.updatePowerupCounters()
+    buttonManager.enableButtons()
+
+  powerupInCollection: (powerupSpecificName) ->
+    if collectedPowerups[powerupSpecificName] != nil
+      return collectedPowerups[powerupSpecificName] >= 1
+    return false
 
   getSpawnableUnits: () ->
     -- foo
@@ -425,9 +441,9 @@ class CharacterManager
           "walk", "run"
         }
 
-        newCharacter = Hero(characterID, prop, layer, world, direction.RIGHT, rectangle, stats, actionIDs, 0, -55, powerupStats)
+        newCharacter = Hero(characterID, prop, layer, world, direction.RIGHT, rectangle, stats, actionIDs, 0, -35, powerupStats)
         newCharacter\setHealthbar(Healthbar(LayerMgr\getLayer("ui"), 100, 10))
-        newCharacter\setFilter(entityCategory.CHARACTER, entityCategory.POWERUP + entityCategory.BOUNDARY)
+        newCharacter\setFilter(entityCategory.CHARACTER, entityCategory.POWERUP + entityCategory.DRAGGEDPOWERUP + entityCategory.BOUNDARY)
 
       when "jumpwalker"
         print "Basic Unit Character"
@@ -445,8 +461,9 @@ class CharacterManager
         x = ufo\getLocation()
         print "New location: #{x}"
 
-        newCharacter = Unit(characterID, prop, layer, world, direction.LEFT, rectangle, stats, actionIDs, x, -70)
+        newCharacter = Unit(characterID, prop, layer, world, direction.LEFT, rectangle, stats, actionIDs, x, -50)
         newCharacter\setFilter(entityCategory.CHARACTER, entityCategory.BOUNDARY)
+        newCharacter\setHealthbar(Healthbar(LayerMgr\getLayer("characters"), 40, 4), false)
         ufo\doAction("spawn")
 
       when "elite_jumpwalker"
@@ -476,10 +493,11 @@ class CharacterManager
         x = ufo\getLocation()
         print "New location: #{x}"
 
-        newCharacter = Unit(characterID, prop, layer, world, direction.LEFT, rectangle, stats, actionIDs, x, -70)
+        newCharacter = Unit(characterID, prop, layer, world, direction.LEFT, rectangle, stats, actionIDs, x, -50)
         newCharacter\setPowerupDrops(1, 2, { "health", "shield", "shield" })
         newCharacter\setFilter(entityCategory.CHARACTER, entityCategory.BOUNDARY )
         newCharacter.icon = powerupManager.makePowerupIcon("shield")
+        newCharacter\setHealthbar(Healthbar(LayerMgr\getLayer("characters"), 40, 4), false)
         ufo\doAction("spawn")
 
       when "supreme_jumpwalker"
@@ -514,9 +532,9 @@ class CharacterManager
         x = ufo\getLocation()
         print "New location: #{x}"
 
-        newCharacter = Unit(characterID, prop, layer, world, direction.LEFT, rectangle, stats, actionIDs, x, -70, powerupStats)
+        newCharacter = Unit(characterID, prop, layer, world, direction.LEFT, rectangle, stats, actionIDs, x, -50, powerupStats)
         newCharacter\setPowerupDrops(0, 0, {})
-        newCharacter\setFilter(entityCategory.CHARACTER, entityCategory.POWERUP + entityCategory.BOUNDARY)
+        newCharacter\setFilter(entityCategory.CHARACTER, entityCategory.DRAGGEDPOWERUP + entityCategory.BOUNDARY)
         newCharacter\setHealthbar(Healthbar(LayerMgr\getLayer("characters"), 40, 4), false)
         ufo\doAction("spawn")
 
@@ -533,9 +551,19 @@ class CharacterManager
           "fly"
         }
 
-        newCharacter = UFO(characterID, prop, layer, world, direction.RIGHT, rectangle, stats, actionIDs, 0, 20)
+        newCharacter = UFO(characterID, prop, layer, world, direction.RIGHT, rectangle, stats, actionIDs, 0, 40, nil, false)
         ufo = newCharacter
-        newCharacter\setFilter(entityCategory.CHARACTER, entityCategory.POWERUP + entityCategory.BOUNDARY + entityCategory.INACTIVEPOWERUP)
+        
+        newCharacter.body = world\addBody( MOAIBox2DBody.KINEMATIC )
+        newCharacter.body\setTransform 0, 20
+        newCharacter.fixture = newCharacter.body\addCircle( 0, 15, 32 )
+        newCharacter.fixture.parent = newCharacter
+        newCharacter.fixture\setCollisionHandler(newCharacter.onCollide, MOAIBox2DArbiter.BEGIN)
+        newCharacter.prop\setParent newCharacter.body
+        newCharacter.prop.body = newCharacter.body
+
+        newCharacter\setFilter(entityCategory.CHARACTER, entityCategory.POWERUP + entityCategory.BOUNDARY + entityCategory.INACTIVEPOWERUP + entityCategory.DRAGGEDPOWERUP)
+      
       else
         print "Generic Character"
         rectangle = Rectangle(-32,-32,32,32)

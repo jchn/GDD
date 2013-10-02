@@ -36,6 +36,9 @@ export class Healthbar
   setLoc: (x, y) =>
     @healthBar\setLoc(x, y)
 
+  setVisible: (bool) =>
+    @healthBar\setVisible(bool)
+
   destroy: () =>
     @layer\removeProp(@healthBar)
     @texture = nil
