@@ -27,13 +27,11 @@ export class PowerupInfobox
 		@add()
 
 	triggerClick: (x, y) =>
+		x, y = @layer\worldToWnd x, y
 		if characterManager.powerupInCollection(@type)
 			characterManager.useCollectedPowerup(@type)
 			print "Clicking on Powerup Infobox for #{@type}"
 			characterLayer = LayerMgr\getLayer("characters")
-			--characterLayer.x, characterLayer.y = x, y
-			x += 230
-			y -= 100
 			x, y = characterLayer\wndToWorld x, y
 			characterLayer.x, characterLayer.y = x, y
 			powerup = powerupManager.makePowerup(@type, x, y)
