@@ -119,7 +119,7 @@ export class Level extends Screen
 		LayerMgr\createLayer('background', 1, false)\render!\setParallax 0.5, 1
 		LayerMgr\createLayer('ground', 2, false)\render!
 		LayerMgr\createLayer('characters', 3, false)\render!
-		LayerMgr\createLayer('box2d', 4, false)\render!
+		LayerMgr\createLayer('box2d', 4, false)
 		LayerMgr\createLayer('foreground', 5, false)\render!\setParallax 1.5, 1
 		LayerMgr\createLayer('ui', 7, true, false)\render!
 		LayerMgr\createLayer('powerups', 6, true)\render!

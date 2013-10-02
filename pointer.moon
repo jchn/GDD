@@ -42,6 +42,8 @@ class Pointer
 
   clear: () =>
     if @pick
+      if @pick.draggable
+        @pick.parent\endDrag()
       if @mouseBody
         @mouseBody\destroy()
         @mouseBody = nil
@@ -51,14 +53,19 @@ class Pointer
       @pick.isDragged = false
       @pick = nil
 
+  forcedPick: (prop, layer) =>
+    @pick = prop
+    @handlePick(layer)
+
   handlePick: (layer) =>
     if @pick and @pick.draggable
       @pick.isDragged = true
+      @pick.parent\beginDrag()
       @mouseBody = @world\addBody MOAIBox2DBody.DYNAMIC
       @mouseJoint = @world\addMouseJoint @mouseBody, @pick.body, layer.x, layer.y, 10000.0 * @pick.body\getMass()
       @mouseBody\setTransform layer.x, layer.y
     if @pick and @pick.clickable
-      @pick.parent\triggerClick!
+      @pick.parent\triggerClick layer.x, layer.y
 
   callback: (x, y) =>
     for priority, layer in pairs @layers

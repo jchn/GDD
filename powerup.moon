@@ -9,7 +9,7 @@ class Powerup
     @body\setTransform(@x, @y)
 
     @fixture = @body\addCircle( 0, 0, 16)
-    @fixture.character = @
+    @fixture.parent = @
     @fixture\setFilter(entityCategory.INACTIVEPOWERUP, entityCategory.BOUNDARY + entityCategory.INACTIVEPOWERUP + entityCategory.POWERUP + entityCategory.CHARACTER)
 
     @prop = MOAIProp2D.new()
@@ -17,7 +17,7 @@ class Powerup
     @prop.draggable = true
     @prop.isDragged = false
     @prop.isPowerup = true
-    @prop.character = @
+    @prop.parent = @
     @prop\setParent @body
     @prop\setBlendMode(MOAIProp2D.GL_SRC_ALPHA, MOAIProp2D.GL_ONE_MINUS_SRC_ALPHA)
 
@@ -44,6 +44,7 @@ class Powerup
     @anim\start()
 
     @layer\insertProp @prop
+    @active = false
 
   remove: () =>
     @layer\removeProp @prop
@@ -59,7 +60,19 @@ class Powerup
     @prop = nil
 
   activate: () =>
-    @fixture\setFilter(entityCategory.POWERUP, entityCategory.BOUNDARY + entityCategory.CHARACTER + entityCategory.POWERUP + entityCategory.INACTIVEPOWERUP)
+    print "Activating powerup. @active is: #{@active}"
+    if @active == false
+      print "NOW THE POWERUP SHALL BE ACTIVATED. AND IT SHALL BE GLORIOUS!"
+      @active = true
+      @fixture\setFilter(entityCategory.POWERUP, entityCategory.BOUNDARY + entityCategory.CHARACTER + entityCategory.POWERUP + entityCategory.INACTIVEPOWERUP + entityCategory.DRAGGEDPOWERUP)
+
+  beginDrag: () =>
+    @active = true
+    @fixture\setFilter(entityCategory.DRAGGEDPOWERUP, entityCategory.BOUNDARY + entityCategory.CHARACTER + entityCategory.POWERUP + entityCategory.INACTIVEPOWERUP)
+
+  endDrag: () =>
+    @active = false
+    @activate()
 
 class HealthPowerup extends Powerup
 

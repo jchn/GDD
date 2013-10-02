@@ -21,10 +21,11 @@ export mouseX = 0
 export mouseY = 0
 
 export entityCategory = {
-  BOUNDARY: 0x0001,
-  CHARACTER: 0x0002,
+  BOUNDARY: 0x0001
+  CHARACTER: 0x0002
   POWERUP: 0x0004
   INACTIVEPOWERUP: 0x0010
+  DRAGGEDPOWERUP: 0x0100
 }
 
 export direction = {
