@@ -336,7 +336,7 @@ class CharacterManager
 
   updatePowerupCounters: () ->
     x, y = 170, 130
-    offsetX, offsetY = -90, 0
+    offsetX, offsetY = -60, 0
 
     for powerupInfobox in *powerupInfoboxes do
       powerupInfobox\remove()
@@ -344,7 +344,7 @@ class CharacterManager
     for powerUpID, amount in pairs collectedPowerups do
       graphic = powerupManager.getGraphic(powerUpID)
       print "USING THE GRAPHIC : #{powerUpID} and #{amount}"
-      powerupInfobox = PowerupInfobox(graphic, Rectangle(-10, -10, 10, 10), "x #{amount}", Rectangle(0, 0, 60, 25), R.ASSETS.STYLES.ARIAL, LayerMgr\getLayer("ui"), x, y, powerUpID)
+      powerupInfobox = PowerupInfobox(graphic, Rectangle(-10, -10, 10, 10), "#{amount}", Rectangle(0, 0, 30, 25), R.ASSETS.STYLES.ARIAL, LayerMgr\getLayer("ui"), x, y, powerUpID)
       x += offsetX
       y += offsetY
       table.insert(powerupInfoboxes, powerupInfobox)
@@ -362,6 +362,9 @@ class CharacterManager
     --   comboCounter = 0
 
     -- lastTimestamp = time
+
+    if collectedPowerups[powerupSpecificName] >= 99
+      aantal = 0
 
     collectedPowerups[powerupSpecificName] += aantal
     characterManager.updatePowerupCounters()

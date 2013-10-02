@@ -119,7 +119,7 @@ export class Level extends Screen
 		LayerMgr\createLayer('background', 1, false)\render!\setParallax 0.5, 1
 		LayerMgr\createLayer('ground', 2, false)\render!
 		LayerMgr\createLayer('characters', 3, false)\render!
-		LayerMgr\createLayer('box2d', 4, false)\render!
+		LayerMgr\createLayer('box2d', 4, false)
 		LayerMgr\createLayer('foreground', 5, false)\render!\setParallax 1.5, 1
 		LayerMgr\createLayer('ui', 7, true, false)\render!
 		LayerMgr\createLayer('powerups', 6, true)\render!
@@ -165,17 +165,17 @@ export class Level extends Screen
 		fgprop = MOAIProp2D.new()
 		fgprop\setDeck fgdeck
 		fgprop\setGrid fggrid
-		fgprop\setLoc -200, -100
+		fgprop\setLoc 0, -100
 
 		bgprop = MOAIProp2D.new()
 		bgprop\setDeck bgdeck
 		bgprop\setGrid bggrid
-		bgprop\setLoc -200, -60
+		bgprop\setLoc 0, -60
 
 		gprop = MOAIProp2D.new()
 		gprop\setDeck gdeck
 		gprop\setGrid ggrid
-		gprop\setLoc -200, -80
+		gprop\setLoc 0, -80
 
 		LayerMgr\getLayer('foreground')\insertProp fgprop
 		LayerMgr\getLayer('background')\insertProp bgprop
