@@ -441,7 +441,7 @@ class CharacterManager
           "walk", "run"
         }
 
-        newCharacter = Hero(characterID, prop, layer, world, direction.RIGHT, rectangle, stats, actionIDs, 0, -55, powerupStats)
+        newCharacter = Hero(characterID, prop, layer, world, direction.RIGHT, rectangle, stats, actionIDs, 0, -35, powerupStats)
         newCharacter\setHealthbar(Healthbar(LayerMgr\getLayer("ui"), 100, 10))
         newCharacter\setFilter(entityCategory.CHARACTER, entityCategory.POWERUP + entityCategory.DRAGGEDPOWERUP + entityCategory.BOUNDARY)
 
@@ -461,7 +461,7 @@ class CharacterManager
         x = ufo\getLocation()
         print "New location: #{x}"
 
-        newCharacter = Unit(characterID, prop, layer, world, direction.LEFT, rectangle, stats, actionIDs, x, -70)
+        newCharacter = Unit(characterID, prop, layer, world, direction.LEFT, rectangle, stats, actionIDs, x, -50)
         newCharacter\setFilter(entityCategory.CHARACTER, entityCategory.BOUNDARY)
         newCharacter\setHealthbar(Healthbar(LayerMgr\getLayer("characters"), 40, 4), false)
         ufo\doAction("spawn")
@@ -493,7 +493,7 @@ class CharacterManager
         x = ufo\getLocation()
         print "New location: #{x}"
 
-        newCharacter = Unit(characterID, prop, layer, world, direction.LEFT, rectangle, stats, actionIDs, x, -70)
+        newCharacter = Unit(characterID, prop, layer, world, direction.LEFT, rectangle, stats, actionIDs, x, -50)
         newCharacter\setPowerupDrops(1, 2, { "health", "shield", "shield" })
         newCharacter\setFilter(entityCategory.CHARACTER, entityCategory.BOUNDARY )
         newCharacter.icon = powerupManager.makePowerupIcon("shield")
@@ -532,7 +532,7 @@ class CharacterManager
         x = ufo\getLocation()
         print "New location: #{x}"
 
-        newCharacter = Unit(characterID, prop, layer, world, direction.LEFT, rectangle, stats, actionIDs, x, -70, powerupStats)
+        newCharacter = Unit(characterID, prop, layer, world, direction.LEFT, rectangle, stats, actionIDs, x, -50, powerupStats)
         newCharacter\setPowerupDrops(0, 0, {})
         newCharacter\setFilter(entityCategory.CHARACTER, entityCategory.DRAGGEDPOWERUP + entityCategory.BOUNDARY)
         newCharacter\setHealthbar(Healthbar(LayerMgr\getLayer("characters"), 40, 4), false)
@@ -551,7 +551,7 @@ class CharacterManager
           "fly"
         }
 
-        newCharacter = UFO(characterID, prop, layer, world, direction.RIGHT, rectangle, stats, actionIDs, 0, 20, nil, false)
+        newCharacter = UFO(characterID, prop, layer, world, direction.RIGHT, rectangle, stats, actionIDs, 0, 40, nil, false)
         ufo = newCharacter
         
         newCharacter.body = world\addBody( MOAIBox2DBody.KINEMATIC )
