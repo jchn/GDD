@@ -15,6 +15,7 @@ require 'assetLoader'
 require 'indicator'
 require 'screens'
 
+require 'lib/copy'
 export _ = require 'lib/underscore'
 
 export mouseX = 0
@@ -46,44 +47,30 @@ screenHeight = R.DEVICE_HEIGHT
 MOAISim.openWindow "wrestlers vs aliens", screenWidth, screenHeight
 R\load()
 
+CONFIG_FILE = 'config/config.json'
+
 dataBuffer = MOAIDataBuffer.new()
-dataBuffer\load('config/config.json')
+dataBuffer\load(CONFIG_FILE)
 config = dataBuffer\getString()
 configTable = MOAIJsonParser.decode config
 configTable = configTable.Config
 
--- screenToOpen = ""
+characterManager.setConfigTable(configTable.Characters)
 
--- for screen in *configTable.Screens do
---   print "Making screen #{screen.NAME} from config.json"
---   screenType = screen.TYPE\lower!
---   newScreen = nil
---   switch screenType
---     when "Level"
---       newScreen = Level(screen.FILE)
---     else
---       newScreen = GameScreen(screen.FILE)
---   screenManager.registerScreen(screen.NAME, newScreen)
---   if screen.DEFAULTOPEN == true
---     screenToOpen = screen.NAME
-
--- screenManager.openScreen(screenToOpen)
-
-
-mainMenu = GameScreen('config/mainmenu.json')
-screenManager.registerScreen("mainMenu", mainMenu)
-
-level = Level('config/level1.json')
-
-screenManager.registerScreen("level_1", level)
-
-level = Level('config/level2.json')
-screenManager.registerScreen("level_2", level)
-
-level = Level('config/level3.json')
-screenManager.registerScreen("level_3", level)
-
-screenManager.openScreen("mainMenu")
+for screen in *configTable.Screens do
+  print "Making screen #{screen.NAME} from config.json"
+  screenType = screen.TYPE\lower!
+  newScreen = nil
+  switch screenType
+    when "level"
+      print "Loading level"
+      newScreen = Level("config/" .. screen.FILE)
+    else
+      print "Loading screen"
+      newScreen = GameScreen("config/" .. screen.FILE)
+  screenManager.registerScreen(screen.NAME, newScreen)
+  if screen.DEFAULTOPEN
+    screenManager.openScreen(screen.NAME)
 
 export performWithDelay = (delay, func, repeats, ...) ->
   t = MOAITimer.new()
