@@ -5,11 +5,22 @@ export class Healthbar
     @texture\setTexture R.ASSETS.IMAGES.GREEN
     @texture\setRect 0, 0, @width, @height
 
+    backgroundTexture = MOAIGfxQuad2D.new()
+    backgroundTexture\setTexture R.ASSETS.IMAGES.BLACK
+    backgroundTexture\setRect 0, 0, @width, @height
+
+    @background = MOAIProp2D.new()
+    @background\setDeck backgroundTexture
+    @background\setLoc(x, y)
+    @background\setBlendMode(MOAIProp2D.GL_SRC_ALPHA, MOAIProp2D.GL_ONE_MINUS_SRC_ALPHA)
+    @background\setColor 1, 1, 1, 0.6
+
     @healthBar = MOAIProp2D.new()
     @healthBar\setDeck @texture
     @healthBar\setLoc(x, y)
     @healthBar\setBlendMode(MOAIProp2D.GL_SRC_ALPHA, MOAIProp2D.GL_ONE_MINUS_SRC_ALPHA)
 
+    @layer\insertProp(@background)
     @layer\insertProp(@healthBar)
 
   update: (percentage) =>
@@ -34,12 +45,15 @@ export class Healthbar
     @texture\setRect 0, 0, width, @height
 
   setLoc: (x, y) =>
+    @background\setLoc(x, y)
     @healthBar\setLoc(x, y)
 
   setVisible: (bool) =>
+    @background\setVisible(bool)
     @healthBar\setVisible(bool)
 
   destroy: () =>
+    @layer\removeProp(@background)
     @layer\removeProp(@healthBar)
     @texture = nil
     @layer = nil

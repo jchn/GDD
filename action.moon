@@ -55,6 +55,130 @@ class IdleAction extends Action
   poll: (otherCharacters = {}) =>
     return true, 100
 
+class RangedAttackAction extends Action
+
+  execute: (otherCharacters = {}) =>
+    if @character.state == Characterstate.IDLE
+
+      print "Loading WRESTLER_IDLE"
+      texture = R.ASSETS.IMAGES.WRESTLER_PUNCH
+
+      rect = @character.rectangle
+
+      @tileLib = MOAITileDeck2D\new()
+      @tileLib\setTexture(texture)
+      @tileLib\setSize(6, 1)
+      @tileLib\setRect(rect\get())
+
+      @character.prop\setDeck @tileLib
+
+      @curve = MOAIAnimCurve.new()
+      @curve\reserveKeys(6)
+
+      @curve\setKey(1, 0.16, 1)
+      @curve\setKey(2, 0.33, 2)
+      @curve\setKey(3, 0.50, 3)
+      @curve\setKey(4, 0.66, 4)
+      @curve\setKey(5, 0.83, 5)
+      @curve\setKey(6, 1.00, 6)
+
+      @anim = MOAIAnim\new()
+      @anim\reserveLinks(1)
+      @anim\setLink(1, @curve, @character.prop, MOAIProp2D.ATTR_INDEX)
+      @anim\setMode(MOAITimer.NORMAL)
+      @anim\setSpan(2)
+      @anim\start()
+      @anim\setListener(MOAITimer.EVENT_TIMER_END_SPAN, @\stop)
+
+      @timer = MOAITimer.new()
+      @timer\setSpan(0.5)
+      @timer\setMode(MOAITimer.NORMAL)
+      @timer\setListener(MOAITimer.EVENT_TIMER_END_SPAN, @\update)
+      @timer\start()
+
+    super @character
+
+  beforeStop: (otherCharacters = {}) =>
+    @anim\stop()
+    @anim = nil
+    @curve = nil
+    @timer\stop()
+    @timer = nil
+
+  update: () =>
+    x, y = @character\getLocation()
+    bullet = powerupManager.makePowerup("bullet", x, y)
+    bullet.body\setLinearVelocity(-200, 0)
+
+class PunchAction extends Action
+
+  execute: (otherCharacters = {}) =>
+    if @character.state == Characterstate.IDLE
+
+      print "Loading WRESTLER_IDLE"
+      texture = R.ASSETS.IMAGES.WRESTLER_PUNCH
+
+      rect = @character.rectangle
+
+      @tileLib = MOAITileDeck2D\new()
+      @tileLib\setTexture(texture)
+      @tileLib\setSize(6, 1)
+      @tileLib\setRect(rect\get())
+
+      @character.prop\setDeck @tileLib
+
+      @curve = MOAIAnimCurve.new()
+      @curve\reserveKeys(6)
+
+      @curve\setKey(1, 0.16, 1)
+      @curve\setKey(2, 0.33, 2)
+      @curve\setKey(3, 0.50, 3)
+      @curve\setKey(4, 0.66, 4)
+      @curve\setKey(5, 0.83, 5)
+      @curve\setKey(6, 1.00, 6)
+
+      @anim = MOAIAnim\new()
+      @anim\reserveLinks(1)
+      @anim\setLink(1, @curve, @character.prop, MOAIProp2D.ATTR_INDEX)
+      @anim\setMode(MOAITimer.NORMAL)
+      @anim\setSpan(1.3)
+      @anim\start()
+      @anim\setListener(MOAITimer.EVENT_TIMER_END_SPAN, @\stop)
+
+      @timer = MOAITimer.new()
+      @timer\setSpan(0.5)
+      @timer\setMode(MOAITimer.NORMAL)
+      @timer\setListener(MOAITimer.EVENT_TIMER_END_SPAN, @\update)
+      @timer\start()
+
+    super @character
+
+  selectCharacters: (range) =>
+    characterManager.selectCharacters((char) ->
+      x1, y1 = char\getLocation()
+      x2, y2 = @character\getLocation()
+
+      return char.name == 'unit' and (x1 >= x2 - 20 and x1 <= x2 + range) )
+
+  update: () =>
+    otherCharacters = @selectCharacters(55)
+
+    if #otherCharacters > 0
+      for char in *otherCharacters do
+        char\alterHealth(-@character.stats.attack)
+
+  beforeStop: (otherCharacters = {}) =>
+    @anim\stop()
+    @anim = nil
+    @curve = nil
+    @timer\stop()
+    @timer = nil
+
+  poll: () =>
+    otherCharacters = @selectCharacters(55)
+    print "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Punch action: #{#otherCharacters}"
+    return true, 90 + (#otherCharacters * 100)
+
 class WalkAction extends Action
 
   execute: (otherCharacters = {}) =>
@@ -106,7 +230,73 @@ class WalkAction extends Action
     @curve = nil
 
   poll: (otherCharacters = {}) =>
-    return true, 200
+    return true, 100
+
+class CollectWalk extends Action
+
+  execute: (otherCharacters = {}) =>
+    if @character.state == Characterstate.IDLE
+
+      print "Loading WRESTLER_WALK"
+      texture = R.ASSETS.IMAGES.COLLECTOR
+
+      rect = @character.rectangle
+
+
+      @tileLib = MOAITileDeck2D\new()
+      @tileLib\setTexture(texture)
+      @tileLib\setSize(5, 1)
+      @tileLib\setRect(rect\get())
+
+      @character.prop\setDeck @tileLib
+
+      @curve = MOAIAnimCurve.new()
+      @curve\reserveKeys(5)
+
+      @curve\setKey(1, 0.25, 1)
+      @curve\setKey(2, 0.5, 2)
+      @curve\setKey(3, 0.75, 3)
+      @curve\setKey(4, 1.0, 4)
+      @curve\setKey(5, 1.25, 5)
+
+      @anim = MOAIAnim\new()
+      @anim\reserveLinks(1)
+      @anim\setLink(1, @curve, @character.prop, MOAIProp2D.ATTR_INDEX)
+      @anim\setMode(MOAITimer.LOOP)
+      @anim\setSpan(1.5)
+      @anim\start()
+      @anim\setListener(MOAITimer.EVENT_TIMER_END_SPAN, @\test)
+      -- @anim\stop(otherCharacters)
+
+      @character.body\setLinearVelocity(@character.stats.speed * @character.direction, 0)
+    super @character
+
+  test: =>
+    print 'stop'
+    @stop!
+
+  beforeStop: (otherCharacters = {}) =>
+    @anim\stop()
+    @character.body\setLinearVelocity(0, 0)
+    @anim = nil
+    @curve = nil
+
+  poll: (otherCharacters = {}) =>
+    return true, 100
+
+class EliteCollectWalk extends CollectWalk
+
+  execute: (otherCharacters = {}) =>
+    super @character
+    texture = R.ASSETS.IMAGES.ELITE_COLLECTOR
+    @tileLib\setTexture(texture) 
+
+class SupremeCollectWalk extends CollectWalk
+
+  execute: (otherCharacters = {}) =>
+    super @character
+    texture = R.ASSETS.IMAGES.SUPREME_COLLECTOR
+    @tileLib\setTexture(texture) 
 
 class RunAction extends WalkAction
 
@@ -119,12 +309,12 @@ class RunAction extends WalkAction
       x1, y1 = powerup.body\getPosition()
       x2, y2 = @character\getLocation()
 
-      return (x1 >= x2 and x1 <= x2 + 100) )
+      return powerup.name == 'powerup' and (x1 >= x2 and x1 <= x2 + 100) )
 
   poll: () =>
     otherCharacters = @selectCharacters()
     print "Run action: #{#otherCharacters}"
-    return true, 150 + (#otherCharacters * 100)
+    return true, 90 + (#otherCharacters * 20)
 
 class FlyAction extends Action
 
@@ -266,7 +456,7 @@ class JumpwalkAction extends Action
   execute: (otherCharacters = {}) =>
     if @character.state == Characterstate.IDLE
 
-      texture = R.ASSETS.IMAGES.ALIEN
+      texture = R.ASSETS.IMAGES.JUMPWALKER
 
       rect = @character.rectangle
 
@@ -369,7 +559,7 @@ class EliteJumpwalkAction extends JumpwalkAction
 
   execute: (otherCharacters = {}) =>
     super @character
-    texture = R.ASSETS.IMAGES.ALIEN2
+    texture = R.ASSETS.IMAGES.ELITE_JUMPWALKER
     @tileLib\setTexture(texture)
     print "Elite Jumpwalker!"    
 
@@ -377,7 +567,7 @@ class SupremeJumpwalkAction extends JumpwalkAction
 
   execute: (otherCharacters = {}) =>
     super @character
-    texture = R.ASSETS.IMAGES.ALIEN3
+    texture = R.ASSETS.IMAGES.SUPREME_JUMPWALKER
     @tileLib\setTexture(texture)
     print "Elite Jumpwalker!"   
 
@@ -393,6 +583,12 @@ class ActionManager
       when "walk"
         WalkAction(character)
 
+      when "punch"
+        PunchAction(character)
+
+      when "ranged"
+        RangedAttackAction(character)
+
       when "run"
         RunAction(character)
 
@@ -404,6 +600,15 @@ class ActionManager
 
       when "supreme_jumpwalk"
         SupremeJumpwalkAction(character)
+
+      when "collectwalk"
+        CollectWalk(character)
+
+      when "elite_collectwalk"
+        EliteCollectWalk(character)
+
+      when "supreme_collectwalk"
+        SupremeCollectWalk(character)
 
       when "spawn"
         SpawnAction(character)

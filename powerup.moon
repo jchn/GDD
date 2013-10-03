@@ -101,6 +101,66 @@ class StrengthPowerup extends Powerup
   execute: (character) =>
     character.stats.attack += character.powerupStats.strength
 
+class Bullet
+
+  name: 'bullet'
+
+  new: (@world, @layer, @x, @y, @image) =>
+
+    @body = @world\addBody( MOAIBox2DBody.KINEMATIC )
+    @body\setTransform(@x, @y)
+
+    @fixture = @body\addCircle( 0, 0, 16)
+    @fixture.parent = @
+    @fixture\setFilter(entityCategory.BULLET, entityCategory.BOUNDARY + entityCategory.CHARACTER)
+
+    @prop = MOAIProp2D.new()
+    @prop.body = @body
+    @prop.isPowerup = true
+    @prop.parent = @
+    @prop\setParent @body
+    @prop\setBlendMode(MOAIProp2D.GL_SRC_ALPHA, MOAIProp2D.GL_ONE_MINUS_SRC_ALPHA)
+
+    rect = Rectangle(-32,-32,32,32)
+
+    @tileLib = MOAITileDeck2D\new()
+    @tileLib\setTexture(@image)
+    @tileLib\setSize(2, 1)
+    @tileLib\setRect(rect\get())
+
+    @prop\setDeck @tileLib
+
+    @curve = MOAIAnimCurve.new()
+    @curve\reserveKeys(2)
+
+    @curve\setKey(1, 0.25, 1)
+    @curve\setKey(2, 0.5, 2)
+
+    @anim = MOAIAnim\new()
+    @anim\reserveLinks(1)
+    @anim\setLink(1, @curve, @prop, MOAIProp2D.ATTR_INDEX)
+    @anim\setMode(MOAITimer.LOOP)
+    @anim\setSpan(1)
+    @anim\start()
+
+    @layer\insertProp @prop
+
+  remove: () =>
+    @layer\removeProp @prop
+
+  destroy: () =>
+    @world = nil
+    @layer = nil
+    @x = 0
+    @y = 0
+    @image = nil
+    @body\destroy()
+    @fixture\destroy()
+    @prop = nil
+
+  execute: (character) =>
+    character\alterHealth(-1, true)
+
 class PowerUpManager
 
   layer = nil
@@ -153,6 +213,9 @@ class PowerUpManager
 
       when "strength"
         newPowerup = StrengthPowerup(world, layer, x, y, R.ASSETS.IMAGES["#{powerupID}_ANIM"\upper!])
+
+      when "bullet"
+        newPowerup = Bullet(world, layer, x, y, R.ASSETS.IMAGES.STRENGTH_ANIM)
 
       else
         print "Generic Powerup"

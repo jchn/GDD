@@ -8,15 +8,17 @@ class Character
 
   name: 'character'
 
-  new: (@characterID, @prop, @layer, @world, @direction, @rectangle, @stats, actionIDs, @x = 0, @y = 0, @powerupStats = { health: 1, shield: 1, strength: 1 }, makeDefaultBody = true) =>
+  new: (@characterID, @prop, @layer, @world, @direction, @rectangle, @bodyRectangle, @stats, actionIDs, @x = 0, @y = 0, @powerupStats = { health: 1, shield: 1, strength: 1 }, makeDefaultBody = true) =>
     @state = Characterstate.IDLE
     @body = nil
     @fixture = nil
 
-    if makeDefaultBody
+    print "MAKE DEFAUL BODY = #{makeDefaultBody}"
+    if makeDefaultBody == true
       @body = @world\addBody( MOAIBox2DBody.KINEMATIC )
       @body\setTransform @x, @y
-      @fixture = @body\addRect( @rectangle\get() )
+
+      @fixture = @body\addRect( @bodyRectangle\get() )
       @fixture.parent = @
       if @onCollide
         @fixture\setCollisionHandler(@onCollide, MOAIBox2DArbiter.BEGIN)
@@ -34,10 +36,10 @@ class Character
     @update()
 
   getHeight: () =>
-    return @rectangle\getHeight()
+    return @bodyRectangle\getHeight()
 
   getWidth: () =>
-    return @rectangle\getWidth()
+    return @bodyRectangle\getWidth()
 
   setFilter: (category, mask) =>
     @fixture\setFilter(category, mask)
@@ -60,10 +62,11 @@ class Character
       floatingNumber = nil)
     timer\start()
 
-  alterHealth: (deltaHealth) =>
+  alterHealth: (deltaHealth, pierce = false) =>
     if deltaHealth < 0
       if @stats.shield
-        if @stats.shield > 0
+        print "!!!!!!!!!!!!!!!!!!!!!!!!!! PIERC = #{pierce}"
+        if @stats.shield > 0 and pierce == false
           @stats.shield -= 1
 
           if @stats.shield <= 0
@@ -163,7 +166,7 @@ class PowerupUser extends Character
   onCollide: (own, other) =>
     own = own.parent
     other = other.parent
-    if other.name == 'powerup'
+    if other.name == 'powerup' or other.name == 'bullet'
       if other.prop.isDragged
         Pntr\clear()
       powerupManager.removePowerups((p) -> return p == other)
@@ -178,8 +181,8 @@ class Hero extends PowerupUser
 
   name: 'hero'
 
-  alterHealth: (deltaHealth) =>
-    super deltaHealth
+  alterHealth: (deltaHealth, pierce) =>
+    super deltaHealth, pierce
     if deltaHealth >= 0
       @showFloatingNumber("+#{deltaHealth}", 2, R.GREENSTYLE)
     else
@@ -222,6 +225,27 @@ class Unit extends PowerupUser
       timer\setListener(MOAITimer.EVENT_TIMER_END_SPAN, ->
         powerup\activate!)
       timer\start()
+
+class CollectorUnit extends Unit
+
+  setSkill: (@skill) =>
+
+  onCollide: (own, other, event) =>
+    own = own.parent
+    other = other.parent
+    if other.name == 'powerup'
+      if other.prop.isDragged
+        Pntr\clear()
+      other\remove()
+      other\destroy()
+      own\colorBlink(0.0, 1.0, 0.0, 1.00)
+      amount = characterManager.collectPowerup(other.specificName, own.skill)
+      if amount >= 0
+        own\showFloatingNumber("+#{amount}", 4, R.GREENSTYLE)
+      else
+        style = R.REDSTYLE
+        own\showFloatingNumber("#{amount}", 4, R.REDSTYLE)
+      powerupManager.removePowerups((p) -> return p == other)
 
 class UFO extends Character
 
@@ -269,10 +293,10 @@ class UFO extends Character
       own\colorBlink(0.0, 1.0, 0.0, 1.00)
       amount = characterManager.collectPowerup(other.specificName)
       if amount >= 0
-        own\showFloatingNumber("+#{amount}", 4, R.GREENSTYLE, 40, 20)
+        own\showFloatingNumber("+#{amount}", 4, R.GREENSTYLE)
       else
         style = R.REDSTYLE
-        own\showFloatingNumber("#{amount}", 4, R.REDSTYLE, 40, 20)
+        own\showFloatingNumber("#{amount}", 4, R.REDSTYLE)
       powerupManager.removePowerups((p) -> return p == other)
       
 
@@ -321,11 +345,26 @@ class CharacterManager
   checkEnemySpawnable: (characterID) ->
     characterID = characterID\lower()
     switch characterID
-      when "jumpwalker"
+      when "jumpwalker", "wall", "ranged"
         return true
-      when "elite_jumpwalker"
+      when "elite_jumpwalker", "collector"
         if collectedPowerups["health"]
           if collectedPowerups["health"] >= 1
+            return true
+        return false
+      when "elite_collector"
+        if collectedPowerups["health"]
+          if collectedPowerups["health"] >= 2
+            return true
+        return false
+      when "supreme_collector"
+        if collectedPowerups["health"]
+          if collectedPowerups["health"] >= 3
+            return true
+        return false
+      when "elite_wall"
+        if collectedPowerups["health"]
+          if collectedPowerups["health"] >= 10
             return true
         return false
       when "supreme_jumpwalker"
@@ -336,7 +375,7 @@ class CharacterManager
 
   updatePowerupCounters: () ->
     x, y = 170, 130
-    offsetX, offsetY = -90, 0
+    offsetX, offsetY = -60, 0
 
     for powerupInfobox in *powerupInfoboxes do
       powerupInfobox\remove()
@@ -344,16 +383,16 @@ class CharacterManager
     for powerUpID, amount in pairs collectedPowerups do
       graphic = powerupManager.getGraphic(powerUpID)
       print "USING THE GRAPHIC : #{powerUpID} and #{amount}"
-      powerupInfobox = PowerupInfobox(graphic, Rectangle(-10, -10, 10, 10), "x #{amount}", Rectangle(0, 0, 60, 25), R.ASSETS.STYLES.ARIAL, LayerMgr\getLayer("ui"), x, y, powerUpID)
+      powerupInfobox = PowerupInfobox(graphic, Rectangle(-10, -10, 10, 10), "#{amount}", Rectangle(0, 0, 30, 25), R.ASSETS.STYLES.ARIAL, LayerMgr\getLayer("ui"), x, y, powerUpID)
       x += offsetX
       y += offsetY
       table.insert(powerupInfoboxes, powerupInfobox)
 
-  collectPowerup: (powerupSpecificName) ->
+  collectPowerup: (powerupSpecificName, amount = 1) ->
     if collectedPowerups[powerupSpecificName] == nil
       collectedPowerups[powerupSpecificName] = 0
 
-    aantal = 1
+    -- aantal = 1
     -- time = os.time()
     -- if time - lastTimestamp <= 1
     --   comboCounter += 1
@@ -363,11 +402,14 @@ class CharacterManager
 
     -- lastTimestamp = time
 
-    collectedPowerups[powerupSpecificName] += aantal
+    collectedPowerups[powerupSpecificName] += amount
+    if collectedPowerups[powerupSpecificName] > 99
+      collectedPowerups[powerupSpecificName] = 99
+
     characterManager.updatePowerupCounters()
     print "Powerup collection: #{collectedPowerups[powerupSpecificName]} with combo counter #{comboCounter}"
     buttonManager.enableButtons()
-    return aantal
+    return amount
 
   useCollectedPowerup: (powerupSpecificName) ->
     collectedPowerups[powerupSpecificName] -= 1
@@ -438,16 +480,86 @@ class CharacterManager
         }
 
         actionIDs = {
-          "walk", "run"
+          "walk", "run", "punch"
         }
 
-        newCharacter = Hero(characterID, prop, layer, world, direction.RIGHT, rectangle, stats, actionIDs, 0, -35, powerupStats)
+        newCharacter = Hero(characterID, prop, layer, world, direction.RIGHT, rectangle, rectangle, stats, actionIDs, 0, -35, powerupStats)
         newCharacter\setHealthbar(Healthbar(LayerMgr\getLayer("ui"), 100, 10))
-        newCharacter\setFilter(entityCategory.CHARACTER, entityCategory.POWERUP + entityCategory.BOUNDARY)
+        newCharacter\setFilter(entityCategory.CHARACTER, entityCategory.POWERUP + entityCategory.BOUNDARY + entityCategory.BULLET)
+
+      when "ranged"
+        rectangle = Rectangle(-32, -32, 32, 32)
+
+        stats = {
+          health: 4,
+          speed: 0,
+          attack: 0
+        }
+
+        actionIDs = {
+          "ranged"
+        }
+        x = ufo\getLocation()
+
+        newCharacter = Unit(characterID, prop, layer, world, direction.LEFT, rectangle, rectangle, stats, actionIDs, x, -35)
+        newCharacter\setPowerupDrops(0, 2, { "strength", "health" })
+        newCharacter\setFilter(entityCategory.CHARACTER, entityCategory.BOUNDARY )
+        newCharacter\setHealthbar(Healthbar(LayerMgr\getLayer("characters"), 64, 4), false)
+        ufo\doAction("spawn")
+
+      when "wall"
+        rectangle = Rectangle(-32, -32, 32, 32)
+
+        stats = {
+          health: 30,
+          speed: 0,
+          attack: 0
+        }
+
+        actionIDs = {
+          "idle"
+        }
+        x = ufo\getLocation()
+
+        newCharacter = Unit(characterID, prop, layer, world, direction.LEFT, rectangle, rectangle, stats, actionIDs, x, -35)
+        newCharacter\setPowerupDrops(1, 1, { "health", "health", "strength", "shield" })
+        newCharacter\setFilter(entityCategory.CHARACTER, entityCategory.BOUNDARY )
+        newCharacter\setHealthbar(Healthbar(LayerMgr\getLayer("characters"), 64, 4), false)
+        ufo\doAction("spawn")
+
+      when "elite_wall"
+        if collectedPowerups["health"]
+          if collectedPowerups["health"] >= 10
+            collectedPowerups["health"] -= 10
+            characterManager.updatePowerupCounters()
+          else
+            return
+        else
+          return
+
+        rectangle = Rectangle(-32, -32, 32, 32)
+
+        stats = {
+          health: 100,
+          speed: 0,
+          attack: 0
+        }
+
+        actionIDs = {
+          "idle"
+        }
+        x = ufo\getLocation()
+
+        newCharacter = Unit(characterID, prop, layer, world, direction.LEFT, rectangle, rectangle, stats, actionIDs, x, -35)
+        newCharacter\setPowerupDrops(2, 2, { "health", "strength", "shield" })
+        newCharacter\setFilter(entityCategory.CHARACTER, entityCategory.BOUNDARY )
+        newCharacter\setHealthbar(Healthbar(LayerMgr\getLayer("characters"), 64, 4), false)
+        ufo\doAction("spawn")
 
       when "jumpwalker"
         print "Basic Unit Character"
-        rectangle = Rectangle(-20,-20,20,20)
+        rectangle = Rectangle(-32,-32,32,32)
+        bodyRectangle = Rectangle(-20, -20, 20, 20)
 
         stats = {
           health: 10,
@@ -461,7 +573,7 @@ class CharacterManager
         x = ufo\getLocation()
         print "New location: #{x}"
 
-        newCharacter = Unit(characterID, prop, layer, world, direction.LEFT, rectangle, stats, actionIDs, x, -50)
+        newCharacter = Unit(characterID, prop, layer, world, direction.LEFT, rectangle, bodyRectangle, stats, actionIDs, x, -50)
         newCharacter\setFilter(entityCategory.CHARACTER, entityCategory.BOUNDARY)
         newCharacter\setHealthbar(Healthbar(LayerMgr\getLayer("characters"), 40, 4), false)
         ufo\doAction("spawn")
@@ -478,7 +590,8 @@ class CharacterManager
           return
 
         print "Shielded Unit Character"
-        rectangle = Rectangle(-20,-20,20,20)
+        rectangle = Rectangle(-32,-32,32,32)
+        bodyRectangle = Rectangle(-20, -20, 20, 20)
 
         stats = {
           health: 10,
@@ -493,7 +606,7 @@ class CharacterManager
         x = ufo\getLocation()
         print "New location: #{x}"
 
-        newCharacter = Unit(characterID, prop, layer, world, direction.LEFT, rectangle, stats, actionIDs, x, -50)
+        newCharacter = Unit(characterID, prop, layer, world, direction.LEFT, rectangle, bodyRectangle, stats, actionIDs, x, -50)
         newCharacter\setPowerupDrops(1, 2, { "health", "shield", "shield" })
         newCharacter\setFilter(entityCategory.CHARACTER, entityCategory.BOUNDARY )
         newCharacter.icon = powerupManager.makePowerupIcon("shield")
@@ -512,7 +625,8 @@ class CharacterManager
           return
 
         print "Supreme Unit Character"
-        rectangle = Rectangle(-20,-20,20,20)
+        rectangle = Rectangle(-32,-32,32,32)
+        bodyRectangle = Rectangle(-20, -20, 20, 20)
 
         stats = {
           health: 10,
@@ -532,10 +646,111 @@ class CharacterManager
         x = ufo\getLocation()
         print "New location: #{x}"
 
-        newCharacter = Unit(characterID, prop, layer, world, direction.LEFT, rectangle, stats, actionIDs, x, -50, powerupStats)
+        newCharacter = Unit(characterID, prop, layer, world, direction.LEFT, rectangle, bodyRectangle, stats, actionIDs, x, -50, powerupStats)
         newCharacter\setPowerupDrops(0, 0, {})
         newCharacter\setFilter(entityCategory.CHARACTER, entityCategory.DRAGGEDPOWERUP + entityCategory.BOUNDARY)
         newCharacter\setHealthbar(Healthbar(LayerMgr\getLayer("characters"), 40, 4), false)
+        ufo\doAction("spawn")
+
+      when "collector"
+
+        if collectedPowerups["health"]
+          if collectedPowerups["health"] >= 1
+            collectedPowerups["health"] -= 1
+            characterManager.updatePowerupCounters()
+          else
+            return
+        else
+          return
+
+        print "Supreme Unit Character"
+        rectangle = Rectangle(-32,-32,32,32)
+        bodyRectangle = Rectangle(-20, -20, 20, 20)
+
+        stats = {
+          health: 1,
+          attack: 15,
+          speed: 70
+        }
+
+        actionIDs = {
+          "collectwalk"
+        }
+        x = ufo\getLocation()
+        print "New location: #{x}"
+
+        newCharacter = CollectorUnit(characterID, prop, layer, world, direction.LEFT, rectangle, bodyRectangle, stats, actionIDs, x, -35)
+        newCharacter\setPowerupDrops(0, 0, {})
+        newCharacter\setFilter(entityCategory.CHARACTER, entityCategory.POWERUP + entityCategory.BOUNDARY + entityCategory.INACTIVEPOWERUP + entityCategory.DRAGGEDPOWERUP)
+        newCharacter\setHealthbar(Healthbar(LayerMgr\getLayer("characters"), 40, 4), false)
+        ufo\doAction("spawn")
+
+      when "elite_collector"
+
+        if collectedPowerups["health"]
+          if collectedPowerups["health"] >= 2
+            collectedPowerups["health"] -= 2
+            characterManager.updatePowerupCounters()
+          else
+            return
+        else
+          return
+
+        print "Supreme Unit Character"
+        rectangle = Rectangle(-32,-32,32,32)
+        bodyRectangle = Rectangle(-20, -20, 20, 20)
+
+        stats = {
+          health: 1,
+          attack: 15,
+          speed: 70
+        }
+
+        actionIDs = {
+          "elite_collectwalk"
+        }
+        x = ufo\getLocation()
+        print "New location: #{x}"
+
+        newCharacter = CollectorUnit(characterID, prop, layer, world, direction.LEFT, rectangle, bodyRectangle, stats, actionIDs, x, -35)
+        newCharacter\setPowerupDrops(0, 0, {})
+        newCharacter\setFilter(entityCategory.CHARACTER, entityCategory.POWERUP + entityCategory.BOUNDARY + entityCategory.INACTIVEPOWERUP + entityCategory.DRAGGEDPOWERUP)
+        newCharacter\setHealthbar(Healthbar(LayerMgr\getLayer("characters"), 40, 4), false)
+        newCharacter\setSkill(2)
+        ufo\doAction("spawn")
+
+      when "supreme_collector"
+
+        if collectedPowerups["health"]
+          if collectedPowerups["health"] >= 3
+            collectedPowerups["health"] -= 3
+            characterManager.updatePowerupCounters()
+          else
+            return
+        else
+          return
+
+        print "Supreme Unit Character"
+        rectangle = Rectangle(-32,-32,32,32)
+        bodyRectangle = Rectangle(-20, -20, 20, 20)
+
+        stats = {
+          health: 1,
+          attack: 15,
+          speed: 70
+        }
+
+        actionIDs = {
+          "supreme_collectwalk"
+        }
+        x = ufo\getLocation()
+        print "New location: #{x}"
+
+        newCharacter = CollectorUnit(characterID, prop, layer, world, direction.LEFT, rectangle, bodyRectangle, stats, actionIDs, x, -35)
+        newCharacter\setPowerupDrops(0, 0, {})
+        newCharacter\setFilter(entityCategory.CHARACTER, entityCategory.POWERUP + entityCategory.BOUNDARY + entityCategory.INACTIVEPOWERUP + entityCategory.DRAGGEDPOWERUP)
+        newCharacter\setHealthbar(Healthbar(LayerMgr\getLayer("characters"), 40, 4), false)
+        newCharacter\setSkill(3)
         ufo\doAction("spawn")
 
       when "ufo"
@@ -551,7 +766,7 @@ class CharacterManager
           "fly"
         }
 
-        newCharacter = UFO(characterID, prop, layer, world, direction.RIGHT, rectangle, stats, actionIDs, 0, 40, nil, false)
+        newCharacter = UFO(characterID, prop, layer, world, direction.RIGHT, rectangle, rectangle, stats, actionIDs, 0, 40, nil, false)
         ufo = newCharacter
         
         newCharacter.body = world\addBody( MOAIBox2DBody.KINEMATIC )
@@ -564,20 +779,6 @@ class CharacterManager
 
         newCharacter\setFilter(entityCategory.CHARACTER, entityCategory.POWERUP + entityCategory.BOUNDARY + entityCategory.INACTIVEPOWERUP + entityCategory.DRAGGEDPOWERUP)
       
-      else
-        print "Generic Character"
-        rectangle = Rectangle(-32,-32,32,32)
-
-        stats = {
-          health: 100,
-          speed 40
-        }
-
-        actionIDs = {
-          "walk", "idle"
-        }
-
-        newCharacter = Character(characterID, prop, layer, world, direction.LEFT, rectangle, stats, actionIDs)
     table.insert(characters, newCharacter)
     newCharacter\add()
     return newCharacter

@@ -26,6 +26,7 @@ export entityCategory = {
   POWERUP: 0x0004
   INACTIVEPOWERUP: 0x0010
   DRAGGEDPOWERUP: 0x0100
+  BULLET: 0x1000
 }
 
 export direction = {

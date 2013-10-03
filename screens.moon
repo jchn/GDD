@@ -3,6 +3,9 @@ class ScreenManager
 	screens = {}
 	currentScreen = nil
 
+	levelRunning: () ->
+		return currentScreen.running
+
 	registerScreen: (screenID, screen) ->
 		print "Registered screen: #{screenID}"
 		screens[screenID] = screen
@@ -217,20 +220,17 @@ export class Level extends Screen
 		fgprop = MOAIProp2D.new()
 		fgprop\setDeck fgdeck
 		fgprop\setGrid fggrid
-		fgprop\setLoc -200, -100
-		fgprop\setPriority 10
+		fgprop\setLoc 0, -100
 
 		bgprop = MOAIProp2D.new()
 		bgprop\setDeck bgdeck
 		bgprop\setGrid bggrid
-		bgprop\setLoc -200, -60
-		bgprop\setPriority 10
+		bgprop\setLoc 0, -60
 
 		gprop = MOAIProp2D.new()
 		gprop\setDeck gdeck
 		gprop\setGrid ggrid
-		gprop\setLoc -200, -80
-		gprop\setPriority(10)
+		gprop\setLoc 0, -80
 
 		LayerMgr\getLayer('foreground')\insertProp fgprop
 		LayerMgr\getLayer('background')\insertProp bgprop
@@ -282,6 +282,20 @@ export class Level extends Screen
 					@indicator\update x
 					if @wrestler.stats.health <= 0
 						@win()
+
+					bullets = powerupManager.selectPowerups((powerup) ->
+      					x1, y1 = powerup.body\getPosition()
+      					x2, y2 = @wrestler\getLocation()
+
+      					return powerup.name == 'bullet' and (x1 >= x2 - 20 and x1 <= x2 + 20) )
+
+					if #bullets > 0
+						for bullet in *bullets do
+							powerupManager.removePowerups((p) -> return p == bullet)
+							bullet\remove()
+							bullet\destroy()
+							bullet\execute(@wrestler)
+
 				when levelState.LEVEL_LOST
 					@wrestler\removeIcon()
 					@ufo\doAction("crash")
