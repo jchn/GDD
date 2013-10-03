@@ -4,6 +4,7 @@ export class AssetLoader
     @TEXTURES = {}
     @FONTS = {}
     @STYLES = {}
+    @OVERLAYS = {}
 
   load: (@onLoadComplete) =>
     -- Load images
@@ -32,6 +33,32 @@ export class AssetLoader
         @STYLES[k] = MOAITextStyle.new()
         @STYLES[k]\setFont @FONTS[k]
         @STYLES[k]\setSize v.size
+
+    -- Load overlays
+    print "check for config.overlays"
+    print @config.overlays
+    if @config.overlays != nil
+      overlays = @config.overlays
+      print "overlays #{overlays}"
+      for k, v in pairs(overlays)
+        @OVERLAYS[k] = {}
+        @OVERLAYS[k]["COLOR"] = MOAIColor.new!\setColor( v["COLOR"]["R"], v["COLOR"]["G"], v["COLOR"]["B"], v["COLOR"]["A"] )
+        @OVERLAYS[k]["TEXT"] = v["TEXT"]
+        @OVERLAYS[k]["ASSETS"] = {}
+        for ke, va in pairs(v["ASSETS"])
+          @OVERLAYS[k]["ASSETS"][ke] = {}
+          @OVERLAYS[k]["ASSETS"][ke]["image"] = @IMAGES[ke]
+          @OVERLAYS[k]["ASSETS"][ke]["x"] = va["x"]
+          @OVERLAYS[k]["ASSETS"][ke]["y"] = va["y"]
+          @OVERLAYS[k]["INDICATORS"] = {}
+        for key, val in pairs(v["INDICATORS"])
+          @OVERLAYS[k]["INDICATORS"][key] = {}
+          @OVERLAYS[k]["INDICATORS"][key]["radius"] = val["radius"]
+          @OVERLAYS[k]["INDICATORS"][key]["x"] = val["x"]
+          @OVERLAYS[k]["INDICATORS"][key]["y"] = val["y"]
+
+        print "___________BBBBBBBBBBBBBB_____________"
+        print "radius #{@OVERLAYS.OVERLAY_1.INDICATORS.POWERUP.radius}"
 
     @onLoadComplete!
 

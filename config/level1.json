@@ -50,17 +50,6 @@
           "glyphs" : "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
         }
       },
-      "overlays" : {
-        "OVERLAY_1" : {
-          "color" : {
-            "R" : 0,
-            "G" : 0,
-            "B" : 0,
-            "A" : 0.5
-          },
-          "text" : "This is a powerup!, you can drag it to Pygo!"
-        }
-      },
       "environment": {
         "foreground": {
             "grid": {
@@ -77,7 +66,31 @@
 
             }
           }
+      },
+      "overlays" : {
+      "OVERLAY_1" : {
+        "COLOR" : {
+          "R" : 0,
+          "G" : 0,
+          "B" : 0,
+          "A" : 0.5
+        },
+        "TEXT" : "This is a powerup!, you can drag it to Pygo!",
+        "ASSETS" : {
+          "STRENGTH" : {
+            "x" : 5,
+            "y" : 5
+          }
+        },
+        "INDICATORS" : {
+          "POWERUP" : {
+            "x" : 5,
+            "y" : 5,
+            "radius" : 50
+          }
+        }
       }
+    }
     }
   }
 }

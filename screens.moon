@@ -69,10 +69,56 @@ class Screen
 	close: () =>
 		print "Closing Screen"
 
-	-- openOverlay: (config) =>
-	-- 	@overlay
+	openOverlay: (overlay) =>
+		@pause!
+		overlayLayer = LayerMgr\getLayer('overlay')
+		if not overlayLayer
+			print 'CREATING NEW OVERLAYLAYER'
+			overlayLayer = LayerMgr\createLayer('overlay', 8, true, false)\render!
 
-	-- closeOverlay: () =>
+		createIndicator = (x, y, radius, layer) ->
+			print 'CREATEINDICATOR'
+			gfxQuad = MOAIGfxQuad2D.new()
+			gfxQuad\setTexture( R.ASSETS.TEXTURES.WIN_GAME )
+			gfxQuad\setRect( -400, 225, 400, -225 )
+			gfxQuad\setUVRect( 0, 0, 1, 1 )
+
+			fireBg = MOAIProp2D.new()
+			fireBg\setDeck( gfxQuad )
+			layer\insertProp( fireBg )
+			fireBg\setLoc(0, 0)
+			fireBg\setPriority(10)
+
+			darkQuad = MOAIGfxQuad2D.new()
+			darkQuad\setTexture( R.ASSETS.TEXTURES.WIN_GAME )
+			darkQuad\setRect( -256, -256, 256, 256 )
+			darkQuad\setUVRect( 0, 0, 1, 1 )
+
+			darkBg = MOAIProp2D.new()
+			darkBg\setDeck( darkQuad )
+			layer\insertProp( darkBg )
+			darkBg\setLoc(0, 0)
+			darkBg\setBlendMode(MOAIProp2D.GL_ONE, MOAIProp2D.GL_ONE_MINUS_DST_ALPHA)
+			darkBg\setColor(0, 0, 0, 1)
+			darkBg\setPriority(30)
+
+			lightQuad = MOAIGfxQuad2D.new()
+			lightQuad\setTexture( R.ASSETS.TEXTURES.WIN_GAME )
+			lightQuad\setRect( -64, -64, 64, 64 )
+			lightQuad\setUVRect( 0, 0, 1, 1 )
+
+			lightBg = MOAIProp2D.new()
+			lightBg\setDeck( lightQuad )
+			layer\insertProp( lightBg )
+			lightBg\setLoc(150, -150)
+			lightBg\setBlendMode(MOAIProp2D.GL_ZERO, MOAIProp2D.GL_ONE_MINUS_SRC_COLOR)
+			lightBg\setColor(0, 0, 0, 1)
+			lightBg\setPriority(20)
+
+		createIndicator( 5, 5, "radius", overlayLayer )
+
+
+	closeOverlay: () =>
 		
 
 export class GameScreen extends Screen
@@ -125,7 +171,7 @@ export class Level extends Screen
 		LayerMgr\createLayer('background', 1, false)\render!\setParallax 0.5, 1
 		LayerMgr\createLayer('ground', 2, false)\render!
 		LayerMgr\createLayer('characters', 3, false)\render!
-		LayerMgr\createLayer('box2d', 4, false)\render!
+		LayerMgr\createLayer('box2d', 4, false)
 		LayerMgr\createLayer('foreground', 5, false)\render!\setParallax 1.5, 1
 		LayerMgr\createLayer('ui', 7, true, false)\render!
 		LayerMgr\createLayer('powerups', 6, true)\render!
@@ -172,16 +218,19 @@ export class Level extends Screen
 		fgprop\setDeck fgdeck
 		fgprop\setGrid fggrid
 		fgprop\setLoc -200, -100
+		fgprop\setPriority 10
 
 		bgprop = MOAIProp2D.new()
 		bgprop\setDeck bgdeck
 		bgprop\setGrid bggrid
 		bgprop\setLoc -200, -60
+		bgprop\setPriority 10
 
 		gprop = MOAIProp2D.new()
 		gprop\setDeck gdeck
 		gprop\setGrid ggrid
 		gprop\setLoc -200, -80
+		gprop\setPriority(10)
 
 		LayerMgr\getLayer('foreground')\insertProp fgprop
 		LayerMgr\getLayer('background')\insertProp bgprop
@@ -310,3 +359,8 @@ export class Level extends Screen
 
 	    LayerMgr\getLayer("ui")\insertProp prop
 	    buttonManager.forcefullyDisableButtons!
+
+export class TutLevel extends Level
+	open: () =>
+		super!
+		-- @openOverlay(R.ASSETS.OVERLAYS.OVERLAY_1)

@@ -72,7 +72,7 @@ configTable = configTable.Config
 mainMenu = GameScreen('config/mainmenu.json')
 screenManager.registerScreen("mainMenu", mainMenu)
 
-level = Level('config/level1.json')
+level = TutLevel('config/level1.json')
 
 screenManager.registerScreen("level_1", level)
 
