@@ -240,10 +240,10 @@ class CollectorUnit extends Unit
       own\colorBlink(0.0, 1.0, 0.0, 1.00)
       amount = characterManager.collectPowerup(other.specificName, own.skill)
       if amount >= 0
-        own\showFloatingNumber("+#{amount}", 4, R.GREENSTYLE, 40, 20)
+        own\showFloatingNumber("+#{amount}", 4, R.GREENSTYLE)
       else
         style = R.REDSTYLE
-        own\showFloatingNumber("#{amount}", 4, R.REDSTYLE, 40, 20)
+        own\showFloatingNumber("#{amount}", 4, R.REDSTYLE)
       powerupManager.removePowerups((p) -> return p == other)
 
 class UFO extends Character
@@ -292,10 +292,10 @@ class UFO extends Character
       own\colorBlink(0.0, 1.0, 0.0, 1.00)
       amount = characterManager.collectPowerup(other.specificName)
       if amount >= 0
-        own\showFloatingNumber("+#{amount}", 4, R.GREENSTYLE, 40, 20)
+        own\showFloatingNumber("+#{amount}", 4, R.GREENSTYLE)
       else
         style = R.REDSTYLE
-        own\showFloatingNumber("#{amount}", 4, R.REDSTYLE, 40, 20)
+        own\showFloatingNumber("#{amount}", 4, R.REDSTYLE)
       powerupManager.removePowerups((p) -> return p == other)
       
 
@@ -344,7 +344,7 @@ class CharacterManager
   checkEnemySpawnable: (characterID) ->
     characterID = characterID\lower()
     switch characterID
-      when "jumpwalker"
+      when "jumpwalker", "wall"
         return true
       when "elite_jumpwalker", "collector"
         if collectedPowerups["health"]
@@ -359,6 +359,11 @@ class CharacterManager
       when "supreme_collector"
         if collectedPowerups["health"]
           if collectedPowerups["health"] >= 3
+            return true
+        return false
+      when "elite_wall"
+        if collectedPowerups["health"]
+          if collectedPowerups["health"] >= 10
             return true
         return false
       when "supreme_jumpwalker"
@@ -474,12 +479,61 @@ class CharacterManager
         }
 
         actionIDs = {
-          "walk", "run"
+          "walk", "run", "punch"
         }
 
         newCharacter = Hero(characterID, prop, layer, world, direction.RIGHT, rectangle, rectangle, stats, actionIDs, 0, -35, powerupStats)
         newCharacter\setHealthbar(Healthbar(LayerMgr\getLayer("ui"), 100, 10))
         newCharacter\setFilter(entityCategory.CHARACTER, entityCategory.POWERUP + entityCategory.BOUNDARY)
+
+      when "wall"
+        rectangle = Rectangle(-32, -32, 32, 32)
+
+        stats = {
+          health: 30,
+          speed: 0,
+          attack: 0
+        }
+
+        actionIDs = {
+          "idle"
+        }
+        x = ufo\getLocation()
+
+        newCharacter = Unit(characterID, prop, layer, world, direction.LEFT, rectangle, rectangle, stats, actionIDs, x, -35)
+        newCharacter\setPowerupDrops(1, 1, { "health", "health", "strength", "shield" })
+        newCharacter\setFilter(entityCategory.CHARACTER, entityCategory.BOUNDARY )
+        newCharacter\setHealthbar(Healthbar(LayerMgr\getLayer("characters"), 64, 4), false)
+        ufo\doAction("spawn")
+
+      when "elite_wall"
+        if collectedPowerups["health"]
+          if collectedPowerups["health"] >= 10
+            collectedPowerups["health"] -= 10
+            characterManager.updatePowerupCounters()
+          else
+            return
+        else
+          return
+
+        rectangle = Rectangle(-32, -32, 32, 32)
+
+        stats = {
+          health: 100,
+          speed: 0,
+          attack: 0
+        }
+
+        actionIDs = {
+          "idle"
+        }
+        x = ufo\getLocation()
+
+        newCharacter = Unit(characterID, prop, layer, world, direction.LEFT, rectangle, rectangle, stats, actionIDs, x, -35)
+        newCharacter\setPowerupDrops(2, 2, { "health", "strength", "shield" })
+        newCharacter\setFilter(entityCategory.CHARACTER, entityCategory.BOUNDARY )
+        newCharacter\setHealthbar(Healthbar(LayerMgr\getLayer("characters"), 64, 4), false)
+        ufo\doAction("spawn")
 
       when "jumpwalker"
         print "Basic Unit Character"
@@ -593,7 +647,7 @@ class CharacterManager
         bodyRectangle = Rectangle(-20, -20, 20, 20)
 
         stats = {
-          health: 10,
+          health: 1,
           attack: 15,
           speed: 70
         }
@@ -626,7 +680,7 @@ class CharacterManager
         bodyRectangle = Rectangle(-20, -20, 20, 20)
 
         stats = {
-          health: 10,
+          health: 1,
           attack: 15,
           speed: 70
         }
@@ -660,7 +714,7 @@ class CharacterManager
         bodyRectangle = Rectangle(-20, -20, 20, 20)
 
         stats = {
-          health: 10,
+          health: 1,
           attack: 15,
           speed: 70
         }

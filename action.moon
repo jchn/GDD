@@ -55,6 +55,75 @@ class IdleAction extends Action
   poll: (otherCharacters = {}) =>
     return true, 100
 
+class PunchAction extends Action
+
+  execute: (otherCharacters = {}) =>
+    if @character.state == Characterstate.IDLE
+
+      print "Loading WRESTLER_IDLE"
+      texture = R.ASSETS.IMAGES.WRESTLER_PUNCH
+
+      rect = @character.rectangle
+
+      @tileLib = MOAITileDeck2D\new()
+      @tileLib\setTexture(texture)
+      @tileLib\setSize(6, 1)
+      @tileLib\setRect(rect\get())
+
+      @character.prop\setDeck @tileLib
+
+      @curve = MOAIAnimCurve.new()
+      @curve\reserveKeys(6)
+
+      @curve\setKey(1, 0.16, 1)
+      @curve\setKey(2, 0.33, 2)
+      @curve\setKey(3, 0.50, 3)
+      @curve\setKey(4, 0.66, 4)
+      @curve\setKey(5, 0.83, 5)
+      @curve\setKey(6, 1.00, 6)
+
+      @anim = MOAIAnim\new()
+      @anim\reserveLinks(1)
+      @anim\setLink(1, @curve, @character.prop, MOAIProp2D.ATTR_INDEX)
+      @anim\setMode(MOAITimer.NORMAL)
+      @anim\setSpan(1.3)
+      @anim\start()
+      @anim\setListener(MOAITimer.EVENT_TIMER_END_SPAN, @\stop)
+
+      @timer = MOAITimer.new()
+      @timer\setSpan(0.5)
+      @timer\setMode(MOAITimer.NORMAL)
+      @timer\setListener(MOAITimer.EVENT_TIMER_END_SPAN, @\update)
+      @timer\start()
+
+    super @character
+
+  selectCharacters: (range) =>
+    characterManager.selectCharacters((char) ->
+      x1, y1 = char\getLocation()
+      x2, y2 = @character\getLocation()
+
+      return char.name == 'unit' and (x1 >= x2 - 20 and x1 <= x2 + range) )
+
+  update: () =>
+    otherCharacters = @selectCharacters(55)
+
+    if #otherCharacters > 0
+      for char in *otherCharacters do
+        char\alterHealth(-@character.stats.attack)
+
+  beforeStop: (otherCharacters = {}) =>
+    @anim\stop()
+    @anim = nil
+    @curve = nil
+    @timer\stop()
+    @timer = nil
+
+  poll: () =>
+    otherCharacters = @selectCharacters(55)
+    print "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Punch action: #{#otherCharacters}"
+    return true, 90 + (#otherCharacters * 100)
+
 class WalkAction extends Action
 
   execute: (otherCharacters = {}) =>
@@ -106,7 +175,7 @@ class WalkAction extends Action
     @curve = nil
 
   poll: (otherCharacters = {}) =>
-    return true, 200
+    return true, 100
 
 class CollectWalk extends Action
 
@@ -158,7 +227,7 @@ class CollectWalk extends Action
     @curve = nil
 
   poll: (otherCharacters = {}) =>
-    return true, 200
+    return true, 100
 
 class EliteCollectWalk extends CollectWalk
 
@@ -190,7 +259,7 @@ class RunAction extends WalkAction
   poll: () =>
     otherCharacters = @selectCharacters()
     print "Run action: #{#otherCharacters}"
-    return true, 150 + (#otherCharacters * 100)
+    return true, 90 + (#otherCharacters * 10)
 
 class FlyAction extends Action
 
@@ -458,6 +527,9 @@ class ActionManager
 
       when "walk"
         WalkAction(character)
+
+      when "punch"
+        PunchAction(character)
 
       when "run"
         RunAction(character)
