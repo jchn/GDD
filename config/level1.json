@@ -4,7 +4,7 @@
     "wrestler" : "hero",
 
     "spawnableUnits" : [
-      "JUMPWALKER", "ELITE_JUMPWALKER", "SUPREME_JUMPWALKER", "COLLECTOR", "ELITE_COLLECTOR", "SUPREME_COLLECTOR", "WALL", "ELITE_WALL"
+      "JUMPWALKER", "ELITE_JUMPWALKER", "SUPREME_JUMPWALKER", "COLLECTOR", "ELITE_COLLECTOR", "SUPREME_COLLECTOR", "WALL", "ELITE_WALL", "RANGED"
     ],
 
     "startingPowerups" : [
@@ -34,6 +34,7 @@
         "SUPREME_COLLECTOR" : "resources/supreme_collector.png",
         "WALL" : "resources/wrestler_idle.png",
         "ELITE_WALL" : "resources/wrestler_idle.png",
+        "RANGED" : "resources/jumpwalker.png",
         "UFO" : "resources/ufo2.png",
         "RED" : "resources/red_health.png",
         "GREEN" : "resources/green_health.png",
@@ -50,6 +51,7 @@
         "SUPREME_COLLECTOR_BUTTON" : "resources/button_alien_rank1.png",
         "WALL_BUTTON" : "resources/button_alien_rank2.png",
         "ELITE_WALL_BUTTON" : "resources/button_alien_rank3.png",
+        "RANGED" : "resources/button_alien_rank1.png",
         "INDICATOR_BASE" : "resources/indicator_base.png",
         "INDICATOR" : "resources/indicator.png",
         "GAME_OVER" : "resources/game_over.png",

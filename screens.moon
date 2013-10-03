@@ -230,6 +230,20 @@ export class Level extends Screen
 					@indicator\update x
 					if @wrestler.stats.health <= 0
 						@win()
+
+					bullets = powerupManager.selectPowerups((powerup) ->
+      					x1, y1 = powerup.body\getPosition()
+      					x2, y2 = @wrestler\getLocation()
+
+      					return powerup.name == 'bullet' and (x1 >= x2 - 20 and x1 <= x2 + 20) )
+
+					if #bullets > 0
+						for bullet in *bullets do
+							powerupManager.removePowerups((p) -> return p == bullet)
+							bullet\remove()
+							bullet\destroy()
+							bullet\execute(@wrestler)
+
 				when levelState.LEVEL_LOST
 					@wrestler\removeIcon()
 					@ufo\doAction("crash")

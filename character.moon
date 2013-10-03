@@ -62,10 +62,11 @@ class Character
       floatingNumber = nil)
     timer\start()
 
-  alterHealth: (deltaHealth) =>
+  alterHealth: (deltaHealth, pierce = false) =>
     if deltaHealth < 0
       if @stats.shield
-        if @stats.shield > 0
+        print "!!!!!!!!!!!!!!!!!!!!!!!!!! PIERC = #{pierce}"
+        if @stats.shield > 0 and pierce == false
           @stats.shield -= 1
 
           if @stats.shield <= 0
@@ -165,7 +166,7 @@ class PowerupUser extends Character
   onCollide: (own, other) =>
     own = own.parent
     other = other.parent
-    if other.name == 'powerup'
+    if other.name == 'powerup' or other.name == 'bullet'
       if other.prop.isDragged
         Pntr\clear()
       powerupManager.removePowerups((p) -> return p == other)
@@ -180,8 +181,8 @@ class Hero extends PowerupUser
 
   name: 'hero'
 
-  alterHealth: (deltaHealth) =>
-    super deltaHealth
+  alterHealth: (deltaHealth, pierce) =>
+    super deltaHealth, pierce
     if deltaHealth >= 0
       @showFloatingNumber("+#{deltaHealth}", 2, R.GREENSTYLE)
     else
@@ -344,7 +345,7 @@ class CharacterManager
   checkEnemySpawnable: (characterID) ->
     characterID = characterID\lower()
     switch characterID
-      when "jumpwalker", "wall"
+      when "jumpwalker", "wall", "ranged"
         return true
       when "elite_jumpwalker", "collector"
         if collectedPowerups["health"]
@@ -484,7 +485,27 @@ class CharacterManager
 
         newCharacter = Hero(characterID, prop, layer, world, direction.RIGHT, rectangle, rectangle, stats, actionIDs, 0, -35, powerupStats)
         newCharacter\setHealthbar(Healthbar(LayerMgr\getLayer("ui"), 100, 10))
-        newCharacter\setFilter(entityCategory.CHARACTER, entityCategory.POWERUP + entityCategory.BOUNDARY)
+        newCharacter\setFilter(entityCategory.CHARACTER, entityCategory.POWERUP + entityCategory.BOUNDARY + entityCategory.BULLET)
+
+      when "ranged"
+        rectangle = Rectangle(-32, -32, 32, 32)
+
+        stats = {
+          health: 4,
+          speed: 0,
+          attack: 0
+        }
+
+        actionIDs = {
+          "ranged"
+        }
+        x = ufo\getLocation()
+
+        newCharacter = Unit(characterID, prop, layer, world, direction.LEFT, rectangle, rectangle, stats, actionIDs, x, -35)
+        newCharacter\setPowerupDrops(0, 2, { "strength", "health" })
+        newCharacter\setFilter(entityCategory.CHARACTER, entityCategory.BOUNDARY )
+        newCharacter\setHealthbar(Healthbar(LayerMgr\getLayer("characters"), 64, 4), false)
+        ufo\doAction("spawn")
 
       when "wall"
         rectangle = Rectangle(-32, -32, 32, 32)

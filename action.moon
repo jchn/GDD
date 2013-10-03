@@ -55,6 +55,61 @@ class IdleAction extends Action
   poll: (otherCharacters = {}) =>
     return true, 100
 
+class RangedAttackAction extends Action
+
+  execute: (otherCharacters = {}) =>
+    if @character.state == Characterstate.IDLE
+
+      print "Loading WRESTLER_IDLE"
+      texture = R.ASSETS.IMAGES.WRESTLER_PUNCH
+
+      rect = @character.rectangle
+
+      @tileLib = MOAITileDeck2D\new()
+      @tileLib\setTexture(texture)
+      @tileLib\setSize(6, 1)
+      @tileLib\setRect(rect\get())
+
+      @character.prop\setDeck @tileLib
+
+      @curve = MOAIAnimCurve.new()
+      @curve\reserveKeys(6)
+
+      @curve\setKey(1, 0.16, 1)
+      @curve\setKey(2, 0.33, 2)
+      @curve\setKey(3, 0.50, 3)
+      @curve\setKey(4, 0.66, 4)
+      @curve\setKey(5, 0.83, 5)
+      @curve\setKey(6, 1.00, 6)
+
+      @anim = MOAIAnim\new()
+      @anim\reserveLinks(1)
+      @anim\setLink(1, @curve, @character.prop, MOAIProp2D.ATTR_INDEX)
+      @anim\setMode(MOAITimer.NORMAL)
+      @anim\setSpan(2)
+      @anim\start()
+      @anim\setListener(MOAITimer.EVENT_TIMER_END_SPAN, @\stop)
+
+      @timer = MOAITimer.new()
+      @timer\setSpan(0.5)
+      @timer\setMode(MOAITimer.NORMAL)
+      @timer\setListener(MOAITimer.EVENT_TIMER_END_SPAN, @\update)
+      @timer\start()
+
+    super @character
+
+  beforeStop: (otherCharacters = {}) =>
+    @anim\stop()
+    @anim = nil
+    @curve = nil
+    @timer\stop()
+    @timer = nil
+
+  update: () =>
+    x, y = @character\getLocation()
+    bullet = powerupManager.makePowerup("bullet", x, y)
+    bullet.body\setLinearVelocity(-200, 0)
+
 class PunchAction extends Action
 
   execute: (otherCharacters = {}) =>
@@ -254,12 +309,12 @@ class RunAction extends WalkAction
       x1, y1 = powerup.body\getPosition()
       x2, y2 = @character\getLocation()
 
-      return (x1 >= x2 and x1 <= x2 + 100) )
+      return powerup.name == 'powerup' and (x1 >= x2 and x1 <= x2 + 100) )
 
   poll: () =>
     otherCharacters = @selectCharacters()
     print "Run action: #{#otherCharacters}"
-    return true, 90 + (#otherCharacters * 10)
+    return true, 90 + (#otherCharacters * 20)
 
 class FlyAction extends Action
 
@@ -530,6 +585,9 @@ class ActionManager
 
       when "punch"
         PunchAction(character)
+
+      when "ranged"
+        RangedAttackAction(character)
 
       when "run"
         RunAction(character)
