@@ -80,6 +80,7 @@ export class SimpleButton extends Clickable
   enable: () =>
     if @enableFunction
       if not @enableFunction()
+        @disable!
         return
     @prop\setColor 1, 1, 1, 1
     @clickable = true

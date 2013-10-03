@@ -3,6 +3,9 @@ class ScreenManager
 	screens = {}
 	currentScreen = nil
 
+	levelRunning: () ->
+		return currentScreen.running
+
 	registerScreen: (screenID, screen) ->
 		print "Registered screen: #{screenID}"
 		screens[screenID] = screen

@@ -4,7 +4,7 @@
     "wrestler" : "hero",
 
     "spawnableUnits" : [
-      "JUMPWALKER", "ELITE_JUMPWALKER", "SUPREME_JUMPWALKER"
+      "JUMPWALKER", "ELITE_JUMPWALKER", "SUPREME_JUMPWALKER", "COLLECTOR", "ELITE_COLLECTOR", "SUPREME_COLLECTOR"
     ],
 
     "startingPowerups" : [
@@ -25,19 +25,26 @@
         "SHIELD_ICON" : "resources/shield_icon.png",
         "WRESTLER_IDLE" : "resources/wrestler_idle.png",
         "WRESTLER_WALK" : "resources/wrestler_walk.png",
-        "ALIEN" : "resources/alien_rank1.png",
-        "ALIEN2" : "resources/alien_rank2.png",
-        "ALIEN3" : "resources/alien_rank3.png",
+        "JUMPWALKER" : "resources/jumpwalker.png",
+        "ELITE_JUMPWALKER" : "resources/elite_jumpwalker.png",
+        "SUPREME_JUMPWALKER" : "resources/supreme_jumpwalker.png",
+        "COLLECTOR" : "resources/collector.png",
+        "ELITE_COLLECTOR" : "resources/elite_collector.png",
+        "SUPREME_COLLECTOR" : "resources/supreme_collector.png",
         "UFO" : "resources/ufo2.png",
         "RED" : "resources/red_health.png",
         "GREEN" : "resources/green_health.png",
-        "YELLOW" : "resources/yellow_health.png"
+        "YELLOW" : "resources/yellow_health.png",
+        "BLACK" : "resources/black_health.png"
       },
       
       "textures": {
         "JUMPWALKER_BUTTON" : "resources/button_alien_rank1.png",
         "ELITE_JUMPWALKER_BUTTON" : "resources/button_alien_rank2.png",
         "SUPREME_JUMPWALKER_BUTTON" : "resources/button_alien_rank3.png",
+        "COLLECTOR_BUTTON" : "resources/button_alien_rank1.png",
+        "ELITE_COLLECTOR_BUTTON" : "resources/button_alien_rank1.png",
+        "SUPREME_COLLECTOR_BUTTON" : "resources/button_alien_rank1.png",
         "INDICATOR_BASE" : "resources/indicator_base.png",
         "INDICATOR" : "resources/indicator.png",
         "GAME_OVER" : "resources/game_over.png",
