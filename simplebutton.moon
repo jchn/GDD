@@ -112,9 +112,32 @@ export class ImageButton extends SimpleButton
     super @
     @layer\removeProp @backgroundImage
 
+export class TextButton extends SimpleButton
+
+  new: (@layer, @textLayer, @texture, @text, @style, @rectangle, @x, @y, @onClick, @enableFunction) =>
+
+    @textbox = MOAITextBox.new()
+    @textbox\setStyle(@style)
+    @textbox\setString(@text)
+    @textbox\setRect(@rectangle\get())
+    @textbox\setYFlip(true)
+    @textbox\setLoc(@x, @y - 8)
+    @textbox\setAlignment( MOAITextBox.CENTER_JUSTIFY )
+
+    super @layer, @texture, @rectangle, @x, @y, @onClick, @enableFunction
+    @
+
+  add: () =>
+    @layer\insertProp(@prop)
+    @textLayer\insertProp(@textbox)
+
+  remove: () =>
+    @layer\removeProp @prop
+    @textLayer\removeProp @textbox
+
 export class AnimatedCooldownButton extends Button
 
-  new: (@layer, @texture, @rectangle, @x, @y, @onClick, @enableFunction) =>
+  new: (@layer, @texture, @iconTexture, @rectangle, @x, @y, @onClick, @enableFunction) =>
     @prop = MOAIProp2D.new()
 
     @tileLib = MOAITileDeck2D\new()
@@ -148,21 +171,45 @@ export class AnimatedCooldownButton extends Button
     @prop\setColor 1.0, 1.0, 1.0, 1.0
     @prop\setBlendMode(MOAIProp2D.GL_SRC_ALPHA, MOAIProp2D.GL_ONE_MINUS_SRC_ALPHA)
 
+    @icon = MOAIProp2D.new()
+    @icon\setLoc(@x, @y)
+    @icon\setColor 1.0, 1.0, 1.0, 1.0
+    @icon\setBlendMode(MOAIProp2D.GL_SRC_ALPHA, MOAIProp2D.GL_ONE_MINUS_SRC_ALPHA)
+
+    @iconQuad = MOAIGfxQuad2D.new()
+    @iconQuad\setTexture( @iconTexture )
+    @iconQuad\setRect( @rectangle\get() )
+
+    @icon\setDeck( @iconQuad )
+
     buttonManager.registerButton(@)
     super @prop, @layer, @onClick, @enableFunction
     @
 
+  add: () =>
+    super @
+    LayerMgr\getLayer('icon')\insertProp @icon
+
+  remove: () =>
+    super @
+    LayerMgr\getLayer('icon')\removeProp @icon
+
   afterDisable: () =>
+    @icon\setColor 1, 1, 1, 0.5
     if @enableFunction
       if @enableFunction()
         @anim\start()
+
         return
     @anim\apply(0)
 
   afterEnable: () =>
+    @icon\setColor 1, 1, 1, 1
     if @enableFunction
       if @enableFunction()
         @anim\apply(1.8)
+        
+
 
   triggerClick: () =>
     if @clickable

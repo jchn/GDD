@@ -24,13 +24,18 @@ class ScreenManager
 		currentScreen\load!
 		currentScreen\open!
 
-	makeScreenElement: (layer, screenElementConfig) ->
+	makeScreenElement: (layer, screenElementConfig, secondaryLayer = layer) ->
 		elementID = screenElementConfig.ELEMENT\lower!
 		switch elementID
 			when "button"
 				size = screenElementConfig.SIZE
 				
 				button = SimpleButton(layer, R.ASSETS.IMAGES[screenElementConfig.IMAGE], Rectangle(size[1], size[2], size[3], size[4]), screenElementConfig.X, screenElementConfig.Y, (-> screenManager.doScreenElementFunctions(screenElementConfig.FUNCTION)), (-> screenManager.doScreenElementFunctions(screenElementConfig.ENABLE_FUNCTION)) )
+				button\add()
+			when "textbutton"
+				size = screenElementConfig.SIZE
+				
+				button = TextButton(layer, secondaryLayer, R.ASSETS.IMAGES[screenElementConfig.IMAGE], screenElementConfig.TEXT, R.STYLE, Rectangle(size[1], size[2], size[3], size[4]), screenElementConfig.X, screenElementConfig.Y, (-> screenManager.doScreenElementFunctions(screenElementConfig.FUNCTION)), (-> screenManager.doScreenElementFunctions(screenElementConfig.ENABLE_FUNCTION)) )
 				button\add()
 			when "imagebutton"
 				size = screenElementConfig.SIZE
@@ -86,6 +91,7 @@ export class GameScreen extends Screen
 	open: () =>
 		backgroundLayer = LayerMgr\createLayer('background', 1, false, false)\render!
 		screenLayer = LayerMgr\createLayer('screen', 2, true, false)\render!
+		secondaryLayer = LayerMgr\createLayer('secondary', 3, false, false)\render!
 
 		MOAIGfxDevice\getFrameBuffer()\setClearColor 0, 0, 1, 1
 
@@ -106,7 +112,7 @@ export class GameScreen extends Screen
 		backgroundLayer\insertProp bgprop
 
 		for screenElement in *@screenElements
-			screenManager.makeScreenElement(screenLayer, screenElement)
+			screenManager.makeScreenElement(screenLayer, screenElement, secondaryLayer)
 
 export levelState = {
 	MADE: 0
@@ -148,6 +154,7 @@ export class Level extends Screen
 		LayerMgr\createLayer('foreground', 5, false)\render!\setParallax 1.5, 1
 		LayerMgr\createLayer('ui', 7, true, false)\render!
 		LayerMgr\createLayer('powerups', 6, true)\render!
+		LayerMgr\createLayer('icon', 20, false, false)\render!
 
 		MOAIGfxDevice\getFrameBuffer()\setClearColor .2980, .1372, .2, 1
 
@@ -219,7 +226,7 @@ export class Level extends Screen
 		buttonXOffset = -50
 		buttonCount = 0
 		for spawnableUnit in *@spawnableUnits 
-			button = AnimatedCooldownButton LayerMgr\getLayer("ui"), R.ASSETS.IMAGES.UNIT_BUTTON, Rectangle(-32, -32, 32, 32), buttonX, buttonY, (-> characterManager.makeCharacter(spawnableUnit)), (-> return characterManager.checkEnemySpawnable(spawnableUnit))
+			button = AnimatedCooldownButton LayerMgr\getLayer("ui"), R.ASSETS.IMAGES.UNIT_BUTTON, R.ASSETS.IMAGES[spawnableUnit .. "_ICON"] ,Rectangle(-32, -32, 32, 32), buttonX, buttonY, (-> characterManager.makeCharacter(spawnableUnit)), (-> return characterManager.checkEnemySpawnable(spawnableUnit))
 			button\add()
 			buttonX += buttonXOffset
 			buttonCount += 1

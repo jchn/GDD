@@ -5,7 +5,7 @@
 		"background" : "BACKGROUND",
 
 		"screenElements" : [
-			{ "ELEMENT": "button", "X" : 0, "Y" : 0, "IMAGE" : "BUTTON", "FUNCTION" : "openscreen levelSelect", "ENABLE_FUNCTION" : "true", "SIZE" : [-128, -32, 128, 32] }
+			{ "ELEMENT": "textbutton", "X" : 0, "Y" : 0, "IMAGE" : "BUTTON", "TEXT" : "story mode" , "FUNCTION" : "openscreen levelSelect", "ENABLE_FUNCTION" : "true", "SIZE" : [-128, -32, 128, 32] }
 		],
 
 		"assets" : {
