@@ -151,7 +151,7 @@
 				"COST" : {},
 				"STATS" : {
 					"health" : 4,
-					"attack" : 0,
+					"attack" : 1,
 					"speed" : 0,
 					"shield" : 0,
 					"ranged_cooldown": 4
@@ -177,7 +177,7 @@
 				},
 				"STATS" : {
 					"health" : 4,
-					"attack" : 0,
+					"attack" : 2,
 					"speed" : 0,
 					"shield" : 0,
 					"ranged_cooldown": 3
@@ -203,7 +203,7 @@
 				},
 				"STATS" : {
 					"health" : 4,
-					"attack" : 0,
+					"attack" : 4,
 					"speed" : 0,
 					"shield" : 0,
 					"ranged_cooldown": 2
@@ -218,6 +218,7 @@
 				],
 				"RECTANGLE" : [-32, -32, 32, 32 ],
 				"SPAWNLOCATION_OFFSET" : -35,
+				"CAN_USE_POWERUPS" : true,
 				"MIN_LOOT": 1,
 				"MAX_LOOT": 1,
 				"POSSIBLE_LOOT" : [ "strength" ]
@@ -254,6 +255,52 @@
 					"speed" : 40,
 					"shield" : 0,
 					"collectSkill" : 1
+				},
+				"POWERUP_STATS" : {
+					"health" : 0,
+					"attack" : 0,
+					"shield" : 0
+				},
+				"ACTIONS" : [
+					"walk"
+				],
+				"RECTANGLE" : [-32, -32, 32, 32 ],
+				"SPAWNLOCATION_OFFSET" : -35
+			},
+
+			"ELITE_COLLECTOR" : {
+				"COST" : {
+					"health" : 1
+				},
+				"STATS" : {
+					"health" : 1,
+					"attack" : 0,
+					"speed" : 40,
+					"shield" : 0,
+					"collectSkill" : 2
+				},
+				"POWERUP_STATS" : {
+					"health" : 0,
+					"attack" : 0,
+					"shield" : 0
+				},
+				"ACTIONS" : [
+					"walk"
+				],
+				"RECTANGLE" : [-32, -32, 32, 32 ],
+				"SPAWNLOCATION_OFFSET" : -35
+			},
+
+			"SUPREME_COLLECTOR" : {
+				"COST" : {
+					"health" : 2
+				},
+				"STATS" : {
+					"health" : 1,
+					"attack" : 0,
+					"speed" : 40,
+					"shield" : 0,
+					"collectSkill" : 3
 				},
 				"POWERUP_STATS" : {
 					"health" : 0,

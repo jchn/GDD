@@ -173,9 +173,6 @@ class Hero extends PowerupUser
   name: 'hero'
 
   alterHealth: (deltaHealth, pierce) =>
-    if deltaHealth < 0 and pierce and @stats.shield > 0
-      deltaHealth *= 2
-
     super deltaHealth, pierce
     if deltaHealth >= 0
       @showFloatingNumber("+#{deltaHealth}", 2, R.GREENSTYLE)
@@ -422,7 +419,7 @@ class CharacterManager
         newCharacter = Hero(characterID, prop, layer, world, direction.RIGHT, rectangle, bodyRectangle, stats, actions, x, y, powerupStats)
         newCharacter\setHealthbar(Healthbar(LayerMgr\getLayer("ui"), 100, 10))
         newCharacter\setFilter(entityCategory.CHARACTER, entityCategory.POWERUP + entityCategory.BOUNDARY + entityCategory.BULLET)
-      when "COLLECTOR"
+      when "COLLECTOR", "ELITE_COLLECTOR", "SUPREME_COLLECTOR"
         x = ufo\getLocation()
         newCharacter = CollectorUnit(characterID, prop, layer, world, direction.LEFT, rectangle, bodyRectangle, stats, actions, x, y)
         newCharacter\setFilter(entityCategory.CHARACTER, entityCategory.POWERUP + entityCategory.BOUNDARY + entityCategory.INACTIVEPOWERUP + entityCategory.DRAGGEDPOWERUP)

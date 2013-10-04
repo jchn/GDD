@@ -111,6 +111,7 @@ class RangedAttackAction extends Action
     x, y = @character\getLocation()
     bullet = powerupManager.makePowerup("bullet", x, y)
     bullet.body\setLinearVelocity(-200, 0)
+    bullet\setPotency(@character.stats.attack * -1)
 
 class PunchAction extends Action
 

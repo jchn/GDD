@@ -156,8 +156,10 @@ class Bullet
     @fixture\destroy()
     @prop = nil
 
+  setPotency: (@potency) =>
+
   execute: (character) =>
-    character\alterHealth(-1, true)
+    character\alterHealth(@potency, true)
 
 class PowerUpManager
 
