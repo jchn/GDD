@@ -51,9 +51,6 @@ class Resource
     units_y = 320
     units_x = units_y * @DEVICE_WIDTH/@DEVICE_HEIGHT
 
-    print "DEVICE_WIDTH #{@DEVICE_WIDTH}"
-    print "DEVICE_HEIGHT #{@DEVICE_HEIGHT}"
-
     @VIEWPORT = MOAIViewport.new()
     @VIEWPORT\setSize @DEVICE_WIDTH, @DEVICE_HEIGHT
     @VIEWPORT\setScale units_x, units_y

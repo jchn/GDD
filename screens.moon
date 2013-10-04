@@ -38,12 +38,11 @@ class ScreenManager
 	doScreenElementFunctions: (functionInfo) ->
 		functionInfo = splitAtSpaces(functionInfo)
 		functionInfo[1] = functionInfo[1]\lower!
-		print "DO SCREEN ELMENT FUNCTION: #{functionInfo[1]}"
+
 		switch functionInfo[1]
 			when "openscreen"
 				screenManager.openScreen(functionInfo[2])
 			when "levelunlocked"
-				print "Level unlocked"
 				saveFile.Save.CURRENT_LEVEL >= tonumber(functionInfo[2])
 
 export screenManager = ScreenManager()
@@ -291,12 +290,9 @@ export class Level extends Screen
 			LayerMgr\getLayer("ui")\insertProp prop
 			buttonManager.forcefullyDisableButtons!
 
-			print "CURRENT LEVEL: #{@levelNO}"
-
 			if saveFile.Save.CURRENT_LEVEL <= @levelNO
 				saveFile.Save.CURRENT_LEVEL = @levelNO + 1
 				save()
-				print "CURRENT LEVEL SAVEs: #{@levelNO}"
 
 			performWithDelay(2, -> screenManager.openScreen("mainMenu"))
 

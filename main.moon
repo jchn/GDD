@@ -61,13 +61,19 @@ saveBuffer\load(SAVE_FILE)
 saveString = saveBuffer\getString()
 export saveFile = MOAIJsonParser.decode saveString
 
-if saveFile == nil
-  saveFile.Save.CURRENT_LEVEL = 1
-
 export save = () =>
   saveString = MOAIJsonParser.encode saveFile
   saveBuffer\setString(saveString)
   saveBuffer\save(SAVE_FILE)
+
+export resetSave = () =>
+  saveFile = {}
+  saveFile.Save = {}
+  saveFile.Save.CURRENT_LEVEL = 1
+  save()
+
+if saveFile == nil
+  resetSave()
 
 characterManager.setConfigTable(configTable.Characters)
 

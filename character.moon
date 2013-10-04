@@ -103,7 +103,6 @@ class Character
   addAction: (actionID) =>
     if @actions[actionID] == nil
       @actions[actionID] = actionManager.makeAction(actionID, @)
-      print @actions[actionID]
 
   doAction: (actionID) =>
     @currentAction\beforeStop()
