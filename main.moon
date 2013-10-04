@@ -58,15 +58,12 @@ configTable = configTable.Config
 characterManager.setConfigTable(configTable.Characters)
 
 for screen in *configTable.Screens do
-  print "Making screen #{screen.NAME} from config.json"
   screenType = screen.TYPE\lower!
   newScreen = nil
   switch screenType
     when "level"
-      print "Loading level"
       newScreen = Level("config/" .. screen.FILE)
     else
-      print "Loading screen"
       newScreen = GameScreen("config/" .. screen.FILE)
   screenManager.registerScreen(screen.NAME, newScreen)
   if screen.DEFAULTOPEN

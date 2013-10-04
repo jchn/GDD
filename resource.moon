@@ -1,25 +1,11 @@
 class Resource
   new: () =>
-    -- misschien later resources in json file zetten en uitlezen
     @WRESTLER_IDLE = MOAIImage.new()
     @WRESTLER_WALK = MOAIImage.new()
-    -- @MUSHROOM = MOAIImage.new()
 
     @RED = MOAIImage.new()
     @GREEN = MOAIImage.new()
     @YELLOW = MOAIImage.new()
-
-    -- @MUSHROOM2 = MOAIImage.new()
-
-    -- @BUTTON = MOAITexture.new()
-    -- @BUTTON2 = MOAITexture.new()
-    -- @BUTTON3 = MOAITexture.new()
-
-    -- @ALIEN = MOAIImage.new()
-    -- @ALIEN2 = MOAIImage.new()
-    -- @ALIEN3 = MOAIImage.new()
-    -- @UFO = MOAIImage.new()
-
 
     @FONT = MOAIFont.new()
     @CHARCODES = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz .!0123456789:-+"
@@ -34,19 +20,6 @@ class Resource
     @setupViewport()
 
   load: () =>
-
-    -- @WRESTLER_IDLE\load('resources/wrestler_idle.png')
-    -- @WRESTLER_WALK\load('resources/wrestler_walk.png')
-    -- @MUSHROOM\load('resources/mushroom.png')
-    -- @MUSHROOM2\load('resources/mushroom2.png')
-    -- @ALIEN\load('resources/alien_rank1.png')
-    -- @ALIEN2\load('resources/alien_rank2.png')
-    -- @ALIEN3\load('resources/alien_rank3.png')
-    -- @UFO\load('resources/ufo.png')
-
-    -- @BUTTON\load "resources/button_alien_rank1.png"
-    -- @BUTTON2\load "resources/button_alien_rank2.png"
-    -- @BUTTON3\load "resources/button_alien_rank3.png"
 
     @FONT\load("resources/arial-rounded.TTF")
     @FONT\preloadGlyphs(@CHARCODES, 20)
@@ -64,28 +37,6 @@ class Resource
     @YELLOW\load("resources/yellow_health.png")
 
     @HIT\load "resources/snare.wav"
-
-    -- @WRESTLER_IDLE\load('resources/wrestler_idle.png')
-    -- @WRESTLER_WALK\load('resources/wrestler_walk.png')
-    -- @MUSHROOM\load('resources/mushroom.png')
-    -- @MUSHROOM2\load('resources/mushroom2.png')
-    -- @ALIEN\load('resources/alien_rank1.png')
-    -- @ALIEN2\load('resources/alien_rank2.png')
-    -- @ALIEN3\load('resources/alien_rank3.png')
-    -- @UFO\load('resources/ufo.png')
-
-    -- @BUTTON\load "resources/button_alien_rank1.png"
-    -- @BUTTON2\load "resources/button_alien_rank2.png"
-    -- @BUTTON3\load "resources/button_alien_rank3.png"
-
-    -- @FONT\load("resources/arial-rounded.TTF")
-    -- @FONT\preloadGlyphs(@CHARCODES, 20)
-    -- @STYLE\setFont(@FONT)
-    -- @STYLE\setSize(20)
-
-    -- @RED\load("resources/red_health.png")
-    -- @GREEN\load("resources/green_health.png")
-    -- @YELLOW\load("resources/yellow_health.png")
 
   loadJson: () =>
     @databuffer = MOAIDataBuffer.new()

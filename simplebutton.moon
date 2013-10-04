@@ -16,12 +16,8 @@ class ButtonManager
   enableButtons: (force = false) ->
     if force
       forcefullyDisabled = false
-    print "Enabling the buttons!"
-    print "Forcefully disabled = #{forcefullyDisabled}"
     if not forcefullyDisabled
-      print "For loop: #{#buttons}"
       for button in *buttons do
-        print "enable"
         button\enable()
 
   forcefullyDisableButtons: () ->
@@ -30,7 +26,6 @@ class ButtonManager
     forcefullyDisabled = true
 
   registerButton: (button) ->
-    print "Registering button: #{button}"
     table.insert(buttons, button)
 
 export buttonManager = ButtonManager()
@@ -52,12 +47,9 @@ export class SimpleButton extends Clickable
     @prop\setDeck( @gfxQuad )
 
     if @enableFunction
-      print "Checking enable function1!!! "
       if @enableFunction()
-        print "enable tha button"
         @enable()
       else
-        print "disable tha button"
         @disable()
 
     super @prop, @layer
@@ -87,7 +79,6 @@ export class SimpleButton extends Clickable
 
 export class CoolDownButton extends SimpleButton
   new: (@layer, @texture, @rectangle, @x, @y, @cooldown, @onClick, @enableFunction) =>
-    print "Cooldown of #{@cooldown}"
     buttonManager.registerButton(@)
     super @layer, @texture, @rectangle, @x, @y, @onClick, @enableFunction     
 

@@ -13,7 +13,6 @@ class Character
     @body = nil
     @fixture = nil
 
-    print "MAKE DEFAUL BODY = #{makeDefaultBody}"
     if makeDefaultBody == true
       @body = @world\addBody( MOAIBox2DBody.KINEMATIC )
       @body\setTransform @x, @y
@@ -51,7 +50,6 @@ class Character
 
   showFloatingNumber: (text, length, style, offsetX = 0, offsetY = 0) =>
     x, y = @getLocation()
-    print "Random x offset: #{randomOffset}"
     x += math.random(-offsetX, offsetX)
     y += math.random(-offsetY, offsetY)
     floatingNumber = FloatingNumber(text, Rectangle(0, 0, 100, 50), style, length, x, y)
@@ -67,7 +65,6 @@ class Character
   alterHealth: (deltaHealth, pierce = false) =>
     if deltaHealth < 0
       if @stats.shield
-        print "!!!!!!!!!!!!!!!!!!!!!!!!!! PIERC = #{pierce}"
         if @stats.shield > 0 and pierce == false
           @stats.shield -= 1
 
@@ -76,15 +73,13 @@ class Character
             @icon = nil
           return
       @colorBlink(1.0, 0.0, 0.0)
-    print "Health was #{@stats.health}"
+
     @stats.health += deltaHealth
 
     if @stats.health > @stats.maxHealth
       @stats.maxHealth = @stats.health
-    print "Health is #{@stats.health}"
     
     if @healthbar
-      print "Health % is now: #{@stats.health / @stats.maxHealth}"
       @healthbar\update(@stats.health / @stats.maxHealth)
     if @stats.health <= 0
       @die()
@@ -110,14 +105,12 @@ class Character
   addAction: (actionID) =>
     if @actions[actionID] == nil
       @actions[actionID] = actionManager.makeAction(actionID, @)
-      print "added Action"
       print @actions[actionID]
 
   doAction: (actionID) =>
     @currentAction\beforeStop()
     @state = Characterstate.IDLE
     @currentAction = actionManager.makeAction(actionID, @)
-    print "Doing action: #{@currentAction}"
     @currentAction\execute()
 
   update: () =>
@@ -140,7 +133,6 @@ class Character
       @icon = nil
 
   destroy: =>
-    print "DESTROY CHARACTER"
     if @currentAction != nil and @state == Characterstate.EXECUTING
       @currentAction\beforeStop()
     if @healthbar != nil
@@ -175,7 +167,6 @@ class PowerupUser extends Character
       other\remove()
       other\destroy()
       other\execute(own)
-      print "CHECK IF POWERUP IS BEING DRAGGED #{other.isDragged}"
       own\colorBlink(0.0, 1.0, 0.0)
       
 
@@ -184,6 +175,9 @@ class Hero extends PowerupUser
   name: 'hero'
 
   alterHealth: (deltaHealth, pierce) =>
+    if deltaHealth < 0 and pierce and @stats.shield > 0
+      deltaHealth *= 2
+
     super deltaHealth, pierce
     if deltaHealth >= 0
       @showFloatingNumber("+#{deltaHealth}", 2, R.GREENSTYLE)
@@ -212,8 +206,6 @@ class Unit extends PowerupUser
     if not @possibleDrops
       @possibleDrops = { "health" }
 
-    
-    print "Drops between #{@minDrops}  and #{@maxDrops} items"
     drops = math.random(@minDrops, @maxDrops)
 
     for i  = 1, drops do
@@ -250,37 +242,6 @@ class CollectorUnit extends Unit
 class UFO extends Character
 
   name: 'ufo'
-
-  -- new: (@characterID, @prop, @layer, @world, @direction, @rectangle, @stats, actionIDs, @x = 0, @y = 0, @powerupStats = { health: 1, shield: 1, strength: 1 }) =>
-  --   @state = Characterstate.IDLE
-
-  --   @body = @world\addBody( MOAIBox2DBody.KINEMATIC )
-  --   @body\setTransform @x, @y
-  --   polygon = {
-  --     0, 45,
-  --     10, 30,
-  --     57, 0,
-  --     52, -5
-  --     -64, 0 
-  --   }
-  --   @fixture = @body\addPolygon( polygon )
-  --   @fixture.character = @
-
-  --   if @onCollide
-  --     @fixture\setCollisionHandler(@onCollide, MOAIBox2DArbiter.BEGIN)
-
-  --   @prop\setParent @body
-  --   @prop.body = @body
-  --   @currentAction = {}
-
-  --   @stats.maxHealth = @stats.health
-
-  --   @actions = {}
-  --   for actionID in *actionIDs do
-  --     @addAction(actionID)
-
-  --   @add()
-  --   @update()
 
   onCollide: (own, other, event) =>
     own = own.parent
@@ -328,21 +289,6 @@ class CharacterManager
         character.healthbar\setLoc(x, y)
         character.healthbar\setVisible(true)
 
-  updatePowerupCounters: () ->
-    x, y = 170, 130
-    offsetX, offsetY = -90, 0
-
-    for powerupInfobox in *powerupInfoboxes do
-      powerupInfobox\remove()
-
-    for powerUpID, amount in pairs collectedPowerups do
-      graphic = powerupManager.getGraphic(powerUpID)
-      print "USING THE GRAPHIC : #{graphic}"
-      powerupInfobox = PowerupInfobox(graphic, Rectangle(-16, -16, 16, 16), "x #{amount}", Rectangle(0, 0, 60, 25), R.STYLE, LayerMgr\getLayer("ui"), x, y)
-      x += offsetX
-      y += offsetY
-      table.insert(powerupInfoboxes, powerupInfobox)
-
   checkEnemySpawnable: (characterID) ->
     characterID = characterID\upper()
     if configTable[characterID].COST == nil
@@ -373,8 +319,7 @@ class CharacterManager
 
     for powerUpID, amount in pairs collectedPowerups do
       graphic = powerupManager.getGraphic(powerUpID)
-      print "USING THE GRAPHIC : #{powerUpID} and #{amount}"
-      powerupInfobox = PowerupInfobox(graphic, Rectangle(-10, -10, 10, 10), "#{amount}", Rectangle(0, 0, 30, 25), R.ASSETS.STYLES.ARIAL, LayerMgr\getLayer("ui"), x, y, powerUpID)
+      powerupInfobox = PowerupInfobox(graphic, Rectangle(-16, -16, 16, 16), "#{amount}", Rectangle(0, 0, 30, 25), R.ASSETS.STYLES.ARIAL, LayerMgr\getLayer("ui"), x, y, powerUpID)
       x += offsetX
       y += offsetY
       table.insert(powerupInfoboxes, powerupInfobox)
@@ -389,7 +334,6 @@ class CharacterManager
       collectedPowerups[powerupSpecificName] = 99
 
     characterManager.updatePowerupCounters()
-    print "Powerup collection: #{collectedPowerups[powerupSpecificName]} with combo counter #{comboCounter}"
     buttonManager.enableButtons()
     return amount
 
@@ -442,7 +386,6 @@ class CharacterManager
 
   makeCharacter: (characterID) ->
     characterID = characterID\upper()
-    print "Character Factory: " .. characterID
     prop = MOAIProp2D.new()
     prop\setLoc(0, 0)
     prop\setColor 1.0, 1.0, 1.0, 1.0

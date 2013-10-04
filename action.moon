@@ -84,12 +84,12 @@ class RangedAttackAction extends Action
       @anim\reserveLinks(1)
       @anim\setLink(1, @curve, @character.prop, MOAIProp2D.ATTR_INDEX)
       @anim\setMode(MOAITimer.NORMAL)
-      @anim\setSpan(2)
+      @anim\setSpan(4)
       @anim\start()
       @anim\setListener(MOAITimer.EVENT_TIMER_END_SPAN, @\stop)
 
       @timer = MOAITimer.new()
-      @timer\setSpan(0.5)
+      @timer\setSpan(1)
       @timer\setMode(MOAITimer.NORMAL)
       @timer\setListener(MOAITimer.EVENT_TIMER_END_SPAN, @\update)
       @timer\start()
@@ -173,7 +173,7 @@ class PunchAction extends Action
 
   poll: () =>
     otherCharacters = @selectCharacters(55)
-    return true, 90 + (#otherCharacters * 100)
+    return true, 90 + (#otherCharacters * 100) + math.random(0,12)
 
 class WalkAction extends Action
 
@@ -215,7 +215,6 @@ class WalkAction extends Action
     super @character
 
   test: =>
-    print 'stop'
     @stop!
 
   beforeStop: (otherCharacters = {}) =>
@@ -242,15 +241,12 @@ class RunAction extends WalkAction
 
   poll: () =>
     otherCharacters = @selectCharacters()
-    print "Run action: #{#otherCharacters}"
     return true, 90 + (#otherCharacters * 20)
 
 class FlyAction extends Action
 
   execute: (otherCharacters = {}) =>
     if @character.state == Characterstate.IDLE
-
-      print "Loading image UFO"
 
       texture = R.ASSETS.IMAGES.UFO
 
@@ -340,8 +336,6 @@ class SpawnAction extends Action
 
   execute: (otherCharacters = {}) =>
     if @character.state == Characterstate.IDLE
-
-      print "EXECUTING THE SPAWN ACTION!!!!!!!!!!!!!!!!!!!!!!!!!"
 
       texture = R.ASSETS.IMAGES.UFO
 
@@ -470,7 +464,6 @@ class JumpwalkAction extends Action
       return char.name == 'hero' and (x1 >= x2 - 20 and x1 <= x2 + 20) )
 
   test: =>
-    print 'stop'
     @stop!
 
   beforeStop: (otherCharacters = {}) =>
@@ -487,7 +480,6 @@ class JumpwalkAction extends Action
 class ActionManager
   makeAction: (actionID, character) ->
     actionID = actionID\lower()
-    print "Action Factory: " .. actionID
 
     switch actionID
       when "idle"

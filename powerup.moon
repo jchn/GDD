@@ -60,9 +60,7 @@ class Powerup
     @prop = nil
 
   activate: () =>
-    print "Activating powerup. @active is: #{@active}"
     if @active == false
-      print "NOW THE POWERUP SHALL BE ACTIVATED. AND IT SHALL BE GLORIOUS!"
       @active = true
       @fixture\setFilter(entityCategory.POWERUP, entityCategory.BOUNDARY + entityCategory.CHARACTER + entityCategory.POWERUP + entityCategory.INACTIVEPOWERUP + entityCategory.DRAGGEDPOWERUP)
 
@@ -99,7 +97,7 @@ class StrengthPowerup extends Powerup
   specificName: 'strength'
 
   execute: (character) =>
-    character.stats.attack += character.powerupStats.strength
+    character.stats.attack += character.powerupStats.attack
 
 class Bullet
 
@@ -199,9 +197,7 @@ class PowerUpManager
     world = newWorld
 
   makePowerup: (powerupID, x, y) ->
-    print powerupID
     powerupID = powerupID\lower()
-    print "Powerup Factory: " .. powerupID
     newPowerup = {}
 
     switch powerupID
@@ -218,7 +214,6 @@ class PowerUpManager
         newPowerup = Bullet(world, layer, x, y, R.ASSETS.IMAGES.STRENGTH_ANIM)
 
       else
-        print "Generic Powerup"
         newPowerup = Powerup(world, layer, x, y, R.ASSETS.IMAGES.HEALTH)
 
     table.insert(powerups, newPowerup)
