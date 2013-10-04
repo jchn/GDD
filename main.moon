@@ -61,6 +61,9 @@ saveBuffer\load(SAVE_FILE)
 saveString = saveBuffer\getString()
 export saveFile = MOAIJsonParser.decode saveString
 
+if saveFile == nil
+  saveFile.Save.CURRENT_LEVEL = 1
+
 export save = () =>
   saveString = MOAIJsonParser.encode saveFile
   saveBuffer\setString(saveString)
