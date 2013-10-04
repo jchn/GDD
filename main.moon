@@ -48,7 +48,7 @@ MOAISim.openWindow "wrestlers vs aliens", screenWidth, screenHeight
 R\load()
 
 CONFIG_FILE = 'config/config.json'
-SAVE_FILE = 'config/save.json'
+SAVE_FILE = (MOAIEnvironment.documentDirectory or "./") .. '/config/save.json'
 
 dataBuffer = MOAIDataBuffer.new()
 dataBuffer\load(CONFIG_FILE)
@@ -60,7 +60,6 @@ saveBuffer = MOAIDataBuffer.new()
 saveBuffer\load(SAVE_FILE)
 saveString = saveBuffer\getString()
 export saveFile = MOAIJsonParser.decode saveString
-
 
 export save = () =>
   saveString = MOAIJsonParser.encode saveFile
