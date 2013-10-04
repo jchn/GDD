@@ -36,7 +36,7 @@
 			"WRESTLER" : {
 				"COST" : {},
 				"STATS" : {
-					"health" : 100,
+					"health" : 1,
 					"attack" : 5,
 					"speed" : 40,
 					"shield" : 0

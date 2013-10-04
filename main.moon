@@ -67,8 +67,6 @@ export save = () =>
   saveBuffer\setString(saveString)
   saveBuffer\save(SAVE_FILE)
 
-save()
-
 characterManager.setConfigTable(configTable.Characters)
 
 for screen in *configTable.Screens do

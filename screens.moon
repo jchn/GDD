@@ -291,10 +291,12 @@ export class Level extends Screen
 			LayerMgr\getLayer("ui")\insertProp prop
 			buttonManager.forcefullyDisableButtons!
 
-			if saveFile.Save.CURRENT_LEVEL < @levelNO
-				saveFile.Save.CURRENT_LEVEL = @levelNO
+			print "CURRENT LEVEL: #{@levelNO}"
+
+			if saveFile.Save.CURRENT_LEVEL <= @levelNO
+				saveFile.Save.CURRENT_LEVEL = @levelNO + 1
 				save()
-				print "CURRENT LEVEL: #{@levelNO}"
+				print "CURRENT LEVEL SAVEs: #{@levelNO}"
 
 			performWithDelay(2, -> screenManager.openScreen("mainMenu"))
 
