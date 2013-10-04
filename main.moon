@@ -48,12 +48,26 @@ MOAISim.openWindow "wrestlers vs aliens", screenWidth, screenHeight
 R\load()
 
 CONFIG_FILE = 'config/config.json'
+SAVE_FILE = 'config/save.json'
 
 dataBuffer = MOAIDataBuffer.new()
 dataBuffer\load(CONFIG_FILE)
 config = dataBuffer\getString()
 configTable = MOAIJsonParser.decode config
 configTable = configTable.Config
+
+saveBuffer = MOAIDataBuffer.new()
+saveBuffer\load(SAVE_FILE)
+saveString = saveBuffer\getString()
+export saveFile = MOAIJsonParser.decode saveString
+
+
+export save = () =>
+  saveString = MOAIJsonParser.encode saveFile
+  saveBuffer\setString(saveString)
+  saveBuffer\save(SAVE_FILE)
+
+save()
 
 characterManager.setConfigTable(configTable.Characters)
 
@@ -62,7 +76,7 @@ for screen in *configTable.Screens do
   newScreen = nil
   switch screenType
     when "level"
-      newScreen = Level("config/" .. screen.FILE)
+      newScreen = Level("config/" .. screen.FILE, screen.LEVEL_NO)
     else
       newScreen = GameScreen("config/" .. screen.FILE)
   screenManager.registerScreen(screen.NAME, newScreen)

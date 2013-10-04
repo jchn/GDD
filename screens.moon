@@ -31,17 +31,20 @@ class ScreenManager
 		switch elementID
 			when "button"
 				size = screenElementConfig.SIZE
-				button = SimpleButton(layer, R.ASSETS.IMAGES[screenElementConfig.IMAGE], Rectangle(size[1], size[2], size[3], size[4]), screenElementConfig.X, screenElementConfig.Y, -> screenManager.doScreenElementFunctions(screenElementConfig.FUNCTION))
+				
+				button = SimpleButton(layer, R.ASSETS.IMAGES[screenElementConfig.IMAGE], Rectangle(size[1], size[2], size[3], size[4]), screenElementConfig.X, screenElementConfig.Y, (-> screenManager.doScreenElementFunctions(screenElementConfig.FUNCTION)), (-> screenManager.doScreenElementFunctions(screenElementConfig.ENABLE_FUNCTION)) )
 				button\add()
 
 	doScreenElementFunctions: (functionInfo) ->
 		functionInfo = splitAtSpaces(functionInfo)
 		functionInfo[1] = functionInfo[1]\lower!
-
+		print "DO SCREEN ELMENT FUNCTION: #{functionInfo[1]}"
 		switch functionInfo[1]
 			when "openscreen"
 				screenManager.openScreen(functionInfo[2])
-
+			when "levelunlocked"
+				print "Level unlocked"
+				saveFile.Save.CURRENT_LEVEL >= tonumber(functionInfo[2])
 
 export screenManager = ScreenManager()
 
@@ -90,7 +93,7 @@ export levelState = {
 
 export class Level extends Screen
 
-	new: (@configJson) =>
+	new: (@configJson, @levelNO) =>
 		super
 		@state = levelState.MADE
 
@@ -288,7 +291,14 @@ export class Level extends Screen
 			LayerMgr\getLayer("ui")\insertProp prop
 			buttonManager.forcefullyDisableButtons!
 
+			if saveFile.Save.CURRENT_LEVEL < @levelNO
+				saveFile.Save.CURRENT_LEVEL = @levelNO
+				save()
+				print "CURRENT LEVEL: #{@levelNO}"
+
 			performWithDelay(2, -> screenManager.openScreen("mainMenu"))
+
+			
 		
 	gameOver: () =>
 		if @state == levelState.RUNNING

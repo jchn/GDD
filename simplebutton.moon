@@ -46,10 +46,14 @@ export class SimpleButton extends Clickable
 
     @prop\setDeck( @gfxQuad )
 
+    print "BUTTON MADE. #{@enableFunction}"
+
     if @enableFunction
       if @enableFunction()
+        print "BUTTON IS ENABLED!"
         @enable()
       else
+        print "BUTTON IS DISABLED!"
         @disable()
 
     super @prop, @layer
