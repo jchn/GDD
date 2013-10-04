@@ -20,7 +20,7 @@ export class AssetLoader
       textures = @config.textures
       for k, v in pairs(textures)
         @TEXTURES[k] = MOAITexture.new()
-        @TEXTURES[k]\load(v)
+        @TEXTURES[k]\load(v, MOAIImage.PREMULTIPLY_ALPHA)
 
     -- Load fonts
     if @config.fonts  != nil
@@ -43,6 +43,8 @@ export class AssetLoader
       for k, v in pairs(overlays)
         @OVERLAYS[k] = {}
         @OVERLAYS[k]["TEXT"] = v["TEXT"]
+        @OVERLAYS[k]["TEXTURE"] = @TEXTURES[v["TEXTURE"]]
+        @OVERLAYS[k]["EVENT"] = v["EVENT"]
 
     @onLoadComplete!
 

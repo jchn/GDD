@@ -14,6 +14,7 @@ require 'floatingnumber'
 require 'assetLoader'
 require 'indicator'
 require 'screens'
+require 'eventhandler'
 
 require 'lib/copy'
 export _ = require 'lib/underscore'

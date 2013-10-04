@@ -2,6 +2,15 @@ class ScreenManager
 
 	screens = {}
 	currentScreen = nil
+	EVENTS = {
+		LEVEL_START: 0,
+		LEVEL_END: 1,
+		GIVE_POWERUP_TO_PYGO: 2,
+		GIVE_POWERUP_TO_ENEMY: 3,
+		GIVE_POWERUP_TO_UNIT: 4,
+		GET_POWERUP_FROM_UI: 5,
+		IDLE: 6
+	}
 
 	levelRunning: () ->
 		return currentScreen.running
@@ -68,7 +77,7 @@ class Screen
 
 	close: () =>
 
-	openOverlay: (overlay, prop) =>
+	openOverlay: (overlay) =>
 		print 'OPEN OVERLAY'
 		@pause!
 
@@ -76,8 +85,10 @@ class Screen
 		print 'CREATEINDICATOR'
 		print "olayer: #{olayer}, ilayer: #{ilayer}"
 
+		layer = LayerMgr\getLayer 'powerups'
 		olayer = LayerMgr\getLayer("overlay")
 		ilayer = LayerMgr\getLayer("indicator")
+		infoLayer = LayerMgr\getLayer("info")
 
 		darkQuad = MOAIGfxQuad2D.new()
 		darkQuad\setTexture( R.ASSETS.TEXTURES.DARK_OVERLAY )
@@ -87,7 +98,7 @@ class Screen
 		darkBg = MOAIProp2D.new()
 		darkBg\setDeck( darkQuad )
 		olayer\insertProp( darkBg )
-		darkBg\setLoc(olayer\wndToWorld(256, 0))
+		darkBg\setLoc(0, 0)
 		darkBg\setBlendMode(MOAIProp2D.GL_SRC_ALPHA, MOAIProp2D.GL_ONE_MINUS_DST_ALPHA)
 		darkBg\setColor(0, 0, 0, 1)
 		darkBg\setPriority(30)
@@ -105,9 +116,12 @@ class Screen
 		transparentBg\setColor(0, 0, 0, 1)
 		transparentBg\setPriority(35)
 
-		x,y = prop\getLoc!
-		pLayer = LayerMgr\getLayer('characters')
-		wndX, wndY = pLayer\worldToWnd x, y
+		-- x,y = prop\getLoc!
+		-- pLayer = LayerMgr\getLayer('characters')
+		-- wndX, wndY = pLayer\worldToWnd x, y
+
+		-- powerup = powerupManager.makePowerup("", 0, 0)
+		-- newProp = powerup.prop
 
 		lightQuad = MOAIGfxQuad2D.new()
 		lightQuad\setTexture( R.ASSETS.TEXTURES.INDICATOR64 )
@@ -117,10 +131,41 @@ class Screen
 		lightBg = MOAIProp2D.new()
 		lightBg\setDeck( lightQuad )
 		ilayer\insertProp( lightBg )
-		lightBg\setLoc(wndX, 0)
+		-- newProp\setLoc(prop\getLoc!)
+		lightBg\setLoc(0, 0)
+		-- newProp\setLoc(layer\worldToWnd(prop\getLoc!))
 		lightBg\setBlendMode(MOAIProp2D.GL_ZERO, MOAIProp2D.GL_ONE_MINUS_SRC_COLOR)
 		lightBg\setColor(0, 0, 0, 0.5)
-		lightBg\setPriority(40)
+		-- newProp\setColor 0, 0, 0, 0.5
+		-- lightBg\setPriority(40)
+		-- newProp\setPriority 40
+
+		-- Set the image in center
+
+		imageQuad = MOAIGfxQuad2D.new()
+		imageQuad\setTexture( overlay.TEXTURE )
+		imageQuad\setRect( -64, -64, 64, 64 )
+		imageQuad\setUVRect( 0, 0, 1, 1 )
+
+		imageBg = MOAIProp2D.new()
+		imageBg\setDeck( imageQuad )
+		infoLayer\insertProp( imageBg )
+		imageBg\setLoc(0, 0)
+		-- imageBg\setBlendMode(MOAIProp2D.GL_ZERO, MOAIProp2D.GL_ONE_MINUS_SRC_ALPHA)
+		-- imageBg\setColor(0, 0, 0, 1)
+		-- imageBg\setPriority(35)
+
+		textbox = MOAITextBox.new!
+		textbox\setStyle(R.ASSETS.STYLES.ARIAL)
+		textbox\setString(overlay.TEXT)
+		textbox\setTextSize(20)
+		textbox\setLoc(0, -100)
+		textbox\setYFlip(true)
+		textbox\setRect(-128, -128, 128, 128)
+		textbox\setAlignment(MOAITextBox.CENTER_JUSTIFY, MOAITextBox.CENTER_JUSTIFY)
+		textbox\spool!
+
+		infoLayer\insertProp(textbox)
 
 
 	closeOverlay: () =>
@@ -154,6 +199,9 @@ export class Level extends Screen
 		super
 		@state = levelState.MADE
 
+		-- Setting events
+
+
 	load: (onComplete = -> print "Loading complete") =>
 		super (onComplete)
 		@length = @configTable.length
@@ -172,6 +220,14 @@ export class Level extends Screen
 
 
 	open: () =>
+
+		-- Setting events for overlays
+		if R.ASSETS.OVERLAYS
+			for k,v in pairs(R.ASSETS.OVERLAYS)
+				overlayName = k
+				print "k: #{k}, v: #{v.EVENT}"
+				e\addEventListener(v["EVENT"], -> @openOverlay(R.ASSETS.OVERLAYS[overlayName]))
+
 		@state = levelState.RUNNING
 		LayerMgr\createLayer('background', 1, false)\render!\setParallax 0.5, 1
 		LayerMgr\createLayer('ground', 2, false)\render!
@@ -182,7 +238,7 @@ export class Level extends Screen
 		LayerMgr\createLayer('ui', 7, true, false)\render!
 		LayerMgr\createLayer('indicator', 8, true, false)\render!
 		LayerMgr\createLayer('overlay', 9, false, false)\render!
-		LayerMgr\createLayer('overlay2', 10, false, false)\render!
+		LayerMgr\createLayer('info', 10, false, false)\render!
 
 		MOAIGfxDevice\getFrameBuffer()\setClearColor .2980, .1372, .2, 1
 
@@ -273,6 +329,10 @@ export class Level extends Screen
 		@thread = MOAIThread.new()
 		@thread\run(@\loop)
 
+		-- Add some delay, or else everything is centered out >.<
+		print "EventHandler: #{e.events}"
+		performWithDelay(0.2, -> e\triggerEvent("LEVEL_START"))
+
 	loop: () =>
 		while @running
 			characterManager.updateCharacters()
@@ -308,13 +368,17 @@ export class Level extends Screen
 					performWithDelay(4, ->
 						@pause!
 						screenManager.openScreen("mainMenu"))
-
 		
 			coroutine.yield()
 	
 	pause: () =>
 		@oldRoot = MOAIActionMgr.getRoot()
 		MOAIActionMgr.setRoot()
+		e\triggerEvent("LEVEL_PAUSE")
+
+	resume: () =>
+		MOAIActionMgr.setRoot(@oldRoot)
+		e\triggerEvent("LEVEL_RESUME")
 
 	close: () =>
 		@running = false
@@ -387,12 +451,12 @@ export class Level extends Screen
 export class TutLevel extends Level
 
 	test: =>
-		@openOverlay(R.ASSETS.OVERLAYS.POWERUP_OVERLAY, @getFirstPowerup!)
+		-- e\addEventListener("START_LEVEL", -> @openOverlay(R.ASSETS.OVERLAYS.POWERUP_OVERLAY))
 
 	getFirstPowerup: () ->
 		powerups = powerupManager.selectPowerups((p) -> true)
 		powerups[1].prop
 
 	open: () =>
+		@test!
 		super!
-		performWithDelay(1.5, @\test)
