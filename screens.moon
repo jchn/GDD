@@ -72,53 +72,59 @@ class Screen
 	close: () =>
 		print "Closing Screen"
 
-	openOverlay: (overlay) =>
+	openOverlay: (overlay, prop) =>
+		print 'OPEN OVERLAY'
 		@pause!
-		overlayLayer = LayerMgr\getLayer('overlay')
-		if not overlayLayer
-			print 'CREATING NEW OVERLAYLAYER'
-			overlayLayer = LayerMgr\createLayer('overlay', 8, true, false)\render!
 
-		createIndicator = (x, y, radius, layer) ->
-			print 'CREATEINDICATOR'
-			gfxQuad = MOAIGfxQuad2D.new()
-			gfxQuad\setTexture( R.ASSETS.TEXTURES.WIN_GAME )
-			gfxQuad\setRect( -400, 225, 400, -225 )
-			gfxQuad\setUVRect( 0, 0, 1, 1 )
 
-			fireBg = MOAIProp2D.new()
-			fireBg\setDeck( gfxQuad )
-			layer\insertProp( fireBg )
-			fireBg\setLoc(0, 0)
-			fireBg\setPriority(10)
+		print 'CREATEINDICATOR'
+		print "olayer: #{olayer}, ilayer: #{ilayer}"
 
-			darkQuad = MOAIGfxQuad2D.new()
-			darkQuad\setTexture( R.ASSETS.TEXTURES.WIN_GAME )
-			darkQuad\setRect( -256, -256, 256, 256 )
-			darkQuad\setUVRect( 0, 0, 1, 1 )
+		olayer = LayerMgr\getLayer("overlay")
+		ilayer = LayerMgr\getLayer("indicator")
 
-			darkBg = MOAIProp2D.new()
-			darkBg\setDeck( darkQuad )
-			layer\insertProp( darkBg )
-			darkBg\setLoc(0, 0)
-			darkBg\setBlendMode(MOAIProp2D.GL_ONE, MOAIProp2D.GL_ONE_MINUS_DST_ALPHA)
-			darkBg\setColor(0, 0, 0, 1)
-			darkBg\setPriority(30)
+		darkQuad = MOAIGfxQuad2D.new()
+		darkQuad\setTexture( R.ASSETS.TEXTURES.DARK_OVERLAY )
+		darkQuad\setRect( -1024, -1024, 1024, 1024 )
+		darkQuad\setUVRect( 0, 0, 1, 1 )
 
-			lightQuad = MOAIGfxQuad2D.new()
-			lightQuad\setTexture( R.ASSETS.TEXTURES.WIN_GAME )
-			lightQuad\setRect( -64, -64, 64, 64 )
-			lightQuad\setUVRect( 0, 0, 1, 1 )
+		darkBg = MOAIProp2D.new()
+		darkBg\setDeck( darkQuad )
+		olayer\insertProp( darkBg )
+		darkBg\setLoc(olayer\wndToWorld(256, 0))
+		darkBg\setBlendMode(MOAIProp2D.GL_SRC_ALPHA, MOAIProp2D.GL_ONE_MINUS_DST_ALPHA)
+		darkBg\setColor(0, 0, 0, 1)
+		darkBg\setPriority(30)
 
-			lightBg = MOAIProp2D.new()
-			lightBg\setDeck( lightQuad )
-			layer\insertProp( lightBg )
-			lightBg\setLoc(150, -150)
-			lightBg\setBlendMode(MOAIProp2D.GL_ZERO, MOAIProp2D.GL_ONE_MINUS_SRC_COLOR)
-			lightBg\setColor(0, 0, 0, 1)
-			lightBg\setPriority(20)
+		transparentQuad = MOAIGfxQuad2D.new()
+		transparentQuad\setTexture( R.ASSETS.TEXTURES.TRANSPARENT_OVERLAY )
+		transparentQuad\setRect( -240, -160, 240, 160 )
+		transparentQuad\setUVRect( 0, 0, 1, 1 )
 
-		createIndicator( 5, 5, "radius", overlayLayer )
+		transparentBg = MOAIProp2D.new()
+		transparentBg\setDeck( transparentQuad )
+		ilayer\insertProp( transparentBg )
+		transparentBg\setLoc(0, 0)
+		transparentBg\setBlendMode(MOAIProp2D.GL_ZERO, MOAIProp2D.GL_ONE_MINUS_SRC_COLOR)
+		transparentBg\setColor(0, 0, 0, 1)
+		transparentBg\setPriority(35)
+
+		x,y = prop\getLoc!
+		pLayer = LayerMgr\getLayer('characters')
+		wndX, wndY = pLayer\worldToWnd x, y
+
+		lightQuad = MOAIGfxQuad2D.new()
+		lightQuad\setTexture( R.ASSETS.TEXTURES.INDICATOR64 )
+		lightQuad\setRect( -128, -128, 128, 128 )
+		lightQuad\setUVRect( 0, 0, 1, 1 )
+
+		lightBg = MOAIProp2D.new()
+		lightBg\setDeck( lightQuad )
+		ilayer\insertProp( lightBg )
+		lightBg\setLoc(wndX, 0)
+		lightBg\setBlendMode(MOAIProp2D.GL_ZERO, MOAIProp2D.GL_ONE_MINUS_SRC_COLOR)
+		lightBg\setColor(0, 0, 0, 0.5)
+		lightBg\setPriority(40)
 
 
 	closeOverlay: () =>
@@ -176,8 +182,11 @@ export class Level extends Screen
 		LayerMgr\createLayer('characters', 3, false)\render!
 		LayerMgr\createLayer('box2d', 4, false)
 		LayerMgr\createLayer('foreground', 5, false)\render!\setParallax 1.5, 1
-		LayerMgr\createLayer('ui', 7, true, false)\render!
 		LayerMgr\createLayer('powerups', 6, true)\render!
+		LayerMgr\createLayer('ui', 7, true, false)\render!
+		LayerMgr\createLayer('indicator', 8, true, false)\render!
+		LayerMgr\createLayer('overlay', 9, true, false)\render!
+		LayerMgr\createLayer('overlay2', 10, true, false)\render!
 
 		MOAIGfxDevice\getFrameBuffer()\setClearColor .2980, .1372, .2, 1
 
@@ -375,6 +384,14 @@ export class Level extends Screen
 	    buttonManager.forcefullyDisableButtons!
 
 export class TutLevel extends Level
+
+	test: =>
+		@openOverlay(R.ASSETS.OVERLAYS.POWERUP_OVERLAY, @getFirstPowerup!)
+
+	getFirstPowerup: () ->
+		powerups = powerupManager.selectPowerups((p) -> true)
+		powerups[1].prop
+
 	open: () =>
 		super!
-		-- @openOverlay(R.ASSETS.OVERLAYS.OVERLAY_1)
+		performWithDelay(1.5, @\test)
