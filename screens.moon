@@ -7,7 +7,6 @@ class ScreenManager
 		return currentScreen.running
 
 	registerScreen: (screenID, screen) ->
-		print "Registered screen: #{screenID}"
 		screens[screenID] = screen
 
 	closePrevious: () ->
@@ -21,7 +20,6 @@ class ScreenManager
 
 
 	openScreen: (screenID) ->
-		print "Opening screen: #{screenID}"
 		screenManager.closePrevious!
 		currentScreen = screens[screenID]
 		currentScreen\load!
@@ -33,19 +31,19 @@ class ScreenManager
 		switch elementID
 			when "button"
 				size = screenElementConfig.SIZE
-				print "Making button with size: #{size[1]}"
-				button = SimpleButton(layer, R.ASSETS.IMAGES[screenElementConfig.IMAGE], Rectangle(size[1], size[2], size[3], size[4]), screenElementConfig.X, screenElementConfig.Y, -> screenManager.doScreenElementFunctions(screenElementConfig.FUNCTION))
+				
+				button = SimpleButton(layer, R.ASSETS.IMAGES[screenElementConfig.IMAGE], Rectangle(size[1], size[2], size[3], size[4]), screenElementConfig.X, screenElementConfig.Y, (-> screenManager.doScreenElementFunctions(screenElementConfig.FUNCTION)), (-> screenManager.doScreenElementFunctions(screenElementConfig.ENABLE_FUNCTION)) )
 				button\add()
 
 	doScreenElementFunctions: (functionInfo) ->
-		print "Function Info = #{functionInfo}"
 		functionInfo = splitAtSpaces(functionInfo)
 		functionInfo[1] = functionInfo[1]\lower!
 
 		switch functionInfo[1]
 			when "openscreen"
 				screenManager.openScreen(functionInfo[2])
-
+			when "levelunlocked"
+				saveFile.Save.CURRENT_LEVEL >= tonumber(functionInfo[2])
 
 export screenManager = ScreenManager()
 
@@ -67,10 +65,8 @@ class Screen
 		R\setAssets assets
 
 	open: () =>
-		print "Opening Screen"
 
 	close: () =>
-		print "Closing Screen"
 
 	openOverlay: (overlay, prop) =>
 		print 'OPEN OVERLAY'
@@ -154,7 +150,7 @@ export levelState = {
 
 export class Level extends Screen
 
-	new: (@configJson) =>
+	new: (@configJson, @levelNO) =>
 		super
 		@state = levelState.MADE
 
@@ -164,7 +160,7 @@ export class Level extends Screen
 		@wrestler = @configTable.wrestler
 		@spawnableUnits = @configTable.spawnableUnits
 		@startingPowerups = @configTable.startingPowerups
-		print "Length of level: #{@length}, Wrestler: #{@wrestler}"
+
 		@state = levelState.LOADED
 
 		@world = MOAIBox2DWorld.new()
@@ -276,7 +272,6 @@ export class Level extends Screen
 		@running = true
 		@thread = MOAIThread.new()
 		@thread\run(@\loop)
-		print "Opened level"
 
 	loop: () =>
 		while @running
@@ -356,7 +351,13 @@ export class Level extends Screen
 			LayerMgr\getLayer("ui")\insertProp prop
 			buttonManager.forcefullyDisableButtons!
 
+			if saveFile.Save.CURRENT_LEVEL <= @levelNO
+				saveFile.Save.CURRENT_LEVEL = @levelNO + 1
+				save()
+
 			performWithDelay(2, -> screenManager.openScreen("mainMenu"))
+
+			
 		
 	gameOver: () =>
 		if @state == levelState.RUNNING

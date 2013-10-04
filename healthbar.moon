@@ -24,7 +24,6 @@ export class Healthbar
     @layer\insertProp(@healthBar)
 
   update: (percentage) =>
-    print "Updating healthbar. Percentage is #{percentage}"
     if percentage < 0
       percentage = 0
     elseif percentage > 1
@@ -41,7 +40,6 @@ export class Healthbar
       @healthBar\setDeck @texture
 
     width = percentage * @width
-    print "Updating healthbar. Percentage is #{width}"
     @texture\setRect 0, 0, width, @height
 
   setLoc: (x, y) =>

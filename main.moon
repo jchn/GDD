@@ -15,6 +15,7 @@ require 'assetLoader'
 require 'indicator'
 require 'screens'
 
+require 'lib/copy'
 export _ = require 'lib/underscore'
 
 export mouseX = 0
@@ -46,44 +47,49 @@ screenHeight = R.DEVICE_HEIGHT
 MOAISim.openWindow "wrestlers vs aliens", screenWidth, screenHeight
 R\load()
 
+CONFIG_FILE = 'config/config.json'
+SAVE_FILE = (MOAIEnvironment.documentDirectory or "./") .. '/config/save.json'
+
 dataBuffer = MOAIDataBuffer.new()
-dataBuffer\load('config/config.json')
+dataBuffer\load(CONFIG_FILE)
 config = dataBuffer\getString()
 configTable = MOAIJsonParser.decode config
 configTable = configTable.Config
 
--- screenToOpen = ""
+saveBuffer = MOAIDataBuffer.new()
+saveBuffer\load(SAVE_FILE)
+saveString = saveBuffer\getString()
+export saveFile = MOAIJsonParser.decode saveString
 
--- for screen in *configTable.Screens do
---   print "Making screen #{screen.NAME} from config.json"
---   screenType = screen.TYPE\lower!
---   newScreen = nil
---   switch screenType
---     when "Level"
---       newScreen = Level(screen.FILE)
---     else
---       newScreen = GameScreen(screen.FILE)
---   screenManager.registerScreen(screen.NAME, newScreen)
---   if screen.DEFAULTOPEN == true
---     screenToOpen = screen.NAME
+export save = () =>
+  saveString = MOAIJsonParser.encode saveFile
+  saveBuffer\setString(saveString)
+  saveBuffer\save(SAVE_FILE)
 
--- screenManager.openScreen(screenToOpen)
+export resetSave = () =>
+  saveFile = {}
+  saveFile.Save = {}
+  saveFile.Save.CURRENT_LEVEL = 1
+  save()
 
+if saveFile == nil
+  resetSave()
 
-mainMenu = GameScreen('config/mainmenu.json')
-screenManager.registerScreen("mainMenu", mainMenu)
+characterManager.setConfigTable(configTable.Characters)
 
-level = TutLevel('config/level1.json')
-
-screenManager.registerScreen("level_1", level)
-
-level = Level('config/level2.json')
-screenManager.registerScreen("level_2", level)
-
-level = Level('config/level3.json')
-screenManager.registerScreen("level_3", level)
-
-screenManager.openScreen("mainMenu")
+for screen in *configTable.Screens do
+  screenType = screen.TYPE\lower!
+  newScreen = nil
+  switch screenType
+    when "level"
+      newScreen = Level("config/" .. screen.FILE, screen.LEVEL_NO)
+    when "tutlevel"
+      newScreen = TutLevel("config/" .. screen.FILE, screen.LEVEL_NO)
+    else
+      newScreen = GameScreen("config/" .. screen.FILE)
+  screenManager.registerScreen(screen.NAME, newScreen)
+  if screen.DEFAULTOPEN
+    screenManager.openScreen(screen.NAME)
 
 export performWithDelay = (delay, func, repeats, ...) ->
   t = MOAITimer.new()

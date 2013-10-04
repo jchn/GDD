@@ -21,8 +21,6 @@ export class PowerupInfobox
 		@textbox.clickable = true
 		@textbox.parent = @
 
-		print "Width of image: #{@imageRectangle\getWidth()}"
-
 		@prop\setDeck(@gfxQuad)
 		@add()
 
@@ -30,7 +28,7 @@ export class PowerupInfobox
 		x, y = @layer\worldToWnd x, y
 		if characterManager.powerupInCollection(@type) and screenManager.levelRunning!
 			characterManager.useCollectedPowerup(@type)
-			print "Clicking on Powerup Infobox for #{@type}"
+
 			characterLayer = LayerMgr\getLayer("characters")
 			x, y = characterLayer\wndToWorld x, y
 			characterLayer.x, characterLayer.y = x, y

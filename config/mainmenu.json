@@ -2,9 +2,9 @@
 	"Config" : {
 
 		"screenElements" : [
-			{ "ELEMENT": "button", "X" : -100, "Y" : 0, "IMAGE" : "HEALTH", "FUNCTION" : "openscreen level_1", "SIZE" : [-32, -32, 32, 32] },
-			{ "ELEMENT": "button", "X" : 0, "Y" : 0, "IMAGE" : "HEALTH", "FUNCTION" : "openscreen level_2", "SIZE" : [-16, -16, 16, 16] },
-			{ "ELEMENT": "button", "X" : 50, "Y" : 0, "IMAGE" : "HEALTH", "FUNCTION" : "openscreen level_3", "SIZE" : [-16, -16, 16, 16] }
+			{ "ELEMENT": "button", "X" : -50, "Y" : 0, "IMAGE" : "HEALTH", "FUNCTION" : "openscreen level_1", "ENABLE_FUNCTION" : "levelUnlocked 1",  "SIZE" : [-16, -16, 16, 16] },
+			{ "ELEMENT": "button", "X" : 0, "Y" : 0, "IMAGE" : "HEALTH", "FUNCTION" : "openscreen level_2", "ENABLE_FUNCTION" : "levelUnlocked 2", "SIZE" : [-16, -16, 16, 16] },
+			{ "ELEMENT": "button", "X" : 50, "Y" : 0, "IMAGE" : "HEALTH", "FUNCTION" : "openscreen level_3", "ENABLE_FUNCTION" : "levelUnlocked 3", "SIZE" : [-16, -16, 16, 16] }
 		],
 
 		"assets" : {
