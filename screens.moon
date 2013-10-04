@@ -185,8 +185,8 @@ export class Level extends Screen
 		LayerMgr\createLayer('powerups', 6, true)\render!
 		LayerMgr\createLayer('ui', 7, true, false)\render!
 		LayerMgr\createLayer('indicator', 8, true, false)\render!
-		LayerMgr\createLayer('overlay', 9, true, false)\render!
-		LayerMgr\createLayer('overlay2', 10, true, false)\render!
+		LayerMgr\createLayer('overlay', 9, false, false)\render!
+		LayerMgr\createLayer('overlay2', 10, false, false)\render!
 
 		MOAIGfxDevice\getFrameBuffer()\setClearColor .2980, .1372, .2, 1
 
