@@ -73,11 +73,29 @@ export class GameScreen extends Screen
 	load: (onComplete = -> print "Loading Complete") =>
 		super (onComplete)
 		@screenElements = @configTable.screenElements
+		@background = @configTable.background
 
 	open: () =>
-		screenLayer = LayerMgr\createLayer('screen', 1, true, false)\render!
+		backgroundLayer = LayerMgr\createLayer('background', 1, false, false)\render!
+		screenLayer = LayerMgr\createLayer('screen', 2, true, false)\render!
 
-		MOAIGfxDevice\getFrameBuffer()\setClearColor 0, .2, 1, 1
+		MOAIGfxDevice\getFrameBuffer()\setClearColor 0, 0, 1, 1
+
+		bggrid = MOAIGrid.new()
+		bggrid\initRectGrid 1, 1, 480, 320
+		bggrid\setRow 1, 1
+		bggrid\setRepeat(true, true)
+
+		bgdeck = MOAITileDeck2D.new()
+		bgdeck\setTexture R.ASSETS.IMAGES[@background]
+		bgdeck\setSize 1, 1
+
+		bgprop = MOAIProp2D.new()
+		bgprop\setDeck bgdeck
+		bgprop\setGrid bggrid
+		bgprop\setLoc -240, -160
+
+		backgroundLayer\insertProp bgprop
 
 		for screenElement in *@screenElements
 			screenManager.makeScreenElement(screenLayer, screenElement)
