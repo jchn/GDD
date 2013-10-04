@@ -54,6 +54,47 @@ class IdleAction extends Action
   poll: (otherCharacters = {}) =>
     return true, 100
 
+class WallAction extends Action
+
+  execute: (otherCharacters = {}) =>
+    if @character.state == Characterstate.IDLE
+
+      texture = R.ASSETS.IMAGES[@character.characterID\upper! .. "_WALL"]
+
+      rect = @character.rectangle
+
+      @tileLib = MOAITileDeck2D\new()
+      @tileLib\setTexture(texture)
+      @tileLib\setSize(4, 1)
+      @tileLib\setRect(rect\get())
+
+      @character.prop\setDeck @tileLib
+
+      @curve = MOAIAnimCurve.new()
+      @curve\reserveKeys(4)
+
+      @curve\setKey(1, 0.25, 1)
+      @curve\setKey(2, 0.5, 2)
+      @curve\setKey(3, 0.75, 3)
+      @curve\setKey(4, 1, 4)
+
+      @anim = MOAIAnim\new()
+      @anim\reserveLinks(1)
+      @anim\setLink(1, @curve, @character.prop, MOAIProp2D.ATTR_INDEX)
+      @anim\setMode(MOAITimer.LOOP)
+      @anim\setListener(MOAITimer.EVENT_TIMER_END_SPAN, @\stop)
+      @anim\setSpan(1.25)
+      @anim\start()
+    super @character
+
+  beforeStop: (otherCharacters = {}) =>
+    @anim\stop()
+    @anim = nil
+    @curve = nil
+
+  poll: (otherCharacters = {}) =>
+    return true, 100
+
 class RangedAttackAction extends Action
 
   execute: (otherCharacters = {}) =>
@@ -489,6 +530,9 @@ class ActionManager
     switch actionID
       when "idle"
         IdleAction(character)
+
+      when "wall"
+        WallAction(character)
 
       when "walk"
         WalkAction(character)
