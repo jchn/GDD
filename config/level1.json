@@ -4,7 +4,7 @@
     "wrestler" : "wrestler",
 
     "spawnableUnits" : [
-      "JUMPWALKER", "ELITE_JUMPWALKER", "SUPREME_JUMPWALKER", "RANGED", "ELITE_RANGED", "SUPREME_RANGED", "COLLECTOR", "ELITE_COLLECTOR", "SUPREME_COLLECTOR"
+      "JUMPWALKER", "ELITE_JUMPWALKER", "SUPREME_JUMPWALKER", "COLLECTOR", "SLOWDOWN"
     ],
 
     "startingPowerups" : [
@@ -16,6 +16,8 @@
 
     "assets" : {
       "images": {
+        "UNIT_BUTTON" : "resources/unit_buttons.png",
+
         "HEALTH" : "resources/health.png",
         "HEALTH_ANIM" : "resources/health_anim.png",
 
@@ -43,6 +45,8 @@
         "ELITE_RANGED_RANGED_ATTACK" : "resources/elite_jumpwalker.png",
         "SUPREME_RANGED_RANGED_ATTACK" : "resources/supreme_jumpwalker.png",
 
+        "SLOWDOWN_WALL" : "resources/slowdown_wall.png",
+
         "UFO" : "resources/ufo2.png",
 
         "RED" : "resources/red_health.png",
@@ -63,6 +67,8 @@
         "COLLECTOR_BUTTON" : "resources/button_alien_rank1.png",
         "ELITE_COLLECTOR_BUTTON" : "resources/button_alien_rank2.png",
         "SUPREME_COLLECTOR_BUTTON" : "resources/button_alien_rank3.png",
+
+        "SLOWDOWN_BUTTON" : "resources/button_alien_rank1.png",
 
         "INDICATOR_BASE" : "resources/indicator_base.png",
         "INDICATOR" : "resources/indicator.png",

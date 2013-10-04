@@ -18,7 +18,6 @@ class ScreenManager
 		characterManager.clear()
 		buttonManager.clear()
 
-
 	openScreen: (screenID) ->
 		screenManager.closePrevious!
 		currentScreen = screens[screenID]
@@ -27,15 +26,20 @@ class ScreenManager
 
 	makeScreenElement: (layer, screenElementConfig) ->
 		elementID = screenElementConfig.ELEMENT\lower!
-
 		switch elementID
 			when "button"
 				size = screenElementConfig.SIZE
 				
 				button = SimpleButton(layer, R.ASSETS.IMAGES[screenElementConfig.IMAGE], Rectangle(size[1], size[2], size[3], size[4]), screenElementConfig.X, screenElementConfig.Y, (-> screenManager.doScreenElementFunctions(screenElementConfig.FUNCTION)), (-> screenManager.doScreenElementFunctions(screenElementConfig.ENABLE_FUNCTION)) )
 				button\add()
+			when "imagebutton"
+				size = screenElementConfig.SIZE
+				
+				button = ImageButton(layer, R.ASSETS.IMAGES[screenElementConfig.IMAGE], R.ASSETS.IMAGES[screenElementConfig.BACKGROUND], Rectangle(size[1], size[2], size[3], size[4]), screenElementConfig.X, screenElementConfig.Y, (-> screenManager.doScreenElementFunctions(screenElementConfig.FUNCTION)), (-> screenManager.doScreenElementFunctions(screenElementConfig.ENABLE_FUNCTION)) )
+				button\add()
 
 	doScreenElementFunctions: (functionInfo) ->
+
 		functionInfo = splitAtSpaces(functionInfo)
 		functionInfo[1] = functionInfo[1]\lower!
 
@@ -44,6 +48,10 @@ class ScreenManager
 				screenManager.openScreen(functionInfo[2])
 			when "levelunlocked"
 				saveFile.Save.CURRENT_LEVEL >= tonumber(functionInfo[2])
+			when "true"
+				return true
+			when "false"
+				return false
 
 export screenManager = ScreenManager()
 
@@ -211,7 +219,7 @@ export class Level extends Screen
 		buttonXOffset = -50
 		buttonCount = 0
 		for spawnableUnit in *@spawnableUnits 
-			button = CoolDownButton LayerMgr\getLayer("ui"), R.ASSETS.TEXTURES["#{spawnableUnit}_button"\upper!], Rectangle(-16, -16, 16, 16), buttonX, buttonY, 2, (-> characterManager.makeCharacter(spawnableUnit)), (-> return characterManager.checkEnemySpawnable(spawnableUnit))
+			button = AnimatedCooldownButton LayerMgr\getLayer("ui"), R.ASSETS.IMAGES.UNIT_BUTTON, Rectangle(-32, -32, 32, 32), buttonX, buttonY, (-> characterManager.makeCharacter(spawnableUnit)), (-> return characterManager.checkEnemySpawnable(spawnableUnit))
 			button\add()
 			buttonX += buttonXOffset
 			buttonCount += 1
@@ -264,7 +272,7 @@ export class Level extends Screen
 					@running = false
 					performWithDelay(4, ->
 						@pause!
-						screenManager.openScreen("mainMenu"))
+						screenManager.openScreen("levelSelect"))
 
 		
 			coroutine.yield()
@@ -312,9 +320,7 @@ export class Level extends Screen
 				saveFile.Save.CURRENT_LEVEL = @levelNO + 1
 				save()
 
-			performWithDelay(2, -> screenManager.openScreen("mainMenu"))
-
-			
+			performWithDelay(2, -> screenManager.openScreen("levelSelect"))
 		
 	gameOver: () =>
 		if @state == levelState.RUNNING

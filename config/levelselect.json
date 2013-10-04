@@ -1,0 +1,19 @@
+{
+	"Config" : {
+
+
+		"background" : "BACKGROUND",
+
+		"screenElements" : [
+			{ "ELEMENT": "imagebutton", "X" : 0, "Y" : 0, "IMAGE" : "LEVEL_SELECT_BUTTON", "BACKGROUND" : "LEVEL1_PREVIEW", "FUNCTION" : "openscreen level_1", "ENABLE_FUNCTION" : "levelUnlocked 1", "SIZE" : [-64, -64, 64, 64] }
+		],
+
+		"assets" : {
+			"images": {
+				"BACKGROUND" : "resources/menu_bg.png",
+				"LEVEL_SELECT_BUTTON" : "resources/level_select_btn.png",
+				"LEVEL1_PREVIEW" : "resources/level_1_preview.png"
+			}
+		}
+	}
+}
