@@ -59,7 +59,7 @@ class RangedAttackAction extends Action
   execute: (otherCharacters = {}) =>
     if @character.state == Characterstate.IDLE
 
-      texture = R.ASSETS.IMAGES.WRESTLER_PUNCH
+      texture = R.ASSETS.IMAGES[@character.characterID\upper! .. "_RANGED_ATTACK"]
 
       rect = @character.rectangle
 
@@ -80,11 +80,15 @@ class RangedAttackAction extends Action
       @curve\setKey(5, 0.83, 5)
       @curve\setKey(6, 1.00, 6)
 
+      span = 3
+      if @character.stats.ranged_cooldown != nil
+        span = @character.stats.ranged_cooldown
+
       @anim = MOAIAnim\new()
       @anim\reserveLinks(1)
       @anim\setLink(1, @curve, @character.prop, MOAIProp2D.ATTR_INDEX)
       @anim\setMode(MOAITimer.NORMAL)
-      @anim\setSpan(4)
+      @anim\setSpan(span)
       @anim\start()
       @anim\setListener(MOAITimer.EVENT_TIMER_END_SPAN, @\stop)
 
@@ -237,7 +241,7 @@ class RunAction extends WalkAction
       x1, y1 = powerup.body\getPosition()
       x2, y2 = @character\getLocation()
 
-      return powerup.name == 'powerup' and powerup.active and (x1 >= x2 and x1 <= x2 + 100) )
+      return powerup.name == 'powerup' and powerup.active and not powerup.isDragged and (x1 >= x2 and x1 <= x2 + 100) )
 
   poll: () =>
     otherCharacters = @selectCharacters()

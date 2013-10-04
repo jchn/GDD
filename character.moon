@@ -34,8 +34,6 @@ class Character
     @add()
     @update()
 
-  setSkill: (@skill) =>
-
   getHeight: () =>
     return @bodyRectangle\getHeight()
 
@@ -231,7 +229,11 @@ class CollectorUnit extends Unit
       other\remove()
       other\destroy()
       own\colorBlink(0.0, 1.0, 0.0, 1.00)
-      amount = characterManager.collectPowerup(other.specificName, own.skill)
+      skill = 1
+      if own.stats.collectSkill != nil
+        skill = own.stats.collectSkill
+
+      amount = characterManager.collectPowerup(other.specificName, skill)
       if amount >= 0
         own\showFloatingNumber("+#{amount}", 4, R.GREENSTYLE)
       else
@@ -395,17 +397,20 @@ class CharacterManager
     characterConfig = characterManager.getConfigTable(characterID)
   
     rectangle = Rectangle(characterConfig.RECTANGLE[1], characterConfig.RECTANGLE[2], characterConfig.RECTANGLE[3], characterConfig.RECTANGLE[4])
-    bodyRectangle = Rectangle(characterConfig.BODYRECTANGLE[1], characterConfig.BODYRECTANGLE[2], characterConfig.BODYRECTANGLE[3], characterConfig.BODYRECTANGLE[4])
+    bodyRectangle = rectangle
+
+    if characterConfig.BODYRECTANGLE != nil
+      bodyRectangle = Rectangle(characterConfig.BODYRECTANGLE[1], characterConfig.BODYRECTANGLE[2], characterConfig.BODYRECTANGLE[3], characterConfig.BODYRECTANGLE[4])
+
     stats = characterConfig.STATS
     powerupStats = characterConfig.POWERUP_STATS
     actions = characterConfig.ACTIONS
-    hasHealthbar = characterConfig.HAS_HEALTHBAR
     y = characterConfig.SPAWNLOCATION_OFFSET
+
     minLoot = characterConfig.MIN_LOOT
     maxLoot = characterConfig.MAX_LOOT
     possibleLoot = characterConfig.POSSIBLE_LOOT
     canUsePowerups = characterConfig.CAN_USE_POWERUPS
-    skill = characterConfig.SKILL
 
     if characterManager.checkEnemySpawnable(characterID)
       characterManager.payCost(characterID)
@@ -417,13 +422,6 @@ class CharacterManager
         newCharacter = Hero(characterID, prop, layer, world, direction.RIGHT, rectangle, bodyRectangle, stats, actions, x, y, powerupStats)
         newCharacter\setHealthbar(Healthbar(LayerMgr\getLayer("ui"), 100, 10))
         newCharacter\setFilter(entityCategory.CHARACTER, entityCategory.POWERUP + entityCategory.BOUNDARY + entityCategory.BULLET)
-      when "JUMPWALKER", "ELITE_JUMPWALKER", "SUPREME_JUMPWALKER", "RANGED", "SLOWDOWN"
-        x = ufo\getLocation()
-        newCharacter = Unit(characterID, prop, layer, world, direction.LEFT, rectangle, bodyRectangle, stats, actions, x, y)
-        newCharacter\setFilter(entityCategory.CHARACTER, entityCategory.BOUNDARY)
-        newCharacter\setHealthbar(Healthbar(LayerMgr\getLayer("characters"), newCharacter\getWidth(), 4), false)
-        newCharacter\setPowerupDrops(minLoot, maxLoot, possibleLoot )
-        ufo\doAction("spawn")
       when "COLLECTOR"
         x = ufo\getLocation()
         newCharacter = CollectorUnit(characterID, prop, layer, world, direction.LEFT, rectangle, bodyRectangle, stats, actions, x, y)
@@ -442,14 +440,21 @@ class CharacterManager
         newCharacter.prop\setParent newCharacter.body
         newCharacter.prop.body = newCharacter.body
         newCharacter\setFilter(entityCategory.CHARACTER, entityCategory.POWERUP + entityCategory.BOUNDARY + entityCategory.INACTIVEPOWERUP + entityCategory.DRAGGEDPOWERUP)
+      else
+        x = ufo\getLocation()
+        newCharacter = Unit(characterID, prop, layer, world, direction.LEFT, rectangle, bodyRectangle, stats, actions, x, y)
+        newCharacter\setFilter(entityCategory.CHARACTER, entityCategory.BOUNDARY)
+        newCharacter\setHealthbar(Healthbar(LayerMgr\getLayer("characters"), newCharacter\getWidth(), 4), false)
+
+        if minLoot != nil and maxLoot != nil and possibleLoot != nil
+          newCharacter\setPowerupDrops(minLoot, maxLoot, possibleLoot )
+        ufo\doAction("spawn")
 
     if newCharacter.stats.shield > 0
       newCharacter.icon = powerupManager.makePowerupIcon("shield")
 
     if canUsePowerups
       newCharacter\setFilter(entityCategory.CHARACTER, entityCategory.DRAGGEDPOWERUP + entityCategory.BOUNDARY)
-
-    newCharacter\setSkill(skill)
 
     table.insert(characters, newCharacter)
     newCharacter\add()

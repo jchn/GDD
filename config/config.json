@@ -47,13 +47,7 @@
 					"walk", "run", "punch"
 				],
 				"RECTANGLE" : [-32, -32, 32, 32 ],
-				"BODYRECTANGLE" : [-32, -32, 32, 32],
-				"SPAWNLOCATION_OFFSET" : -35,
-				"CAN_USE_POWERUPS" : false,
-				"MIN_LOOT": 0,
-				"MAX_LOOT": 0,
-				"POSSIBLE_LOOT" : [],
-				"SKILL" : 0
+				"SPAWNLOCATION_OFFSET" : -35
 			},
 
 			"UFO" : {
@@ -73,13 +67,7 @@
 					"fly"
 				],
 				"RECTANGLE" : [-64, -64, 64, 64 ],
-				"BODYRECTANGLE" : [-64, -64, 64, 64],
-				"SPAWNLOCATION_OFFSET" : 40,
-				"CAN_USE_POWERUPS" : false,
-				"MIN_LOOT": 0,
-				"MAX_LOOT": 0,
-				"POSSIBLE_LOOT" : [],
-				"SKILL" : 0
+				"SPAWNLOCATION_OFFSET" : 40
 			},
 
 			"JUMPWALKER" : {
@@ -101,11 +89,9 @@
 				"RECTANGLE" : [-32, -32, 32, 32 ],
 				"BODYRECTANGLE" : [-20, -20, 20, 20],
 				"SPAWNLOCATION_OFFSET" : -50,
-				"CAN_USE_POWERUPS" : false,
 				"MIN_LOOT": 1,
 				"MAX_LOOT": 1,
-				"POSSIBLE_LOOT" : [ "health" ],
-				"SKILL" : 0
+				"POSSIBLE_LOOT" : [ "health" ]
 			},
 
 			"ELITE_JUMPWALKER" : {
@@ -129,11 +115,9 @@
 				"RECTANGLE" : [-32, -32, 32, 32 ],
 				"BODYRECTANGLE" : [-20, -20, 20, 20],
 				"SPAWNLOCATION_OFFSET" : -50,
-				"CAN_USE_POWERUPS" : false,
 				"MIN_LOOT": 1,
 				"MAX_LOOT": 2,
-				"POSSIBLE_LOOT" : [ "health", "shield", "shield" ],
-				"SKILL" : 0
+				"POSSIBLE_LOOT" : [ "health", "shield", "shield" ]
 			},
 
 			"SUPREME_JUMPWALKER" : {
@@ -160,8 +144,7 @@
 				"CAN_USE_POWERUPS" : true,
 				"MIN_LOOT": 1,
 				"MAX_LOOT": 2,
-				"POSSIBLE_LOOT" : [ "shield", "shield" ],
-				"SKILL" : 0
+				"POSSIBLE_LOOT" : [ "shield", "shield" ]
 			},
 
 			"RANGED" : {
@@ -170,7 +153,8 @@
 					"health" : 4,
 					"attack" : 0,
 					"speed" : 0,
-					"shield" : 0
+					"shield" : 0,
+					"ranged_cooldown": 4
 				},
 				"POWERUP_STATS" : {
 					"health" : 0,
@@ -181,13 +165,62 @@
 					"ranged_attack"
 				],
 				"RECTANGLE" : [-32, -32, 32, 32 ],
-				"BODYRECTANGLE" : [-32, -32, 32, 32],
 				"SPAWNLOCATION_OFFSET" : -35,
-				"CAN_USE_POWERUPS" : false,
 				"MIN_LOOT": 1,
 				"MAX_LOOT": 1,
-				"POSSIBLE_LOOT" : [ "strength" ],
-				"SKILL" : 0
+				"POSSIBLE_LOOT" : [ "strength" ]
+			},
+
+			"ELITE_RANGED" : {
+				"COST" : {
+					"strength" : 2
+				},
+				"STATS" : {
+					"health" : 4,
+					"attack" : 0,
+					"speed" : 0,
+					"shield" : 0,
+					"ranged_cooldown": 3
+				},
+				"POWERUP_STATS" : {
+					"health" : 0,
+					"attack" : 0,
+					"shield" : 0
+				},
+				"ACTIONS" : [
+					"ranged_attack"
+				],
+				"RECTANGLE" : [-32, -32, 32, 32 ],
+				"SPAWNLOCATION_OFFSET" : -35,
+				"MIN_LOOT": 2,
+				"MAX_LOOT": 2,
+				"POSSIBLE_LOOT" : [ "strength" ]
+			},
+
+			"SUPREME_RANGED" : {
+				"COST" : {
+					"strength" : 4
+				},
+				"STATS" : {
+					"health" : 4,
+					"attack" : 0,
+					"speed" : 0,
+					"shield" : 0,
+					"ranged_cooldown": 2
+				},
+				"POWERUP_STATS" : {
+					"health" : 0,
+					"attack" : 0,
+					"shield" : 0
+				},
+				"ACTIONS" : [
+					"ranged_attack"
+				],
+				"RECTANGLE" : [-32, -32, 32, 32 ],
+				"SPAWNLOCATION_OFFSET" : -35,
+				"MIN_LOOT": 1,
+				"MAX_LOOT": 1,
+				"POSSIBLE_LOOT" : [ "strength" ]
 			},
 
 			"SLOWDOWN" : {
@@ -207,13 +240,10 @@
 					"idle"
 				],
 				"RECTANGLE" : [-32, -32, 32, 32 ],
-				"BODYRECTANGLE" : [-32, -32, 32, 32],
 				"SPAWNLOCATION_OFFSET" : -35,
-				"CAN_USE_POWERUPS" : false,
 				"MIN_LOOT": 1,
 				"MAX_LOOT": 1,
-				"POSSIBLE_LOOT" : [ "shield" ],
-				"SKILL" : 0
+				"POSSIBLE_LOOT" : [ "shield" ]
 			},
 
 			"COLLECTOR" : {
@@ -222,7 +252,8 @@
 					"health" : 1,
 					"attack" : 0,
 					"speed" : 40,
-					"shield" : 0
+					"shield" : 0,
+					"collectSkill" : 1
 				},
 				"POWERUP_STATS" : {
 					"health" : 0,
@@ -233,13 +264,7 @@
 					"walk"
 				],
 				"RECTANGLE" : [-32, -32, 32, 32 ],
-				"BODYRECTANGLE" : [-32, -32, 32, 32],
-				"SPAWNLOCATION_OFFSET" : -35,
-				"CAN_USE_POWERUPS" : false,
-				"MIN_LOOT": 0,
-				"MAX_LOOT": 0,
-				"POSSIBLE_LOOT" : [ ],
-				"SKILL" : 1
+				"SPAWNLOCATION_OFFSET" : -35
 			}
 
 		}

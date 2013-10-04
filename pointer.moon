@@ -40,6 +40,7 @@ class Pointer
   clear: () =>
     if @pick
       if @pick.draggable
+        @pick.parent.isDragged = false
         @pick.parent\endDrag()
       if @mouseBody
         @mouseBody\destroy()
@@ -58,6 +59,7 @@ class Pointer
     if @pick and @pick.draggable
       @pick.isDragged = true
       @pick.parent\beginDrag()
+      @pick.parent.isDragged = true
       @mouseBody = @world\addBody MOAIBox2DBody.DYNAMIC
       @mouseJoint = @world\addMouseJoint @mouseBody, @pick.body, layer.x, layer.y, 10000.0 * @pick.body\getMass()
       @mouseBody\setTransform layer.x, layer.y
