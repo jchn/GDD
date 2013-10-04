@@ -20,8 +20,7 @@ class IdleAction extends Action
   execute: (otherCharacters = {}) =>
     if @character.state == Characterstate.IDLE
 
-      print "Loading WRESTLER_IDLE"
-      texture = R.ASSETS.IMAGES.WRESTLER_IDLE
+      texture = R.ASSETS.IMAGES[@character.characterID\upper! .. "_IDLE"]
 
       rect = @character.rectangle
 
@@ -55,13 +54,138 @@ class IdleAction extends Action
   poll: (otherCharacters = {}) =>
     return true, 100
 
+class RangedAttackAction extends Action
+
+  execute: (otherCharacters = {}) =>
+    if @character.state == Characterstate.IDLE
+
+      texture = R.ASSETS.IMAGES[@character.characterID\upper! .. "_RANGED_ATTACK"]
+
+      rect = @character.rectangle
+
+      @tileLib = MOAITileDeck2D\new()
+      @tileLib\setTexture(texture)
+      @tileLib\setSize(6, 1)
+      @tileLib\setRect(rect\get())
+
+      @character.prop\setDeck @tileLib
+
+      @curve = MOAIAnimCurve.new()
+      @curve\reserveKeys(6)
+
+      @curve\setKey(1, 0.16, 1)
+      @curve\setKey(2, 0.33, 2)
+      @curve\setKey(3, 0.50, 3)
+      @curve\setKey(4, 0.66, 4)
+      @curve\setKey(5, 0.83, 5)
+      @curve\setKey(6, 1.00, 6)
+
+      span = 3
+      if @character.stats.ranged_cooldown != nil
+        span = @character.stats.ranged_cooldown
+
+      @anim = MOAIAnim\new()
+      @anim\reserveLinks(1)
+      @anim\setLink(1, @curve, @character.prop, MOAIProp2D.ATTR_INDEX)
+      @anim\setMode(MOAITimer.NORMAL)
+      @anim\setSpan(span)
+      @anim\start()
+      @anim\setListener(MOAITimer.EVENT_TIMER_END_SPAN, @\stop)
+
+      @timer = MOAITimer.new()
+      @timer\setSpan(1)
+      @timer\setMode(MOAITimer.NORMAL)
+      @timer\setListener(MOAITimer.EVENT_TIMER_END_SPAN, @\update)
+      @timer\start()
+
+    super @character
+
+  beforeStop: (otherCharacters = {}) =>
+    @anim\stop()
+    @anim = nil
+    @curve = nil
+    @timer\stop()
+    @timer = nil
+
+  update: () =>
+    x, y = @character\getLocation()
+    bullet = powerupManager.makePowerup("bullet", x, y)
+    bullet.body\setLinearVelocity(-200, 0)
+    bullet\setPotency(@character.stats.attack * -1)
+
+class PunchAction extends Action
+
+  execute: (otherCharacters = {}) =>
+    if @character.state == Characterstate.IDLE
+
+      texture = R.ASSETS.IMAGES.WRESTLER_PUNCH
+
+      rect = @character.rectangle
+
+      @tileLib = MOAITileDeck2D\new()
+      @tileLib\setTexture(texture)
+      @tileLib\setSize(6, 1)
+      @tileLib\setRect(rect\get())
+
+      @character.prop\setDeck @tileLib
+
+      @curve = MOAIAnimCurve.new()
+      @curve\reserveKeys(6)
+
+      @curve\setKey(1, 0.16, 1)
+      @curve\setKey(2, 0.33, 2)
+      @curve\setKey(3, 0.50, 3)
+      @curve\setKey(4, 0.66, 4)
+      @curve\setKey(5, 0.83, 5)
+      @curve\setKey(6, 1.00, 6)
+
+      @anim = MOAIAnim\new()
+      @anim\reserveLinks(1)
+      @anim\setLink(1, @curve, @character.prop, MOAIProp2D.ATTR_INDEX)
+      @anim\setMode(MOAITimer.NORMAL)
+      @anim\setSpan(1.3)
+      @anim\start()
+      @anim\setListener(MOAITimer.EVENT_TIMER_END_SPAN, @\stop)
+
+      @timer = MOAITimer.new()
+      @timer\setSpan(0.5)
+      @timer\setMode(MOAITimer.NORMAL)
+      @timer\setListener(MOAITimer.EVENT_TIMER_END_SPAN, @\update)
+      @timer\start()
+
+    super @character
+
+  selectCharacters: (range) =>
+    characterManager.selectCharacters((char) ->
+      x1, y1 = char\getLocation()
+      x2, y2 = @character\getLocation()
+
+      return char.name == 'unit' and (x1 >= x2 - 20 and x1 <= x2 + range) )
+
+  update: () =>
+    otherCharacters = @selectCharacters(55)
+
+    if #otherCharacters > 0
+      for char in *otherCharacters do
+        char\alterHealth(-@character.stats.attack)
+
+  beforeStop: (otherCharacters = {}) =>
+    @anim\stop()
+    @anim = nil
+    @curve = nil
+    @timer\stop()
+    @timer = nil
+
+  poll: () =>
+    otherCharacters = @selectCharacters(55)
+    return true, 90 + (#otherCharacters * 100) + math.random(0,12)
+
 class WalkAction extends Action
 
   execute: (otherCharacters = {}) =>
     if @character.state == Characterstate.IDLE
 
-      print "Loading WRESTLER_WALK"
-      texture = R.ASSETS.IMAGES.WRESTLER_WALK
+      texture = R.ASSETS.IMAGES[@character.characterID\upper! .. "_WALK"]
 
       rect = @character.rectangle
 
@@ -96,7 +220,6 @@ class WalkAction extends Action
     super @character
 
   test: =>
-    print 'stop'
     @stop!
 
   beforeStop: (otherCharacters = {}) =>
@@ -106,7 +229,7 @@ class WalkAction extends Action
     @curve = nil
 
   poll: (otherCharacters = {}) =>
-    return true, 200
+    return true, 100
 
 class RunAction extends WalkAction
 
@@ -119,19 +242,16 @@ class RunAction extends WalkAction
       x1, y1 = powerup.body\getPosition()
       x2, y2 = @character\getLocation()
 
-      return (x1 >= x2 and x1 <= x2 + 100) )
+      return powerup.name == 'powerup' and powerup.active and not powerup.isDragged and (x1 >= x2 and x1 <= x2 + 100) )
 
   poll: () =>
     otherCharacters = @selectCharacters()
-    print "Run action: #{#otherCharacters}"
-    return true, 150 + (#otherCharacters * 100)
+    return true, 90 + (#otherCharacters * 20)
 
 class FlyAction extends Action
 
   execute: (otherCharacters = {}) =>
     if @character.state == Characterstate.IDLE
-
-      print "Loading image UFO"
 
       texture = R.ASSETS.IMAGES.UFO
 
@@ -222,8 +342,6 @@ class SpawnAction extends Action
   execute: (otherCharacters = {}) =>
     if @character.state == Characterstate.IDLE
 
-      print "EXECUTING THE SPAWN ACTION!!!!!!!!!!!!!!!!!!!!!!!!!"
-
       texture = R.ASSETS.IMAGES.UFO
 
       rect = @character.rectangle
@@ -266,7 +384,7 @@ class JumpwalkAction extends Action
   execute: (otherCharacters = {}) =>
     if @character.state == Characterstate.IDLE
 
-      texture = R.ASSETS.IMAGES.ALIEN
+      texture = R.ASSETS.IMAGES[@character.characterID\upper! .. "_JUMPWALK"]
 
       rect = @character.rectangle
 
@@ -351,7 +469,6 @@ class JumpwalkAction extends Action
       return char.name == 'hero' and (x1 >= x2 - 20 and x1 <= x2 + 20) )
 
   test: =>
-    print 'stop'
     @stop!
 
   beforeStop: (otherCharacters = {}) =>
@@ -364,27 +481,10 @@ class JumpwalkAction extends Action
 
   poll: (otherCharacters = {}) =>
     return true, math.random(0,800)
-
-class EliteJumpwalkAction extends JumpwalkAction
-
-  execute: (otherCharacters = {}) =>
-    super @character
-    texture = R.ASSETS.IMAGES.ALIEN2
-    @tileLib\setTexture(texture)
-    print "Elite Jumpwalker!"    
-
-class SupremeJumpwalkAction extends JumpwalkAction
-
-  execute: (otherCharacters = {}) =>
-    super @character
-    texture = R.ASSETS.IMAGES.ALIEN3
-    @tileLib\setTexture(texture)
-    print "Elite Jumpwalker!"   
-
+ 
 class ActionManager
   makeAction: (actionID, character) ->
     actionID = actionID\lower()
-    print "Action Factory: " .. actionID
 
     switch actionID
       when "idle"
@@ -393,23 +493,20 @@ class ActionManager
       when "walk"
         WalkAction(character)
 
+      when "punch"
+        PunchAction(character)
+
+      when "ranged_attack"
+        RangedAttackAction(character)
+
       when "run"
         RunAction(character)
 
       when "jumpwalk"
         JumpwalkAction(character)
 
-      when "elite_jumpwalk"
-        EliteJumpwalkAction(character)
-
-      when "supreme_jumpwalk"
-        SupremeJumpwalkAction(character)
-
       when "spawn"
         SpawnAction(character)
-
-      when "spawned"
-        SpawnedAction(character)
 
       when "fly"
         FlyAction(character)

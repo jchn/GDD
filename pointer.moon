@@ -20,7 +20,6 @@ class Pointer
   listenTo: (layer) =>
     layer.x = 0
     layer.y = 0
-    print "layer priority #{layer.priority}"
     @layers[layer.priority] = layer
 
   stopListeningTo: (layer) =>
@@ -28,7 +27,6 @@ class Pointer
 
   onClick: (down) =>
     if down
-      print "number of layers: #{#@layers}"
       for priority, layer in pairs @layers
         if not @pick and layer.interactive
           partition = layer\getPartition!
@@ -37,12 +35,12 @@ class Pointer
             if @pick
               @handlePick(layer)
     else
-      print "About to clear"
       @clear()
 
   clear: () =>
     if @pick
       if @pick.draggable
+        @pick.parent.isDragged = false
         @pick.parent\endDrag()
       if @mouseBody
         @mouseBody\destroy()
@@ -61,6 +59,7 @@ class Pointer
     if @pick and @pick.draggable
       @pick.isDragged = true
       @pick.parent\beginDrag()
+      @pick.parent.isDragged = true
       @mouseBody = @world\addBody MOAIBox2DBody.DYNAMIC
       @mouseJoint = @world\addMouseJoint @mouseBody, @pick.body, layer.x, layer.y, 10000.0 * @pick.body\getMass()
       @mouseBody\setTransform layer.x, layer.y
@@ -77,7 +76,6 @@ class Pointer
   touchcallback: (eventType, idx, x, y, tapCount) =>
     if eventType == MOAITouchSensor.TOUCH_DOWN
       for priority, layer in pairs @layers
-        print "x and y: #{x} #{y}"
         layer.x, layer.y = layer\wndToWorld x, y
         if layer.interactive and not @pick
           partition = layer\getPartition!

@@ -3,8 +3,10 @@ class ScreenManager
 	screens = {}
 	currentScreen = nil
 
+	levelRunning: () ->
+		return currentScreen.running
+
 	registerScreen: (screenID, screen) ->
-		print "Registered screen: #{screenID}"
 		screens[screenID] = screen
 
 	closePrevious: () ->
@@ -18,7 +20,6 @@ class ScreenManager
 
 
 	openScreen: (screenID) ->
-		print "Opening screen: #{screenID}"
 		screenManager.closePrevious!
 		currentScreen = screens[screenID]
 		currentScreen\load!
@@ -30,19 +31,19 @@ class ScreenManager
 		switch elementID
 			when "button"
 				size = screenElementConfig.SIZE
-				print "Making button with size: #{size[1]}"
-				button = SimpleButton(layer, R.ASSETS.IMAGES[screenElementConfig.IMAGE], Rectangle(size[1], size[2], size[3], size[4]), screenElementConfig.X, screenElementConfig.Y, -> screenManager.doScreenElementFunctions(screenElementConfig.FUNCTION))
+				
+				button = SimpleButton(layer, R.ASSETS.IMAGES[screenElementConfig.IMAGE], Rectangle(size[1], size[2], size[3], size[4]), screenElementConfig.X, screenElementConfig.Y, (-> screenManager.doScreenElementFunctions(screenElementConfig.FUNCTION)), (-> screenManager.doScreenElementFunctions(screenElementConfig.ENABLE_FUNCTION)) )
 				button\add()
 
 	doScreenElementFunctions: (functionInfo) ->
-		print "Function Info = #{functionInfo}"
 		functionInfo = splitAtSpaces(functionInfo)
 		functionInfo[1] = functionInfo[1]\lower!
 
 		switch functionInfo[1]
 			when "openscreen"
 				screenManager.openScreen(functionInfo[2])
-
+			when "levelunlocked"
+				saveFile.Save.CURRENT_LEVEL >= tonumber(functionInfo[2])
 
 export screenManager = ScreenManager()
 
@@ -64,10 +65,8 @@ class Screen
 		R\setAssets assets
 
 	open: () =>
-		print "Opening Screen"
 
 	close: () =>
-		print "Closing Screen"
 
 export class GameScreen extends Screen
 
@@ -93,7 +92,7 @@ export levelState = {
 
 export class Level extends Screen
 
-	new: (@configJson) =>
+	new: (@configJson, @levelNO) =>
 		super
 		@state = levelState.MADE
 
@@ -103,7 +102,7 @@ export class Level extends Screen
 		@wrestler = @configTable.wrestler
 		@spawnableUnits = @configTable.spawnableUnits
 		@startingPowerups = @configTable.startingPowerups
-		print "Length of level: #{@length}, Wrestler: #{@wrestler}"
+
 		@state = levelState.LOADED
 
 		@world = MOAIBox2DWorld.new()
@@ -119,7 +118,7 @@ export class Level extends Screen
 		LayerMgr\createLayer('background', 1, false)\render!\setParallax 0.5, 1
 		LayerMgr\createLayer('ground', 2, false)\render!
 		LayerMgr\createLayer('characters', 3, false)\render!
-		LayerMgr\createLayer('box2d', 4, false)\render!
+		LayerMgr\createLayer('box2d', 4, false)
 		LayerMgr\createLayer('foreground', 5, false)\render!\setParallax 1.5, 1
 		LayerMgr\createLayer('ui', 7, true, false)\render!
 		LayerMgr\createLayer('powerups', 6, true)\render!
@@ -165,17 +164,17 @@ export class Level extends Screen
 		fgprop = MOAIProp2D.new()
 		fgprop\setDeck fgdeck
 		fgprop\setGrid fggrid
-		fgprop\setLoc -200, -100
+		fgprop\setLoc 0, -100
 
 		bgprop = MOAIProp2D.new()
 		bgprop\setDeck bgdeck
 		bgprop\setGrid bggrid
-		bgprop\setLoc -200, -60
+		bgprop\setLoc 0, -60
 
 		gprop = MOAIProp2D.new()
 		gprop\setDeck gdeck
 		gprop\setGrid ggrid
-		gprop\setLoc -200, -80
+		gprop\setLoc 0, -80
 
 		LayerMgr\getLayer('foreground')\insertProp fgprop
 		LayerMgr\getLayer('background')\insertProp bgprop
@@ -212,7 +211,6 @@ export class Level extends Screen
 		@running = true
 		@thread = MOAIThread.new()
 		@thread\run(@\loop)
-		print "Opened level"
 
 	loop: () =>
 		while @running
@@ -227,6 +225,20 @@ export class Level extends Screen
 					@indicator\update x
 					if @wrestler.stats.health <= 0
 						@win()
+
+					bullets = powerupManager.selectPowerups((powerup) ->
+      					x1, y1 = powerup.body\getPosition()
+      					x2, y2 = @wrestler\getLocation()
+
+      					return powerup.name == 'bullet' and (x1 >= x2 - 20 and x1 <= x2 + 20) )
+
+					if #bullets > 0
+						for bullet in *bullets do
+							powerupManager.removePowerups((p) -> return p == bullet)
+							bullet\remove()
+							bullet\destroy()
+							bullet\execute(@wrestler)
+
 				when levelState.LEVEL_LOST
 					@wrestler\removeIcon()
 					@ufo\doAction("crash")
@@ -278,7 +290,13 @@ export class Level extends Screen
 			LayerMgr\getLayer("ui")\insertProp prop
 			buttonManager.forcefullyDisableButtons!
 
+			if saveFile.Save.CURRENT_LEVEL <= @levelNO
+				saveFile.Save.CURRENT_LEVEL = @levelNO + 1
+				save()
+
 			performWithDelay(2, -> screenManager.openScreen("mainMenu"))
+
+			
 		
 	gameOver: () =>
 		if @state == levelState.RUNNING
