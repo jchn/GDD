@@ -64,7 +64,7 @@ class Screen
 
 	new: (@configJson) =>
 
-	load: (onComplete = -> print "Loading Complete") =>
+	load: (onComplete = -> ) =>
 		dataBuffer = MOAIDataBuffer.new!
 		dataBuffer\load(@configJson)
 		config = dataBuffer\getString!
@@ -83,7 +83,7 @@ class Screen
 
 export class GameScreen extends Screen
 
-	load: (onComplete = -> print "Loading Complete") =>
+	load: (onComplete = -> ) =>
 		super (onComplete)
 		@screenElements = @configTable.screenElements
 		@background = @configTable.background
@@ -128,7 +128,7 @@ export class Level extends Screen
 		super
 		@state = levelState.MADE
 
-	load: (onComplete = -> print "Loading complete") =>
+	load: (onComplete = -> ) =>
 		super (onComplete)
 		@length = @configTable.length
 		@wrestler = @configTable.wrestler
@@ -226,7 +226,7 @@ export class Level extends Screen
 		buttonXOffset = -50
 		buttonCount = 0
 		for spawnableUnit in *@spawnableUnits 
-			button = AnimatedCooldownButton LayerMgr\getLayer("ui"), R.ASSETS.IMAGES.UNIT_BUTTON, R.ASSETS.IMAGES[spawnableUnit .. "_ICON"] ,Rectangle(-32, -32, 32, 32), buttonX, buttonY, (-> characterManager.makeCharacter(spawnableUnit)), (-> return characterManager.checkEnemySpawnable(spawnableUnit))
+			button = AnimatedCooldownButton LayerMgr\getLayer("ui"), R.ASSETS.IMAGES.UNIT_BUTTON, R.ASSETS.IMAGES[spawnableUnit .. "_ICON"] ,Rectangle(-32, -32, 32, 32), Rectangle(-8, -8, 8, 8), buttonX, buttonY, (-> characterManager.makeCharacter(spawnableUnit)), (-> return characterManager.checkEnemySpawnable(spawnableUnit))
 			button\add()
 			buttonX += buttonXOffset
 			buttonCount += 1
@@ -322,6 +322,7 @@ export class Level extends Screen
 
 			LayerMgr\getLayer("ui")\insertProp prop
 			buttonManager.forcefullyDisableButtons!
+			buttonManager.removeButtons()
 
 			if saveFile.Save.CURRENT_LEVEL <= @levelNO
 				saveFile.Save.CURRENT_LEVEL = @levelNO + 1
@@ -353,3 +354,4 @@ export class Level extends Screen
 
 	    LayerMgr\getLayer("ui")\insertProp prop
 	    buttonManager.forcefullyDisableButtons!
+	    buttonManager.removeButtons()

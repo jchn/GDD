@@ -25,8 +25,15 @@ class ButtonManager
       button\disable()
     forcefullyDisabled = true
 
+  buttonsForcefullyDisabled: () ->
+    return forcefullyDisabled
+
   registerButton: (button) ->
     table.insert(buttons, button)
+
+  removeButtons: () ->
+    for button in *buttons do
+      button\remove()
 
 export buttonManager = ButtonManager()
 
@@ -104,6 +111,13 @@ export class ImageButton extends SimpleButton
 
     super @layer, @texture, @rectangle, @x, @y, @onClick, @enableFunction
 
+  enable: () =>
+    @backgroundImage\setColor 1, 1, 1, 1
+
+  disable: () =>
+    @backgroundImage\setColor 1, 1, 1, 0.5
+
+
   add: () =>
     super @
     @layer\insertProp @backgroundImage
@@ -137,7 +151,7 @@ export class TextButton extends SimpleButton
 
 export class AnimatedCooldownButton extends Button
 
-  new: (@layer, @texture, @iconTexture, @rectangle, @x, @y, @onClick, @enableFunction) =>
+  new: (@layer, @texture, @iconTexture, @rectangle, @iconRectangle, @x, @y, @onClick, @enableFunction) =>
     @prop = MOAIProp2D.new()
 
     @tileLib = MOAITileDeck2D\new()
@@ -178,7 +192,7 @@ export class AnimatedCooldownButton extends Button
 
     @iconQuad = MOAIGfxQuad2D.new()
     @iconQuad\setTexture( @iconTexture )
-    @iconQuad\setRect( @rectangle\get() )
+    @iconQuad\setRect( @iconRectangle\get() )
 
     @icon\setDeck( @iconQuad )
 
@@ -195,13 +209,10 @@ export class AnimatedCooldownButton extends Button
     LayerMgr\getLayer('icon')\removeProp @icon
 
   afterDisable: () =>
-    @icon\setColor 1, 1, 1, 0.5
-    if @enableFunction
-      if @enableFunction()
-        @anim\start()
-
-        return
     @anim\apply(0)
+    @icon\setColor 1, 1, 1, 0.5
+    if (not buttonManager.buttonsForcefullyDisabled!) and @enableFunction!
+      @anim\start()
 
   afterEnable: () =>
     @icon\setColor 1, 1, 1, 1
@@ -209,8 +220,6 @@ export class AnimatedCooldownButton extends Button
       if @enableFunction()
         @anim\apply(1.8)
         
-
-
   triggerClick: () =>
     if @clickable
       @onClick!

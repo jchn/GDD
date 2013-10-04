@@ -5,7 +5,9 @@
 		"background" : "BACKGROUND",
 
 		"screenElements" : [
-			{ "ELEMENT": "imagebutton", "X" : 0, "Y" : 0, "IMAGE" : "LEVEL_SELECT_BUTTON", "BACKGROUND" : "LEVEL1_PREVIEW", "FUNCTION" : "openscreen level_1", "ENABLE_FUNCTION" : "levelUnlocked 1", "SIZE" : [-64, -64, 64, 64] }
+			{ "ELEMENT": "imagebutton", "X" : -120, "Y" : 0, "IMAGE" : "LEVEL_SELECT_BUTTON", "BACKGROUND" : "LEVEL1_PREVIEW", "FUNCTION" : "openscreen level_1", "ENABLE_FUNCTION" : "levelUnlocked 1", "SIZE" : [-64, -64, 64, 64] },
+			{ "ELEMENT": "imagebutton", "X" : 0, "Y" : 0, "IMAGE" : "LEVEL_SELECT_BUTTON", "BACKGROUND" : "LEVEL1_PREVIEW", "FUNCTION" : "openscreen level_2", "ENABLE_FUNCTION" : "levelUnlocked 2", "SIZE" : [-64, -64, 64, 64] },
+			{ "ELEMENT": "imagebutton", "X" : 120, "Y" : 0, "IMAGE" : "LEVEL_SELECT_BUTTON", "BACKGROUND" : "LEVEL1_PREVIEW", "FUNCTION" : "openscreen level_3", "ENABLE_FUNCTION" : "levelUnlocked 3", "SIZE" : [-64, -64, 64, 64] }
 		],
 
 		"assets" : {
