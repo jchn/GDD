@@ -19,7 +19,7 @@ class Powerup
     @prop.isPowerup = true
     @prop.parent = @
     @prop\setParent @body
-    @prop\setBlendMode(MOAIProp2D.GL_SRC_ALPHA, MOAIProp2D.GL_ONE_MINUS_SRC_ALPHA)
+    -- @prop\setBlendMode(MOAIProp2D.GL_SRC_ALPHA, MOAIProp2D.GL_ONE_MINUS_SRC_ALPHA)
 
     rect = Rectangle(-32,-32,32,32)
 

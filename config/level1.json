@@ -78,7 +78,12 @@
         "INDICATOR_BASE" : "resources/indicator_base.png",
         "INDICATOR" : "resources/indicator.png",
         "GAME_OVER" : "resources/game_over.png",
-        "WIN_GAME" : "resources/win_game.png"
+        "WIN_GAME" : "resources/win_game.png",
+        "DARK_OVERLAY" : "resources/dark_overlay.png",
+        "INDICATOR64" : "resources/indicator64.png",
+        "TRANSPARENT_OVERLAY" : "resources/transparent_overlay.png",
+
+        "HEALTH" : "resources/health.png"
       },
       "fonts": {
         "ARIAL" : {
@@ -103,6 +108,14 @@
 
             }
           }
+      },
+      "overlays" : {
+        "POWERUP_OVERLAY" : {
+          "TEXT" : "This is a powerup!, you can drag it to Pygo!",
+          "TEXTURE" : "HEALTH",
+          "EVENT" : "LEVEL_START"
+        }
+        
       }
     }
   }

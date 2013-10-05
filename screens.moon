@@ -2,6 +2,15 @@ class ScreenManager
 
 	screens = {}
 	currentScreen = nil
+	EVENTS = {
+		LEVEL_START: 0,
+		LEVEL_END: 1,
+		GIVE_POWERUP_TO_PYGO: 2,
+		GIVE_POWERUP_TO_ENEMY: 3,
+		GIVE_POWERUP_TO_UNIT: 4,
+		GET_POWERUP_FROM_UI: 5,
+		IDLE: 6
+	}
 
 	levelRunning: () ->
 		return currentScreen.running
@@ -81,6 +90,100 @@ class Screen
 
 	close: () =>
 
+	openOverlay: (overlay) =>
+		print 'OPEN OVERLAY'
+		@pause!
+
+
+		print 'CREATEINDICATOR'
+		print "olayer: #{olayer}, ilayer: #{ilayer}"
+
+		layer = LayerMgr\getLayer 'powerups'
+		olayer = LayerMgr\getLayer("overlay")
+		ilayer = LayerMgr\getLayer("indicator")
+		infoLayer = LayerMgr\getLayer("info")
+
+		darkQuad = MOAIGfxQuad2D.new()
+		darkQuad\setTexture( R.ASSETS.TEXTURES.DARK_OVERLAY )
+		darkQuad\setRect( -1024, -1024, 1024, 1024 )
+		darkQuad\setUVRect( 0, 0, 1, 1 )
+
+		darkBg = MOAIProp2D.new()
+		darkBg\setDeck( darkQuad )
+		olayer\insertProp( darkBg )
+		darkBg\setLoc(0, 0)
+		darkBg\setBlendMode(MOAIProp2D.GL_SRC_ALPHA, MOAIProp2D.GL_ONE_MINUS_DST_ALPHA)
+		darkBg\setColor(0, 0, 0, 1)
+		darkBg\setPriority(30)
+
+		transparentQuad = MOAIGfxQuad2D.new()
+		transparentQuad\setTexture( R.ASSETS.TEXTURES.TRANSPARENT_OVERLAY )
+		transparentQuad\setRect( -240, -160, 240, 160 )
+		transparentQuad\setUVRect( 0, 0, 1, 1 )
+
+		transparentBg = MOAIProp2D.new()
+		transparentBg\setDeck( transparentQuad )
+		ilayer\insertProp( transparentBg )
+		transparentBg\setLoc(0, 0)
+		transparentBg\setBlendMode(MOAIProp2D.GL_ZERO, MOAIProp2D.GL_ONE_MINUS_SRC_COLOR)
+		transparentBg\setColor(0, 0, 0, 1)
+		transparentBg\setPriority(35)
+
+		-- x,y = prop\getLoc!
+		-- pLayer = LayerMgr\getLayer('characters')
+		-- wndX, wndY = pLayer\worldToWnd x, y
+
+		-- powerup = powerupManager.makePowerup("", 0, 0)
+		-- newProp = powerup.prop
+
+		lightQuad = MOAIGfxQuad2D.new()
+		lightQuad\setTexture( R.ASSETS.TEXTURES.INDICATOR64 )
+		lightQuad\setRect( -128, -128, 128, 128 )
+		lightQuad\setUVRect( 0, 0, 1, 1 )
+
+		lightBg = MOAIProp2D.new()
+		lightBg\setDeck( lightQuad )
+		ilayer\insertProp( lightBg )
+		-- newProp\setLoc(prop\getLoc!)
+		lightBg\setLoc(0, 0)
+		-- newProp\setLoc(layer\worldToWnd(prop\getLoc!))
+		lightBg\setBlendMode(MOAIProp2D.GL_ZERO, MOAIProp2D.GL_ONE_MINUS_SRC_COLOR)
+		lightBg\setColor(0, 0, 0, 0.5)
+		-- newProp\setColor 0, 0, 0, 0.5
+		-- lightBg\setPriority(40)
+		-- newProp\setPriority 40
+
+		-- Set the image in center
+
+		imageQuad = MOAIGfxQuad2D.new()
+		imageQuad\setTexture( overlay.TEXTURE )
+		imageQuad\setRect( -64, -64, 64, 64 )
+		imageQuad\setUVRect( 0, 0, 1, 1 )
+
+		imageBg = MOAIProp2D.new()
+		imageBg\setDeck( imageQuad )
+		infoLayer\insertProp( imageBg )
+		imageBg\setLoc(0, 0)
+		-- imageBg\setBlendMode(MOAIProp2D.GL_ZERO, MOAIProp2D.GL_ONE_MINUS_SRC_ALPHA)
+		-- imageBg\setColor(0, 0, 0, 1)
+		-- imageBg\setPriority(35)
+
+		textbox = MOAITextBox.new!
+		textbox\setStyle(R.ASSETS.STYLES.ARIAL)
+		textbox\setString(overlay.TEXT)
+		textbox\setTextSize(20)
+		textbox\setLoc(0, -100)
+		textbox\setYFlip(true)
+		textbox\setRect(-128, -128, 128, 128)
+		textbox\setAlignment(MOAITextBox.CENTER_JUSTIFY, MOAITextBox.CENTER_JUSTIFY)
+		textbox\spool!
+
+		infoLayer\insertProp(textbox)
+
+
+	closeOverlay: () =>
+		
+
 export class GameScreen extends Screen
 
 	load: (onComplete = -> ) =>
@@ -146,15 +249,29 @@ export class Level extends Screen
 
 
 	open: () =>
+
+		-- Setting events for overlays
+		if R.ASSETS.OVERLAYS
+			for k,v in pairs(R.ASSETS.OVERLAYS)
+				overlayName = k
+				print "k: #{k}, v: #{v.EVENT}"
+				e\addEventListener(v["EVENT"], -> @openOverlay(R.ASSETS.OVERLAYS[overlayName]))
+
 		@state = levelState.RUNNING
 		LayerMgr\createLayer('background', 1, false)\render!\setParallax 0.5, 1
 		LayerMgr\createLayer('ground', 2, false)\render!
-		LayerMgr\createLayer('characters', 3, false)\render!
-		LayerMgr\createLayer('box2d', 4, false)
+		LayerMgr\createLayer('characters', 3, true)\render!
+		LayerMgr\createLayer('box2d', 4, false)\render!
 		LayerMgr\createLayer('foreground', 5, false)\render!\setParallax 1.5, 1
-		LayerMgr\createLayer('ui', 7, true, false)\render!
 		LayerMgr\createLayer('powerups', 6, true)\render!
-		LayerMgr\createLayer('icon', 20, false, false)\render!
+		LayerMgr\createLayer('ui', 7, true, false)\render!
+		LayerMgr\createLayer('icon', 8, false, false)\render!
+
+		LayerMgr\createLayer('indicator', 9, true, false)\render!
+		LayerMgr\createLayer('overlay', 10, false, false)\render!
+		LayerMgr\createLayer('info', 11, false, false)\render!
+
+		
 
 		MOAIGfxDevice\getFrameBuffer()\setClearColor .2980, .1372, .2, 1
 
@@ -245,6 +362,10 @@ export class Level extends Screen
 		@thread = MOAIThread.new()
 		@thread\run(@\loop)
 
+		-- Add some delay, or else everything is centered out >.<
+		print "EventHandler: #{e.events}"
+		performWithDelay(0.2, -> e\triggerEvent("LEVEL_START"))
+
 	loop: () =>
 		while @running
 			characterManager.updateCharacters()
@@ -279,14 +400,19 @@ export class Level extends Screen
 					@running = false
 					performWithDelay(4, ->
 						@pause!
-						screenManager.openScreen("levelSelect"))
 
+						screenManager.openScreen("levelSelect"))
 		
 			coroutine.yield()
 	
 	pause: () =>
 		@oldRoot = MOAIActionMgr.getRoot()
 		MOAIActionMgr.setRoot()
+		e\triggerEvent("LEVEL_PAUSE")
+
+	resume: () =>
+		MOAIActionMgr.setRoot(@oldRoot)
+		e\triggerEvent("LEVEL_RESUME")
 
 	close: () =>
 		@running = false
@@ -355,3 +481,16 @@ export class Level extends Screen
 	    LayerMgr\getLayer("ui")\insertProp prop
 	    buttonManager.forcefullyDisableButtons!
 	    buttonManager.removeButtons()
+
+export class TutLevel extends Level
+
+	test: =>
+		-- e\addEventListener("START_LEVEL", -> @openOverlay(R.ASSETS.OVERLAYS.POWERUP_OVERLAY))
+
+	getFirstPowerup: () ->
+		powerups = powerupManager.selectPowerups((p) -> true)
+		powerups[1].prop
+
+	open: () =>
+		@test!
+		super!

@@ -4,6 +4,7 @@ export class AssetLoader
     @TEXTURES = {}
     @FONTS = {}
     @STYLES = {}
+    @OVERLAYS = {}
 
   load: (@onLoadComplete) =>
     -- Load images
@@ -12,14 +13,14 @@ export class AssetLoader
       images = @config.images
       for k, v in pairs(images)
         @IMAGES[k] = MOAIImage.new()
-        @IMAGES[k]\load(v)
+        @IMAGES[k]\load(v, MOAIImage.PREMULTIPLY_ALPHA)
 
     -- Load textures
     if @config.textures != nil
       textures = @config.textures
       for k, v in pairs(textures)
         @TEXTURES[k] = MOAITexture.new()
-        @TEXTURES[k]\load(v)
+        @TEXTURES[k]\load(v, MOAIImage.PREMULTIPLY_ALPHA)
 
     -- Load fonts
     if @config.fonts  != nil
@@ -32,6 +33,18 @@ export class AssetLoader
         @STYLES[k] = MOAITextStyle.new()
         @STYLES[k]\setFont @FONTS[k]
         @STYLES[k]\setSize v.size
+
+    -- Load overlays
+    print "check for config.overlays"
+    print @config.overlays
+    if @config.overlays != nil
+      overlays = @config.overlays
+      print "overlays #{overlays}"
+      for k, v in pairs(overlays)
+        @OVERLAYS[k] = {}
+        @OVERLAYS[k]["TEXT"] = v["TEXT"]
+        @OVERLAYS[k]["TEXTURE"] = @TEXTURES[v["TEXTURE"]]
+        @OVERLAYS[k]["EVENT"] = v["EVENT"]
 
     @onLoadComplete!
 
