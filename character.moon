@@ -438,7 +438,7 @@ class CharacterManager
         newCharacter\setFilter(entityCategory.CHARACTER, entityCategory.POWERUP + entityCategory.BOUNDARY + entityCategory.INACTIVEPOWERUP + entityCategory.DRAGGEDPOWERUP)
       else
         x = ufo\getLocation()
-        newCharacter = Unit(characterID, prop, layer, world, direction.LEFT, rectangle, bodyRectangle, stats, actions, x, y)
+        newCharacter = Unit(characterID, prop, layer, world, direction.LEFT, rectangle, bodyRectangle, stats, actions, x, y, powerupStats)
         newCharacter\setFilter(entityCategory.CHARACTER, entityCategory.BOUNDARY)
         newCharacter\setHealthbar(Healthbar(LayerMgr\getLayer("characters"), newCharacter\getWidth(), 4), false)
 

@@ -66,7 +66,7 @@ class Powerup
 
   beginDrag: () =>
     @active = true
-    @fixture\setFilter(entityCategory.DRAGGEDPOWERUP, entityCategory.BOUNDARY + entityCategory.CHARACTER + entityCategory.POWERUP + entityCategory.INACTIVEPOWERUP)
+    @fixture\setFilter(entityCategory.DRAGGEDPOWERUP, entityCategory.BOUNDARY + entityCategory.CHARACTER)
 
   endDrag: () =>
     @active = false

@@ -27,24 +27,33 @@ class ScreenManager
 		characterManager.clear()
 		buttonManager.clear()
 
-
 	openScreen: (screenID) ->
 		screenManager.closePrevious!
 		currentScreen = screens[screenID]
 		currentScreen\load!
 		currentScreen\open!
 
-	makeScreenElement: (layer, screenElementConfig) ->
+	makeScreenElement: (layer, screenElementConfig, secondaryLayer = layer) ->
 		elementID = screenElementConfig.ELEMENT\lower!
-
 		switch elementID
 			when "button"
 				size = screenElementConfig.SIZE
 				
 				button = SimpleButton(layer, R.ASSETS.IMAGES[screenElementConfig.IMAGE], Rectangle(size[1], size[2], size[3], size[4]), screenElementConfig.X, screenElementConfig.Y, (-> screenManager.doScreenElementFunctions(screenElementConfig.FUNCTION)), (-> screenManager.doScreenElementFunctions(screenElementConfig.ENABLE_FUNCTION)) )
 				button\add()
+			when "textbutton"
+				size = screenElementConfig.SIZE
+				
+				button = TextButton(layer, secondaryLayer, R.ASSETS.IMAGES[screenElementConfig.IMAGE], screenElementConfig.TEXT, R.STYLE, Rectangle(size[1], size[2], size[3], size[4]), screenElementConfig.X, screenElementConfig.Y, (-> screenManager.doScreenElementFunctions(screenElementConfig.FUNCTION)), (-> screenManager.doScreenElementFunctions(screenElementConfig.ENABLE_FUNCTION)) )
+				button\add()
+			when "imagebutton"
+				size = screenElementConfig.SIZE
+				
+				button = ImageButton(layer, R.ASSETS.IMAGES[screenElementConfig.IMAGE], R.ASSETS.IMAGES[screenElementConfig.BACKGROUND], Rectangle(size[1], size[2], size[3], size[4]), screenElementConfig.X, screenElementConfig.Y, (-> screenManager.doScreenElementFunctions(screenElementConfig.FUNCTION)), (-> screenManager.doScreenElementFunctions(screenElementConfig.ENABLE_FUNCTION)) )
+				button\add()
 
 	doScreenElementFunctions: (functionInfo) ->
+
 		functionInfo = splitAtSpaces(functionInfo)
 		functionInfo[1] = functionInfo[1]\lower!
 
@@ -53,6 +62,10 @@ class ScreenManager
 				screenManager.openScreen(functionInfo[2])
 			when "levelunlocked"
 				saveFile.Save.CURRENT_LEVEL >= tonumber(functionInfo[2])
+			when "true"
+				return true
+			when "false"
+				return false
 
 export screenManager = ScreenManager()
 
@@ -60,7 +73,7 @@ class Screen
 
 	new: (@configJson) =>
 
-	load: (onComplete = -> print "Loading Complete") =>
+	load: (onComplete = -> ) =>
 		dataBuffer = MOAIDataBuffer.new!
 		dataBuffer\load(@configJson)
 		config = dataBuffer\getString!
@@ -173,17 +186,36 @@ class Screen
 
 export class GameScreen extends Screen
 
-	load: (onComplete = -> print "Loading Complete") =>
+	load: (onComplete = -> ) =>
 		super (onComplete)
 		@screenElements = @configTable.screenElements
+		@background = @configTable.background
 
 	open: () =>
-		screenLayer = LayerMgr\createLayer('screen', 1, true, false)\render!
+		backgroundLayer = LayerMgr\createLayer('background', 1, false, false)\render!
+		screenLayer = LayerMgr\createLayer('screen', 2, true, false)\render!
+		secondaryLayer = LayerMgr\createLayer('secondary', 3, false, false)\render!
 
-		MOAIGfxDevice\getFrameBuffer()\setClearColor 0, .2, 1, 1
+		MOAIGfxDevice\getFrameBuffer()\setClearColor 0, 0, 1, 1
+
+		bggrid = MOAIGrid.new()
+		bggrid\initRectGrid 1, 1, 480, 320
+		bggrid\setRow 1, 1
+		bggrid\setRepeat(true, true)
+
+		bgdeck = MOAITileDeck2D.new()
+		bgdeck\setTexture R.ASSETS.IMAGES[@background]
+		bgdeck\setSize 1, 1
+
+		bgprop = MOAIProp2D.new()
+		bgprop\setDeck bgdeck
+		bgprop\setGrid bggrid
+		bgprop\setLoc -240, -160
+
+		backgroundLayer\insertProp bgprop
 
 		for screenElement in *@screenElements
-			screenManager.makeScreenElement(screenLayer, screenElement)
+			screenManager.makeScreenElement(screenLayer, screenElement, secondaryLayer)
 
 export levelState = {
 	MADE: 0
@@ -199,10 +231,7 @@ export class Level extends Screen
 		super
 		@state = levelState.MADE
 
-		-- Setting events
-
-
-	load: (onComplete = -> print "Loading complete") =>
+	load: (onComplete = -> ) =>
 		super (onComplete)
 		@length = @configTable.length
 		@wrestler = @configTable.wrestler
@@ -231,14 +260,18 @@ export class Level extends Screen
 		@state = levelState.RUNNING
 		LayerMgr\createLayer('background', 1, false)\render!\setParallax 0.5, 1
 		LayerMgr\createLayer('ground', 2, false)\render!
-		LayerMgr\createLayer('characters', 3, false)\render!
-		LayerMgr\createLayer('box2d', 4, false)
+		LayerMgr\createLayer('characters', 3, true)\render!
+		LayerMgr\createLayer('box2d', 4, false)\render!
 		LayerMgr\createLayer('foreground', 5, false)\render!\setParallax 1.5, 1
 		LayerMgr\createLayer('powerups', 6, true)\render!
 		LayerMgr\createLayer('ui', 7, true, false)\render!
-		LayerMgr\createLayer('indicator', 8, true, false)\render!
-		LayerMgr\createLayer('overlay', 9, false, false)\render!
-		LayerMgr\createLayer('info', 10, false, false)\render!
+		LayerMgr\createLayer('icon', 8, false, false)\render!
+
+		LayerMgr\createLayer('indicator', 9, true, false)\render!
+		LayerMgr\createLayer('overlay', 10, false, false)\render!
+		LayerMgr\createLayer('info', 11, false, false)\render!
+
+		
 
 		MOAIGfxDevice\getFrameBuffer()\setClearColor .2980, .1372, .2, 1
 
@@ -310,7 +343,7 @@ export class Level extends Screen
 		buttonXOffset = -50
 		buttonCount = 0
 		for spawnableUnit in *@spawnableUnits 
-			button = CoolDownButton LayerMgr\getLayer("ui"), R.ASSETS.TEXTURES["#{spawnableUnit}_button"\upper!], Rectangle(-16, -16, 16, 16), buttonX, buttonY, 2, (-> characterManager.makeCharacter(spawnableUnit)), (-> return characterManager.checkEnemySpawnable(spawnableUnit))
+			button = AnimatedCooldownButton LayerMgr\getLayer("ui"), R.ASSETS.IMAGES.UNIT_BUTTON, R.ASSETS.IMAGES[spawnableUnit .. "_ICON"] ,Rectangle(-32, -32, 32, 32), Rectangle(-8, -8, 8, 8), buttonX, buttonY, (-> characterManager.makeCharacter(spawnableUnit)), (-> return characterManager.checkEnemySpawnable(spawnableUnit))
 			button\add()
 			buttonX += buttonXOffset
 			buttonCount += 1
@@ -367,7 +400,8 @@ export class Level extends Screen
 					@running = false
 					performWithDelay(4, ->
 						@pause!
-						screenManager.openScreen("mainMenu"))
+
+						screenManager.openScreen("levelSelect"))
 		
 			coroutine.yield()
 	
@@ -414,14 +448,13 @@ export class Level extends Screen
 
 			LayerMgr\getLayer("ui")\insertProp prop
 			buttonManager.forcefullyDisableButtons!
+			buttonManager.removeButtons()
 
 			if saveFile.Save.CURRENT_LEVEL <= @levelNO
 				saveFile.Save.CURRENT_LEVEL = @levelNO + 1
 				save()
 
-			performWithDelay(2, -> screenManager.openScreen("mainMenu"))
-
-			
+			performWithDelay(2, -> screenManager.openScreen("levelSelect"))
 		
 	gameOver: () =>
 		if @state == levelState.RUNNING
@@ -447,6 +480,7 @@ export class Level extends Screen
 
 	    LayerMgr\getLayer("ui")\insertProp prop
 	    buttonManager.forcefullyDisableButtons!
+	    buttonManager.removeButtons()
 
 export class TutLevel extends Level
 

@@ -1,15 +1,17 @@
 {
 	"Config" : {
 
+
+		"background" : "BACKGROUND",
+
 		"screenElements" : [
-			{ "ELEMENT": "button", "X" : -50, "Y" : 0, "IMAGE" : "HEALTH", "FUNCTION" : "openscreen level_1", "ENABLE_FUNCTION" : "levelUnlocked 1",  "SIZE" : [-16, -16, 16, 16] },
-			{ "ELEMENT": "button", "X" : 0, "Y" : 0, "IMAGE" : "HEALTH", "FUNCTION" : "openscreen level_2", "ENABLE_FUNCTION" : "levelUnlocked 2", "SIZE" : [-16, -16, 16, 16] },
-			{ "ELEMENT": "button", "X" : 50, "Y" : 0, "IMAGE" : "HEALTH", "FUNCTION" : "openscreen level_3", "ENABLE_FUNCTION" : "levelUnlocked 3", "SIZE" : [-16, -16, 16, 16] }
+			{ "ELEMENT": "textbutton", "X" : 0, "Y" : 0, "IMAGE" : "BUTTON", "TEXT" : "story mode" , "FUNCTION" : "openscreen levelSelect", "ENABLE_FUNCTION" : "true", "SIZE" : [-128, -32, 128, 32] }
 		],
 
 		"assets" : {
 			"images": {
-				"HEALTH" : "resources/mushroom.png"
+				"BACKGROUND" : "resources/menu_bg.png",
+				"BUTTON" : "resources/menu_btn.png"
 			}
 		}
 	}

@@ -53,6 +53,7 @@ class Pointer
 
   forcedPick: (prop, layer) =>
     @pick = prop
+    print "layer.x #{layer.x}, layer.y #{layer.y}"
     @handlePick(layer)
 
   handlePick: (layer) =>
@@ -61,17 +62,23 @@ class Pointer
       @pick.parent\beginDrag()
       @pick.parent.isDragged = true
       @mouseBody = @world\addBody MOAIBox2DBody.DYNAMIC
+      x,y = layer\worldToWnd layer.x, layer.y
       @mouseJoint = @world\addMouseJoint @mouseBody, @pick.body, layer.x, layer.y, 10000.0 * @pick.body\getMass()
-      @mouseBody\setTransform layer.x, layer.y
+      @mouseJoint.layer = layer
+      @mouseBody\setTransform x, y
     if @pick and @pick.clickable
       @pick.parent\triggerClick layer.x, layer.y
 
   callback: (x, y) =>
+    print "callback"
     for priority, layer in pairs @layers
         @prevX, @prevY = layer.x, layer.y
         layer.x, layer.y = layer\wndToWorld x, y
+        -- Hier ging het fout, de verkeerde laag werd geselecteerd
         if @pick and @pick.draggable and @mouseJoint
-          @mouseJoint\setTarget layer.x, layer.y
+          @mouseJoint\setTarget @mouseJoint.layer.x, @mouseJoint.layer.y
+          print "blabla"
+          print "layer.x #{@mouseJoint.layer.x}, layer.y #{@mouseJoint.layer.y}"
 
   touchcallback: (eventType, idx, x, y, tapCount) =>
     if eventType == MOAITouchSensor.TOUCH_DOWN
@@ -88,7 +95,7 @@ class Pointer
         -- @prevX, @prevY = layer.x, layer.y
         layer.x, layer.y = layer\wndToWorld x, y
         if @pick and @pick.draggable
-          @mouseJoint\setTarget layer.x, layer.y
+          @mouseJoint\setTarget @mouseJoint.layer.x, @mouseJoint.layer.y
     else
       @clear()
 

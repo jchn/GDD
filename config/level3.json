@@ -4,18 +4,16 @@
     "wrestler" : "wrestler",
 
     "spawnableUnits" : [
-      "JUMPWALKER", "ELITE_JUMPWALKER", "SUPREME_JUMPWALKER", "RANGED", "ELITE_RANGED", "SUPREME_RANGED", "COLLECTOR", "ELITE_COLLECTOR", "SUPREME_COLLECTOR"
+      "JUMPWALKER", "ELITE_JUMPWALKER", "SUPREME_JUMPWALKER", "COLLECTOR", "SLOWDOWN"
     ],
 
     "startingPowerups" : [
-      { "ID" : "shield", "X" : 170, "Y": 0},
-      { "ID" : "strength", "X" : 200, "Y": 0},
-      { "ID" : "health", "X" : 230, "Y": 0},
-      { "ID" : "health", "X" : 260, "Y": 0}
     ],
 
     "assets" : {
       "images": {
+        "UNIT_BUTTON" : "resources/unit_buttons.png",
+
         "HEALTH" : "resources/health.png",
         "HEALTH_ANIM" : "resources/health_anim.png",
 
@@ -32,16 +30,23 @@
         "WRESTLER_PUNCH" : "resources/wrestler_punch.png",
 
         "JUMPWALKER_JUMPWALK" : "resources/jumpwalker.png",
+        "JUMPWALKER_ICON" : "resources/jumpwalker_icon.png",
         "ELITE_JUMPWALKER_JUMPWALK" : "resources/elite_jumpwalker.png",
+        "ELITE_JUMPWALKER_ICON" : "resources/elite_jumpwalker_icon.png",
         "SUPREME_JUMPWALKER_JUMPWALK" : "resources/supreme_jumpwalker.png",
+        "SUPREME_JUMPWALKER_ICON" : "resources/supreme_jumpwalker_icon.png",
 
         "COLLECTOR_WALK" : "resources/collector.png",
+        "COLLECTOR_ICON" : "resources/collector_icon.png",
         "ELITE_COLLECTOR_WALK" : "resources/collector.png",
         "SUPREME_COLLECTOR_WALK" : "resources/collector.png",
 
         "RANGED_RANGED_ATTACK" : "resources/jumpwalker.png",
         "ELITE_RANGED_RANGED_ATTACK" : "resources/elite_jumpwalker.png",
         "SUPREME_RANGED_RANGED_ATTACK" : "resources/supreme_jumpwalker.png",
+
+        "SLOWDOWN_WALL" : "resources/slowdown_wall.png",
+        "SLOWDOWN_ICON" : "resources/slowdown_icon.png",
 
         "UFO" : "resources/ufo2.png",
 
@@ -63,6 +68,8 @@
         "COLLECTOR_BUTTON" : "resources/button_alien_rank1.png",
         "ELITE_COLLECTOR_BUTTON" : "resources/button_alien_rank2.png",
         "SUPREME_COLLECTOR_BUTTON" : "resources/button_alien_rank3.png",
+
+        "SLOWDOWN_BUTTON" : "resources/button_alien_rank1.png",
 
         "INDICATOR_BASE" : "resources/indicator_base.png",
         "INDICATOR" : "resources/indicator.png",

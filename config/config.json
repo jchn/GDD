@@ -9,6 +9,12 @@
 				"DEFAULTOPEN" : true
 			},
 
+			{
+				"NAME" : "levelSelect",
+				"FILE" : "levelselect.json",
+				"TYPE" : "GameScreen"
+			},
+
 			{ 
 				"NAME": "level_1",
 				"FILE" : "level1.json",
@@ -36,7 +42,7 @@
 			"WRESTLER" : {
 				"COST" : {},
 				"STATS" : {
-					"health" : 1,
+					"health" : 10,
 					"attack" : 5,
 					"speed" : 40,
 					"shield" : 0
@@ -241,7 +247,7 @@
 					"shield" : 0
 				},
 				"ACTIONS" : [
-					"idle"
+					"wall"
 				],
 				"RECTANGLE" : [-32, -32, 32, 32 ],
 				"SPAWNLOCATION_OFFSET" : -35,
