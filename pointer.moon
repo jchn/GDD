@@ -70,15 +70,12 @@ class Pointer
       @pick.parent\triggerClick layer.x, layer.y
 
   callback: (x, y) =>
-    print "callback"
     for priority, layer in pairs @layers
         @prevX, @prevY = layer.x, layer.y
         layer.x, layer.y = layer\wndToWorld x, y
         -- Hier ging het fout, de verkeerde laag werd geselecteerd
         if @pick and @pick.draggable and @mouseJoint
           @mouseJoint\setTarget @mouseJoint.layer.x, @mouseJoint.layer.y
-          print "blabla"
-          print "layer.x #{@mouseJoint.layer.x}, layer.y #{@mouseJoint.layer.y}"
 
   touchcallback: (eventType, idx, x, y, tapCount) =>
     if eventType == MOAITouchSensor.TOUCH_DOWN
