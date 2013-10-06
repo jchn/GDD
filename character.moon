@@ -165,6 +165,8 @@ class PowerupUser extends Character
       other\destroy()
       other\execute(own)
       own\colorBlink(0.0, 1.0, 0.0)
+    if other.name == 'powerup'
+      dt\addPowerupForCharacter(other, own)
       
 
 class Hero extends PowerupUser
@@ -245,6 +247,7 @@ class UFO extends Character
     own = own.parent
     other = other.parent
     if other.name == 'powerup'
+      dt\addPowerupForCharacter(other, own)
       if other.prop.isDragged
         Pntr\clear()
       other\remove()
@@ -454,6 +457,8 @@ class CharacterManager
 
     table.insert(characters, newCharacter)
     newCharacter\add()
+
+    dt\addSpawnedUnit(newCharacter)
 
     return newCharacter
 
