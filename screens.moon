@@ -162,7 +162,7 @@ class Screen
 
 		imageBg = MOAIProp2D.new()
 		imageBg\setDeck( imageQuad )
-		infoLayer\insertProp( imageBg )
+		-- infoLayer\insertProp( imageBg )
 		imageBg\setLoc(0, 0)
 		-- imageBg\setBlendMode(MOAIProp2D.GL_ZERO, MOAIProp2D.GL_ONE_MINUS_SRC_ALPHA)
 		-- imageBg\setColor(0, 0, 0, 1)
@@ -180,8 +180,19 @@ class Screen
 
 		infoLayer\insertProp(textbox)
 
+		txtBtn = SimpleButton(infoLayer, overlay.TEXTURE, Rectangle(-64, -64, 64, 64), 0, 0, -> @closeOverlay(overlay))\add!
+		-- buttonManager\registerButton txtBtn
+		e\triggerEvent("OPEN_#{overlay.ID}")
+		print overlay.TEXTURE
 
-	closeOverlay: () =>
+
+	closeOverlay: (overlay) =>
+		LayerMgr\getLayer("indicator")\clear!
+		LayerMgr\getLayer("overlay")\clear!
+		LayerMgr\getLayer("info")\clear!
+		@resume!
+		print "trigger CLOSE_#{overlay.ID}"
+		e\triggerEvent("#{overlay.ID}_CLOSE")
 		
 
 export class GameScreen extends Screen
@@ -254,14 +265,13 @@ export class Level extends Screen
 		if R.ASSETS.OVERLAYS
 			for k,v in pairs(R.ASSETS.OVERLAYS)
 				overlayName = k
-				print "k: #{k}, v: #{v.EVENT}"
 				e\addEventListener(v["EVENT"], -> @openOverlay(R.ASSETS.OVERLAYS[overlayName]))
 
 		@state = levelState.RUNNING
 		LayerMgr\createLayer('background', 1, false)\render!\setParallax 0.5, 1
 		LayerMgr\createLayer('ground', 2, false)\render!
 		LayerMgr\createLayer('characters', 3, true)\render!
-		LayerMgr\createLayer('box2d', 4, false)\render!
+		LayerMgr\createLayer('box2d', 4, false)
 		LayerMgr\createLayer('foreground', 5, false)\render!\setParallax 1.5, 1
 		LayerMgr\createLayer('powerups', 6, true)\render!
 		LayerMgr\createLayer('ui', 7, true, false)\render!
@@ -269,7 +279,7 @@ export class Level extends Screen
 
 		LayerMgr\createLayer('indicator', 9, true, false)\render!
 		LayerMgr\createLayer('overlay', 10, false, false)\render!
-		LayerMgr\createLayer('info', 11, false, false)\render!
+		LayerMgr\createLayer('info', 11, true, false)\render!
 
 		
 
@@ -412,9 +422,12 @@ export class Level extends Screen
 
 	resume: () =>
 		MOAIActionMgr.setRoot(@oldRoot)
+		buttonManager.enableButtons(true)
 		e\triggerEvent("LEVEL_RESUME")
 
 	close: () =>
+		dt\reset!
+		e\clear!
 		@running = false
 		@thread = nil
 		@ground = nil

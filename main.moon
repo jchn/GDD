@@ -15,6 +15,7 @@ require 'assetLoader'
 require 'indicator'
 require 'screens'
 require 'eventhandler'
+require 'datatracker'
 
 require 'lib/copy'
 export _ = require 'lib/underscore'
@@ -85,7 +86,7 @@ for screen in *configTable.Screens do
     when "level"
       newScreen = Level("config/" .. screen.FILE, screen.LEVEL_NO)
     when "tutlevel"
-      newScreen = TutLevel("config/" .. screen.FILE, screen.LEVEL_NO)
+      newScreen = Level("config/" .. screen.FILE, screen.LEVEL_NO)
     else
       newScreen = GameScreen("config/" .. screen.FILE)
   screenManager.registerScreen(screen.NAME, newScreen)

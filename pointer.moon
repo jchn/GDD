@@ -20,7 +20,7 @@ class Pointer
   listenTo: (layer) =>
     layer.x = 0
     layer.y = 0
-    @layers[layer.priority] = layer
+    @layers[layer.name] = layer
 
   stopListeningTo: (layer) =>
     @layers[layer.name] = nil

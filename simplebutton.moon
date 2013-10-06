@@ -81,7 +81,7 @@ export class SimpleButton extends Button
     @prop = MOAIProp2D.new()
     @prop\setLoc(@x, @y)
     @prop\setColor 1.0, 1.0, 1.0, 1.0
-    @prop\setBlendMode(MOAIProp2D.GL_SRC_ALPHA, MOAIProp2D.GL_ONE_MINUS_SRC_ALPHA)
+    -- @prop\setBlendMode(MOAIProp2D.GL_SRC_ALPHA, MOAIProp2D.GL_ONE_MINUS_SRC_ALPHA)
 
     @gfxQuad = MOAIGfxQuad2D.new()
     @gfxQuad\setTexture( @texture )
@@ -135,7 +135,7 @@ export class TextButton extends SimpleButton
     @textbox\setString(@text)
     @textbox\setRect(@rectangle\get())
     @textbox\setYFlip(true)
-    @textbox\setLoc(@x, @y - 8)
+    @textbox\setLoc(@x, @y - 14)
     @textbox\setAlignment( MOAITextBox.CENTER_JUSTIFY )
 
     super @layer, @texture, @rectangle, @x, @y, @onClick, @enableFunction

@@ -4,7 +4,6 @@ export class AssetLoader
     @TEXTURES = {}
     @FONTS = {}
     @STYLES = {}
-    @OVERLAYS = {}
 
   load: (@onLoadComplete) =>
     -- Load images
@@ -35,9 +34,8 @@ export class AssetLoader
         @STYLES[k]\setSize v.size
 
     -- Load overlays
-    print "check for config.overlays"
-    print @config.overlays
     if @config.overlays != nil
+      @OVERLAYS = {}
       overlays = @config.overlays
       print "overlays #{overlays}"
       for k, v in pairs(overlays)
@@ -45,6 +43,7 @@ export class AssetLoader
         @OVERLAYS[k]["TEXT"] = v["TEXT"]
         @OVERLAYS[k]["TEXTURE"] = @TEXTURES[v["TEXTURE"]]
         @OVERLAYS[k]["EVENT"] = v["EVENT"]
+        @OVERLAYS[k]["ID"] = v["ID"]
 
     @onLoadComplete!
 
@@ -53,3 +52,5 @@ export class AssetLoader
     @TEXTURES = nil
     @IMAGES = nil
     @FONTS = nil
+    if @OVERLAYS
+      @OVERLAYS = nil
