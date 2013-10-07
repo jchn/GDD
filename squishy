@@ -1,0 +1,33 @@
+-- Output filename
+Output "out/main.lua"
+
+-- This is normal/main script
+Main "main.lua"
+
+-- Add minify extension if asked to
+if GetOption "with-minify" then
+  Module "action"   "action.lua"
+  Module "ai"  "ai.lua"
+  Module "animation"   "animation.lua"
+  Module "assetloader"  "assetloader.lua"
+  Module "character"  "character.lua"
+  Module "datatracker"  "datatracker.lua"
+  Module "eventhandler"  "eventhandler.lua"
+  Module "floatingnumber"  "floatingnumber.lua"
+  Module "healthbar"  "healthbar.lua"
+  Module "indicator"  "indicator.lua"
+  Module "layermanager"  "layermanager.lua"
+  Module "level"  "level.lua"
+  Module "pointer"  "pointer.lua"
+  Module "powerup"  "powerup.lua"
+  Module "screens"  "screens.lua"
+  Module "simplebutton"  "simplebutton.lua"
+
+  Main "main.lua"
+end
+
+-- Compress Lua scripts (an excellent hack :) )
+if GetOption "with-uglify" then
+
+  Main "main.lua"
+end
