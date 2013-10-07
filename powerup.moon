@@ -10,7 +10,7 @@ class Powerup
 
     @fixture = @body\addCircle( 0, 0, 16)
     @fixture.parent = @
-    @fixture\setFilter(entityCategory.INACTIVEPOWERUP, entityCategory.BOUNDARY + entityCategory.INACTIVEPOWERUP + entityCategory.POWERUP + entityCategory.CHARACTER)
+    @fixture\setFilter(entityCategory.INACTIVEPOWERUP, entityCategory.BOUNDARY + entityCategory.CHARACTER)
 
     @prop = MOAIProp2D.new()
     @prop.body = @body
@@ -62,7 +62,7 @@ class Powerup
   activate: () =>
     if @active == false
       @active = true
-      @fixture\setFilter(entityCategory.POWERUP, entityCategory.BOUNDARY + entityCategory.CHARACTER + entityCategory.POWERUP + entityCategory.INACTIVEPOWERUP + entityCategory.DRAGGEDPOWERUP)
+      @fixture\setFilter(entityCategory.POWERUP, entityCategory.BOUNDARY + entityCategory.CHARACTER)
 
   beginDrag: () =>
     @active = true
