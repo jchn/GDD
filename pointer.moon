@@ -9,6 +9,7 @@ class Pointer
   new: (@world) =>
     -- TODO dit implementeren voor touch
     @layers = {}
+
     if MOAIInputMgr.device.pointer
       MOAIInputMgr.device.pointer\setCallback ( @\callback )
       MOAIInputMgr.device.mouseLeft\setCallback ( @\onClick )
@@ -20,20 +21,24 @@ class Pointer
   listenTo: (layer) =>
     layer.x = 0
     layer.y = 0
-    @layers[layer.name] = layer
+    @layers = LayerMgr\getLayers!
+    -- @layers[layer.name] = layer
+    -- @setLayersByPriority!
 
   stopListeningTo: (layer) =>
-    @layers[layer.name] = nil
+    -- @layers[layer.name] = nil
+    layer.interactive = false
 
   onClick: (down) =>
     if down
       for priority, layer in pairs @layers
-        if not @pick and layer.interactive
-          partition = layer\getPartition!
-          if partition
-            @pick = partition\propForPoint layer.x, layer.y
-            if @pick
-              @handlePick(layer)
+        if layer.interactive
+          if not @pick and layer.interactive
+            partition = layer\getPartition!
+            if partition
+              @pick = partition\propForPoint layer.x, layer.y
+              if @pick
+                @handlePick(layer)
     else
       @clear()
 
@@ -58,6 +63,7 @@ class Pointer
 
   handlePick: (layer) =>
     if @pick and @pick.draggable
+      print 'draggable'
       @pick.isDragged = true
       @pick.parent\beginDrag()
       @pick.parent.isDragged = true
@@ -67,11 +73,12 @@ class Pointer
       @mouseJoint.layer = layer
       @mouseBody\setTransform x, y
     if @pick and @pick.clickable
+      print 'clickable'
       @pick.parent\triggerClick layer.x, layer.y
 
   callback: (x, y) =>
     for priority, layer in pairs @layers
-        @prevX, @prevY = layer.x, layer.y
+      if layer.interactive
         layer.x, layer.y = layer\wndToWorld x, y
         -- Hier ging het fout, de verkeerde laag werd geselecteerd
         if @pick and @pick.draggable and @mouseJoint
@@ -80,13 +87,14 @@ class Pointer
   touchcallback: (eventType, idx, x, y, tapCount) =>
     if eventType == MOAITouchSensor.TOUCH_DOWN
       for priority, layer in pairs @layers
-        layer.x, layer.y = layer\wndToWorld x, y
-        if layer.interactive and not @pick
-          partition = layer\getPartition!
-          if partition
-            @pick = partition\propForPoint layer.x, layer.y
-            if @pick
-              @handlePick(layer)
+        if layer.interactive
+          layer.x, layer.y = layer\wndToWorld x, y
+          if layer.interactive and not @pick
+            partition = layer\getPartition!
+            if partition
+              @pick = partition\propForPoint layer.x, layer.y
+              if @pick
+                @handlePick(layer)
     else if eventType == MOAITouchSensor.TOUCH_MOVE
       for priority, layer in pairs @layers
         -- @prevX, @prevY = layer.x, layer.y

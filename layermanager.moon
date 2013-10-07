@@ -4,6 +4,20 @@ class LayerManager
 
   addLayer: (layer) =>
     @layers[layer.name] = layer
+
+  getLayers: () =>
+    tempLayerTable = {}
+    print "layersssssssdsssssssss"
+    for layerName, layer in pairs @layers do
+      print "layerName #{layerName}, priority #{layer.priority}"
+      tempLayerTable[layer.priority] = layer
+
+    tempLayerTable =  _.reverse tempLayerTable
+
+    for k, v in pairs tempLayerTable do
+      print "key: #{k} value #{v.name}"
+
+    tempLayerTable
     
   renderLayers: () =>
 
@@ -15,6 +29,8 @@ class LayerManager
     layersByPriority = {}
     for layerPriority, layer in pairs tempLayerTable do
       layersByPriority[#layersByPriority + 1] = layer
+
+    -- @layers = layersByPriority
 
     MOAIRenderMgr.setRenderTable(layersByPriority)
 
