@@ -184,6 +184,7 @@ class Screen
 		txtBtn = SimpleButton(infoLayer, overlay.TEXTURE, Rectangle(-64, -64, 64, 64), 0, 0, -> @closeOverlay(overlay))\add!
 		-- buttonManager\registerButton txtBtn
 		e\triggerEvent("OPEN_#{overlay.ID}")
+
 		print overlay.TEXTURE
 
 
@@ -435,14 +436,14 @@ export class Level extends Screen
 			coroutine.yield()
 	
 	pause: () =>
+		e\triggerEvent("LEVEL_PAUSE")
 		@oldRoot = MOAIActionMgr.getRoot()
 		MOAIActionMgr.setRoot()
-		e\triggerEvent("LEVEL_PAUSE")
 
 	resume: () =>
 		MOAIActionMgr.setRoot(@oldRoot)
-		buttonManager.enableButtons(true)
 		e\triggerEvent("LEVEL_RESUME")
+		buttonManager.forcefullyDisableButtons!
 
 	close: () =>
 		dt\reset!

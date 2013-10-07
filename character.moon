@@ -413,6 +413,10 @@ class CharacterManager
     possibleLoot = characterConfig.POSSIBLE_LOOT
     canUsePowerups = characterConfig.CAN_USE_POWERUPS
 
+    proxyID = characterConfig.PROXY_ID
+    if proxyID != nil
+      characterID = proxyID\upper!
+
     if characterManager.checkEnemySpawnable(characterID)
       characterManager.payCost(characterID)
     else
