@@ -281,7 +281,7 @@ export class Level extends Screen
 		LayerMgr\createLayer('icon', 8, false, false)\render!
 
 		LayerMgr\createLayer('indicator', 9, true, false)\render!
-		LayerMgr\createLayer('overlay', 10, false, false)\render!
+		LayerMgr\createLayer('overlay', 10, true, false)\render!
 		LayerMgr\createLayer('info', 11, true, false)\render!
 
 		

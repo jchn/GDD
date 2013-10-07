@@ -263,7 +263,7 @@
 					"attack" : 0,
 					"speed" : 40,
 					"shield" : 0,
-					"collectSkill" : 2
+					"collectSkill" : 1
 				},
 				"POWERUP_STATS" : {
 					"health" : 0,
