@@ -3,3 +3,5 @@
 !/android/*
 /android/build
 /android/settings-local.sh
+out/*
+config/save.json
