@@ -21,6 +21,7 @@ class ButtonManager
         button\enable()
 
   forcefullyDisableButtons: () ->
+    forcefullyDisabled = false
     for button in *buttons do
       button\disable()
     forcefullyDisabled = true
@@ -113,9 +114,13 @@ export class ImageButton extends SimpleButton
 
   enable: () =>
     @backgroundImage\setColor 1, 1, 1, 1
+    @backgroundImage.clickable = true
+    @prop.clickable = true
 
   disable: () =>
     @backgroundImage\setColor 1, 1, 1, 0.5
+    @backgroundImage.clickable = false
+    @prop.clickable = false
 
 
   add: () =>
@@ -224,17 +229,3 @@ export class AnimatedCooldownButton extends Button
     if @clickable
       @onClick!
       buttonManager.forcefullyDisableButtons()
-      
-
--- export class CoolDownButton extends SimpleButton
---   new: (@layer, @texture, @rectangle, @x, @y, @cooldown, @onClick, @enableFunction) =>
---     buttonManager.registerButton(@)
---     super @layer, @texture, @rectangle, @x, @y, @onClick, @enableFunction     
-
---   triggerClick: () =>
---     -- Start cooldown
---     if @clickable
---       @onClick!
---       buttonManager.forcefullyDisableButtons()
---       performWithDelay(@cooldown, ->
---         buttonManager.enableButtons(true))

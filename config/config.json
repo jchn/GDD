@@ -39,10 +39,11 @@
 
 		"Characters" : {
 
-			"WRESTLER" : {
+			"TUTORIAL_WRESTLER" : {
+				"PROXY_ID" : "WRESTLER",
 				"COST" : {},
 				"STATS" : {
-					"health" : 25,
+					"health" : 40,
 					"attack" : 5,
 					"speed" : 40,
 					"shield" : 0
@@ -54,6 +55,26 @@
 				},
 				"ACTIONS" : [
 					"idle"
+				],
+				"RECTANGLE" : [-32, -32, 32, 32 ],
+				"SPAWNLOCATION_OFFSET" : -35
+			},
+
+			"WRESTLER" : {
+				"COST" : {},
+				"STATS" : {
+					"health" : 100,
+					"attack" : 5,
+					"speed" : 40,
+					"shield" : 0
+				},
+				"POWERUP_STATS" : {
+					"health" : 5,
+					"attack" : 1,
+					"shield" : 1
+				},
+				"ACTIONS" : [
+					"idle", "walk", "run", "punch"
 				],
 				"RECTANGLE" : [-32, -32, 32, 32 ],
 				"SPAWNLOCATION_OFFSET" : -35

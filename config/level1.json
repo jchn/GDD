@@ -1,7 +1,7 @@
 {
   "Config": {
     "length": 0,
-    "wrestler" : "wrestler",
+    "wrestler" : "tutorial_wrestler",
 
     "spawnableUnits" : [
       "JUMPWALKER", "ELITE_JUMPWALKER", "SUPREME_JUMPWALKER"
