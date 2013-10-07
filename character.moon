@@ -182,6 +182,7 @@ class Hero extends PowerupUser
       R.HIT\play!
 
   die: () =>
+    dt\addDeadUnit(@)
     
 
 class Unit extends PowerupUser
@@ -215,6 +216,7 @@ class Unit extends PowerupUser
       timer\setListener(MOAITimer.EVENT_TIMER_END_SPAN, ->
         powerup\activate!)
       timer\start()
+    dt\addDeadUnit(@)
 
 class CollectorUnit extends Unit
 

@@ -86,7 +86,7 @@ for screen in *configTable.Screens do
     when "level"
       newScreen = Level("config/" .. screen.FILE, screen.LEVEL_NO)
     when "tutlevel"
-      newScreen = Level("config/" .. screen.FILE, screen.LEVEL_NO)
+      newScreen = TutLevel("config/" .. screen.FILE, screen.LEVEL_NO)
     else
       newScreen = GameScreen("config/" .. screen.FILE)
   screenManager.registerScreen(screen.NAME, newScreen)

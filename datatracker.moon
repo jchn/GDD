@@ -2,6 +2,7 @@ class DataTracker
   new: () =>
     @powerups = {}
     @units = {}
+    @deadUnits = {}
 
   addPowerupForCharacter: (powerup, character) =>
     return if not powerup.specificName
@@ -27,8 +28,17 @@ class DataTracker
     else
       @units[unit.characterID] += 1
 
+  addDeadUnit: (unit) =>
+    return if not unit.characterID
+    if not @deadUnits[unit.characterID]
+      e\triggerEvent("FIRST_"..unit.characterID\upper!.."_UNIT_DIED", unit)
+      @deadUnits[unit.characterID] = 1
+    else
+      @deadUnits[unit.characterID] += 1
+
   reset: () =>
     @powerups = {}
     @units = {}
+    @deadUnits = {}
 
 export dt = DataTracker!

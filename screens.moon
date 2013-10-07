@@ -3,13 +3,14 @@ class ScreenManager
 	screens = {}
 	currentScreen = nil
 	EVENTS = {
-		LEVEL_START: 0,
-		LEVEL_END: 1,
-		GIVE_POWERUP_TO_PYGO: 2,
-		GIVE_POWERUP_TO_ENEMY: 3,
-		GIVE_POWERUP_TO_UNIT: 4,
-		GET_POWERUP_FROM_UI: 5,
-		IDLE: 6
+		IDLE: 0,
+		LEVEL_START: 1,
+		LEVEL_END: 2,
+		GIVE_POWERUP_TO_PYGO: 3,
+		GIVE_POWERUP_TO_ENEMY: 4,
+		GIVE_POWERUP_TO_UNIT: 5,
+		GET_POWERUP_FROM_UI: 6,
+		UNIT_DIES: 7
 	}
 
 	levelRunning: () ->
@@ -261,6 +262,8 @@ export class Level extends Screen
 
 	open: () =>
 
+		@fuell = @length
+
 		-- Setting events for overlays
 		if R.ASSETS.OVERLAYS
 			for k,v in pairs(R.ASSETS.OVERLAYS)
@@ -364,17 +367,33 @@ export class Level extends Screen
 		for startingPowerup in *@startingPowerups
 			powerupManager.makePowerup(startingPowerup.ID, startingPowerup.X, startingPowerup.Y)\activate!
  
-		@startX = @wrestler.body\getPosition()
-		@indicator = Indicator(@startX, @length, LayerMgr\getLayer("ui"), -170, 150, @\gameOver)
-		@indicator\add!
+		
 
 		@running = true
 		@thread = MOAIThread.new()
 		@thread\run(@\loop)
 
+		if @length > 0
+			@startX = @wrestler.body\getPosition()
+			@indicator = Indicator(0, @length, LayerMgr\getLayer("ui"), -170, 150, @\gameOver)
+			@indicator\add!
+			
+			@fuellTimer = MOAITimer.new()
+			@fuellTimer\setSpan(1)
+			@fuellTimer\setMode(MOAITimer.LOOP)
+			@fuellTimer\setListener(MOAITimer.EVENT_TIMER_END_SPAN, @\updateFuellCount)
+			@fuellTimer\start()
+
 		-- Add some delay, or else everything is centered out >.<
 		print "EventHandler: #{e.events}"
-		performWithDelay(0.2, -> e\triggerEvent("LEVEL_START"))
+		performWithDelay(0.01, -> e\triggerEvent("LEVEL_START"))
+
+	updateFuellCount: () =>
+		
+		@fuell -= 1
+		difference = @length - @fuell
+		print "Let's update the fuell! #{@fuell}... #{difference}"
+		@indicator\update difference
 
 	loop: () =>
 		while @running
@@ -386,7 +405,7 @@ export class Level extends Screen
 					R.CAMERA\setLoc((x + 180))
 					@ground\setTransform(x,-80)
 					@ufo.body\setTransform((x + 360), -15)
-					@indicator\update x
+					
 					if @wrestler.stats.health <= 0
 						@win()
 
@@ -505,5 +524,11 @@ export class TutLevel extends Level
 		powerups[1].prop
 
 	open: () =>
-		@test!
 		super!
+		e\addEventListener("FIRST_ELITE_JUMPWALKER_UNIT_DIED", -> @changeWrestlerActions!)
+		print "Tutorial Level made"
+
+	changeWrestlerActions: () =>
+		print "Changing the actions of the wrestler"
+		@wrestler\addAction("walk")
+		@wrestler\addAction("run")

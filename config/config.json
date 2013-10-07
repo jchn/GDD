@@ -42,7 +42,7 @@
 			"WRESTLER" : {
 				"COST" : {},
 				"STATS" : {
-					"health" : 100,
+					"health" : 25,
 					"attack" : 5,
 					"speed" : 40,
 					"shield" : 0
@@ -53,7 +53,7 @@
 					"shield" : 1
 				},
 				"ACTIONS" : [
-					"walk", "run", "punch"
+					"idle"
 				],
 				"RECTANGLE" : [-32, -32, 32, 32 ],
 				"SPAWNLOCATION_OFFSET" : -35
@@ -263,7 +263,7 @@
 					"attack" : 0,
 					"speed" : 40,
 					"shield" : 0,
-					"collectSkill" : 1
+					"collectSkill" : 2
 				},
 				"POWERUP_STATS" : {
 					"health" : 0,
