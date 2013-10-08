@@ -37,7 +37,6 @@ export class AssetLoader
     if @config.overlays != nil
       @OVERLAYS = {}
       overlays = @config.overlays
-      print "overlays #{overlays}"
       for k, v in pairs(overlays)
         @OVERLAYS[k] = {}
         @OVERLAYS[k]["TEXT"] = v["TEXT"]

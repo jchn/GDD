@@ -11,7 +11,6 @@ class EventHandler
     @events[name] = nil
 
   triggerEvent: (name, event = {}) =>
-    print "triggering #{name}"
     if @events[name]
       @events[name](event)
 

@@ -166,7 +166,7 @@ class PowerupUser extends Character
       other\execute(own)
       own\colorBlink(0.0, 1.0, 0.0)
     if other.name == 'powerup'
-      dt\addPowerupForCharacter(other, own)
+      performWithDelay(0.2, -> dt\addPowerupForCharacter(other, own))
       
 
 class Hero extends PowerupUser
@@ -216,7 +216,7 @@ class Unit extends PowerupUser
       timer\setListener(MOAITimer.EVENT_TIMER_END_SPAN, ->
         powerup\activate!)
       timer\start()
-    dt\addDeadUnit(@)
+    performWithDelay(0.2, -> dt\addDeadUnit(@))
 
 class CollectorUnit extends Unit
 
@@ -249,7 +249,7 @@ class UFO extends Character
     own = own.parent
     other = other.parent
     if other.name == 'powerup'
-      dt\addPowerupForCharacter(other, own)
+      performWithDelay(0.2, -> dt\addPowerupForCharacter(other, own))
       if other.prop.isDragged
         Pntr\clear()
       other\remove()
@@ -464,7 +464,8 @@ class CharacterManager
     table.insert(characters, newCharacter)
     newCharacter\add()
 
-    dt\addSpawnedUnit(newCharacter)
+    performWithDelay(0.2, -> dt\addSpawnedUnit(newCharacter))
+    
 
     return newCharacter
 

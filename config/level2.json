@@ -1,6 +1,6 @@
 {
   "Config": {
-    "length": 120,
+    "length": 100,
     "wrestler" : "wrestler",
 
     "spawnableUnits" : [
@@ -28,6 +28,8 @@
         "STRENGTH_ANIM" : "resources/strength_anim.png",
 
         "SHIELD_ICON" : "resources/shield_icon.png",
+
+        "PROJECTILE" : "resources/puke_ball.png",
 
         "WRESTLER_IDLE" : "resources/wrestler_idle.png",
         "WRESTLER_WALK" : "resources/wrestler_walk.png",
@@ -119,6 +121,13 @@
           }
       },
       "overlays" : {
+        "INTRO1_OVERLAY" : {
+          "ID" : "INTRO1",
+          "TEXT" : "Keep an eye on the fuel gauge in the top left corner of the screen. If it runs out, my UFO crashes.",
+          "TEXTURE" : "PYGO",
+          "EVENT" : "LEVEL_START"
+        },
+
         "SPAWNED_FIRST_COLLECTOR_UNIT_OVERLAY" : {
           "ID" : "SPAWNED_FIRST_COLLECTOR_UNIT",
           "TEXT" : "This is a collector. It collects powerups for you.",
@@ -127,7 +136,7 @@
         },
         "SPAWNED_FIRST_SLOWDOWN_UNIT_OVERLAY" : {
           "ID" : "SPAWNED_FIRST_SLOWDOWN_UNIT",
-          "TEXT" : "This is an immovable alien. It slows the wrestler down.",
+          "TEXT" : "This is an immovable alien. You can use it to keep the wrestler busy.",
           "TEXTURE" : "SLOWDOWN_WALL_SINGLE",
           "EVENT" : "SPAWNED_FIRST_SLOWDOWN_UNIT"
         }

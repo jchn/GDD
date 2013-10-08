@@ -108,7 +108,7 @@ class Bullet
     @body = @world\addBody( MOAIBox2DBody.KINEMATIC )
     @body\setTransform(@x, @y)
 
-    @fixture = @body\addCircle( 0, 0, 16)
+    @fixture = @body\addCircle( 0, 0, 8)
     @fixture.parent = @
     @fixture\setFilter(entityCategory.BULLET, entityCategory.BOUNDARY + entityCategory.CHARACTER)
 
@@ -119,7 +119,7 @@ class Bullet
     @prop\setParent @body
     @prop\setBlendMode(MOAIProp2D.GL_SRC_ALPHA, MOAIProp2D.GL_ONE_MINUS_SRC_ALPHA)
 
-    rect = Rectangle(-32,-32,32,32)
+    rect = Rectangle(-16,-16,16,16)
 
     @tileLib = MOAITileDeck2D\new()
     @tileLib\setTexture(@image)
@@ -131,14 +131,14 @@ class Bullet
     @curve = MOAIAnimCurve.new()
     @curve\reserveKeys(2)
 
-    @curve\setKey(1, 0.25, 1)
-    @curve\setKey(2, 0.5, 2)
+    @curve\setKey(1, 0.1, 1)
+    @curve\setKey(2, 0.2, 2)
 
     @anim = MOAIAnim\new()
     @anim\reserveLinks(1)
     @anim\setLink(1, @curve, @prop, MOAIProp2D.ATTR_INDEX)
     @anim\setMode(MOAITimer.LOOP)
-    @anim\setSpan(1)
+    @anim\setSpan(0.3)
     @anim\start()
 
     @layer\insertProp @prop
@@ -213,7 +213,7 @@ class PowerUpManager
         newPowerup = StrengthPowerup(world, layer, x, y, R.ASSETS.IMAGES["#{powerupID}_ANIM"\upper!])
 
       when "bullet"
-        newPowerup = Bullet(world, layer, x, y, R.ASSETS.IMAGES.STRENGTH_ANIM)
+        newPowerup = Bullet(world, layer, x, y, R.ASSETS.IMAGES.PROJECTILE)
 
       else
         newPowerup = Powerup(world, layer, x, y, R.ASSETS.IMAGES.HEALTH)

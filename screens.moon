@@ -2,6 +2,8 @@ class ScreenManager
 
 	screens = {}
 	currentScreen = nil
+	previousScreenID = ""
+
 	EVENTS = {
 		IDLE: 0,
 		LEVEL_START: 1,
@@ -19,8 +21,13 @@ class ScreenManager
 	registerScreen: (screenID, screen) ->
 		screens[screenID] = screen
 
+	openPrevious: () ->
+		if previousScreenID != nil and previousScreenID != ""
+			screenManager.openScreen(previousScreenID)
+
 	closePrevious: () ->
 		if currentScreen != nil
+			previousScreenID = currentScreen.screenID
 			currentScreen\close!
 			currentScreen = nil
 		clearPointer()
@@ -33,6 +40,7 @@ class ScreenManager
 		currentScreen = screens[screenID]
 		currentScreen\load!
 		currentScreen\open!
+		currentScreen.screenID = screenID
 
 	makeScreenElement: (layer, screenElementConfig, secondaryLayer = layer) ->
 		elementID = screenElementConfig.ELEMENT\lower!
@@ -92,12 +100,7 @@ class Screen
 	close: () =>
 
 	openOverlay: (overlay) =>
-		print 'OPEN OVERLAY'
 		@pause!
-
-
-		print 'CREATEINDICATOR'
-		print "olayer: #{olayer}, ilayer: #{ilayer}"
 
 		layer = LayerMgr\getLayer 'powerups'
 		olayer = LayerMgr\getLayer("overlay")
@@ -185,15 +188,12 @@ class Screen
 		-- buttonManager\registerButton txtBtn
 		e\triggerEvent("OPEN_#{overlay.ID}")
 
-		print overlay.TEXTURE
-
 
 	closeOverlay: (overlay) =>
 		LayerMgr\getLayer("indicator")\clear!
 		LayerMgr\getLayer("overlay")\clear!
 		LayerMgr\getLayer("info")\clear!
 		@resume!
-		print "trigger CLOSE_#{overlay.ID}"
 		e\triggerEvent("#{overlay.ID}_CLOSE")
 		
 
@@ -230,6 +230,14 @@ export class GameScreen extends Screen
 		for screenElement in *@screenElements
 			screenManager.makeScreenElement(screenLayer, screenElement, secondaryLayer)
 
+		if MOAIInputMgr.device.pointer
+			MOAIInputMgr.device.mouseRight\setCallback( (down) -> 
+				print "OPENING PREVIOUS SCREEN"
+				if down	
+					screenManager.openPrevious! )
+		else
+			MOAIApp.setListener( MOAIApp.BACK_BUTTON_PRESSED, screenManager.openPrevious )
+
 export levelState = {
 	MADE: 0
 	LOADED: 1
@@ -263,7 +271,7 @@ export class Level extends Screen
 
 	open: () =>
 
-		@fuell = @length
+		@fuel = @length
 
 		-- Setting events for overlays
 		if R.ASSETS.OVERLAYS
@@ -284,8 +292,7 @@ export class Level extends Screen
 		LayerMgr\createLayer('indicator', 9, true, false)\render!
 		LayerMgr\createLayer('overlay', 10, true, false)\render!
 		LayerMgr\createLayer('info', 11, true, false)\render!
-
-		
+		LayerMgr\createLayer('pausemenu', 12, true, false)\render!
 
 		MOAIGfxDevice\getFrameBuffer()\setClearColor .2980, .1372, .2, 1
 
@@ -369,7 +376,7 @@ export class Level extends Screen
 			powerupManager.makePowerup(startingPowerup.ID, startingPowerup.X, startingPowerup.Y)\activate!
  
 		
-
+		@paused = false
 		@running = true
 		@thread = MOAIThread.new()
 		@thread\run(@\loop)
@@ -378,22 +385,46 @@ export class Level extends Screen
 			@startX = @wrestler.body\getPosition()
 			@indicator = Indicator(0, @length, LayerMgr\getLayer("ui"), -170, 150, @\gameOver)
 			@indicator\add!
-			
-			@fuellTimer = MOAITimer.new()
-			@fuellTimer\setSpan(1)
-			@fuellTimer\setMode(MOAITimer.LOOP)
-			@fuellTimer\setListener(MOAITimer.EVENT_TIMER_END_SPAN, @\updateFuellCount)
-			@fuellTimer\start()
 
-		-- Add some delay, or else everything is centered out >.<
-		print "EventHandler: #{e.events}"
-		performWithDelay(0.01, -> e\triggerEvent("LEVEL_START"))
+			@fuelTimer = MOAITimer.new()
+			@fuelTimer\setSpan(1)
+			@fuelTimer\setMode(MOAITimer.LOOP)
+			@fuelTimer\setListener(MOAITimer.EVENT_TIMER_END_SPAN, @\updatefuelCount)
+			@fuelTimer\start()
 
-	updateFuellCount: () =>
+		if MOAIInputMgr.device.pointer
+			MOAIInputMgr.device.mouseRight\setCallback( @\togglePauseScreen )
+		else
+			MOAIApp.setListener( MOAIApp.BACK_BUTTON_PRESSED, pause )
+
+		performWithDelay(0.2, -> e\triggerEvent("LEVEL_START"))
+
+	togglePauseScreen: (down) =>
+		if @paused and down
+			@resume!
+
+			pauseMenuLayer = LayerMgr\getLayer('pausemenu')
+			pauseMenuLayer\removeProp(@pausemenuBackground)
+		elseif down
+			pauseMenuLayer = LayerMgr\getLayer('pausemenu')
+
+			texture = MOAIGfxQuad2D.new()
+			texture\setTexture R.ASSETS.IMAGES.BLACK
+			texture\setRect -1024, -1024, 1024, 1024
+
+			@pausemenuBackground = MOAIProp2D.new()
+			@pausemenuBackground\setDeck texture
+			@pausemenuBackground\setLoc(0, 0)
+			@pausemenuBackground\setBlendMode(MOAIProp2D.GL_SRC_ALPHA, MOAIProp2D.GL_ONE_MINUS_SRC_ALPHA)
+			@pausemenuBackground\setColor 1, 1, 1, 0.6
+
+			pauseMenuLayer\insertProp(@pausemenuBackground)
+			@pause!
+
+	updatefuelCount: () =>
 		
-		@fuell -= 1
-		difference = @length - @fuell
-		print "Let's update the fuell! #{@fuell}... #{difference}"
+		@fuel -= 1
+		difference = @length - @fuel
 		@indicator\update difference
 
 	loop: () =>
@@ -436,18 +467,22 @@ export class Level extends Screen
 			coroutine.yield()
 	
 	pause: () =>
+		@paused = true
 		e\triggerEvent("LEVEL_PAUSE")
 		@oldRoot = MOAIActionMgr.getRoot()
 		MOAIActionMgr.setRoot()
 
 	resume: () =>
+		@paused = false
 		MOAIActionMgr.setRoot(@oldRoot)
 		e\triggerEvent("LEVEL_RESUME")
-		buttonManager.forcefullyDisableButtons!
 
 	close: () =>
 		dt\reset!
 		e\clear!
+		if @fuelTimer != nil
+			@fuelTimer\stop()
+			@fuelTimer = nil
 		@running = false
 		@thread = nil
 		@ground = nil
@@ -527,9 +562,7 @@ export class TutLevel extends Level
 	open: () =>
 		super!
 		e\addEventListener("FIRST_ELITE_JUMPWALKER_UNIT_DIED", -> @changeWrestlerActions!)
-		print "Tutorial Level made"
 
 	changeWrestlerActions: () =>
-		print "Changing the actions of the wrestler"
 		@wrestler\addAction("walk")
 		@wrestler\addAction("run")

@@ -7,15 +7,10 @@ class LayerManager
 
   getLayers: () =>
     tempLayerTable = {}
-    print "layersssssssdsssssssss"
     for layerName, layer in pairs @layers do
-      print "layerName #{layerName}, priority #{layer.priority}"
       tempLayerTable[layer.priority] = layer
 
     tempLayerTable =  _.reverse tempLayerTable
-
-    for k, v in pairs tempLayerTable do
-      print "key: #{k} value #{v.name}"
 
     tempLayerTable
     
