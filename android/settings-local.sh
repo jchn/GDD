@@ -27,7 +27,7 @@
 # you must define key store data in order to build for release
 #----------------------------------------------------------------#
 
-	debug=false
+	debug=true
 	key_store=pygo-release-key.keystore
 	key_alias=pygo
 	key_store_password=A1LY5TowC6se6uP
