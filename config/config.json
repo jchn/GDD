@@ -12,28 +12,32 @@
 			{
 				"NAME" : "levelSelect",
 				"FILE" : "levelselect.json",
-				"TYPE" : "GameScreen"
+				"TYPE" : "GameScreen",
+				"PREVIOUS" : "mainMenu"
 			},
 
 			{ 
 				"NAME": "level_1",
 				"FILE" : "level1.json",
 				"TYPE" : "TutLevel",
-				"LEVEL_NO" : 1
+				"LEVEL_NO" : 1,
+				"PREVIOUS" : "levelSelect"
 			},
 
 			{
 				"NAME": "level_2",
 				"FILE" : "level2.json",
 				"TYPE" : "Level",
-				"LEVEL_NO" : 2
+				"LEVEL_NO" : 2,
+				"PREVIOUS" : "levelSelect"
 			},
 
 			{
 				"NAME": "level_3",
 				"FILE" : "level3.json",
 				"TYPE" : "Level",
-				"LEVEL_NO" : 3
+				"LEVEL_NO" : 3,
+				"PREVIOUS" : "levelSelect"
 			}
 		],
 

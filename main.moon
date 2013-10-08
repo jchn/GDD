@@ -84,11 +84,12 @@ for screen in *configTable.Screens do
   newScreen = nil
   switch screenType
     when "level"
-      newScreen = Level("config/" .. screen.FILE, screen.LEVEL_NO)
+      print "NEW LEVEL WITH PREVIOUS SCREEN: #{screen.PREVIOUS}"
+      newScreen = Level("config/" .. screen.FILE, screen.LEVEL_NO, screen.PREVIOUS)
     when "tutlevel"
-      newScreen = TutLevel("config/" .. screen.FILE, screen.LEVEL_NO)
+      newScreen = TutLevel("config/" .. screen.FILE, screen.LEVEL_NO, screen.PREVIOUS)
     else
-      newScreen = GameScreen("config/" .. screen.FILE)
+      newScreen = GameScreen("config/" .. screen.FILE, screen.PREVIOUS)
   screenManager.registerScreen(screen.NAME, newScreen)
   if screen.DEFAULTOPEN
     screenManager.openScreen(screen.NAME)

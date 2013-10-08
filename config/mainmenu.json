@@ -12,6 +12,12 @@
 			"images": {
 				"BACKGROUND" : "resources/menu_bg.png",
 				"BUTTON" : "resources/menu_btn.png"
+			},
+
+			"textures": {
+
+		        "PAUSE_BUTTON" : "resources/pause_button.png",
+		        "BACK_BUTTON" : "resources/back_button.png"
 			}
 		}
 	}

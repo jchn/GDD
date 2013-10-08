@@ -62,6 +62,10 @@
       },
       
       "textures": {
+
+        "PAUSE_BUTTON" : "resources/pause_button.png",
+        "BACK_BUTTON" : "resources/back_button.png",
+
         "JUMPWALKER_BUTTON" : "resources/button_alien_rank1.png",
         "ELITE_JUMPWALKER_BUTTON" : "resources/button_alien_rank2.png",
         "SUPREME_JUMPWALKER_BUTTON" : "resources/button_alien_rank3.png",

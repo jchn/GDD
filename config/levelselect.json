@@ -15,6 +15,12 @@
 				"BACKGROUND" : "resources/menu_bg.png",
 				"LEVEL_SELECT_BUTTON" : "resources/level_select_btn.png",
 				"LEVEL1_PREVIEW" : "resources/level_1_preview.png"
+			},
+
+			"textures": {
+
+		        "PAUSE_BUTTON" : "resources/pause_button.png",
+		        "BACK_BUTTON" : "resources/back_button.png"
 			}
 		}
 	}

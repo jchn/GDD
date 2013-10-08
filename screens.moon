@@ -2,7 +2,6 @@ class ScreenManager
 
 	screens = {}
 	currentScreen = nil
-	previousScreenID = ""
 
 	EVENTS = {
 		IDLE: 0,
@@ -14,6 +13,7 @@ class ScreenManager
 		GET_POWERUP_FROM_UI: 6,
 		UNIT_DIES: 7
 	}
+	previousScreenID = ""
 
 	levelRunning: () ->
 		return currentScreen.running
@@ -22,12 +22,12 @@ class ScreenManager
 		screens[screenID] = screen
 
 	openPrevious: () ->
-		if previousScreenID != nil and previousScreenID != ""
-			screenManager.openScreen(previousScreenID)
+		print "Previous screen: #{previousScreenID}"
+		if screenManager.hasPreviousScreen!
+			screenManager.openScreen(currentScreen.previousScreenID)
 
 	closePrevious: () ->
 		if currentScreen != nil
-			previousScreenID = currentScreen.screenID
 			currentScreen\close!
 			currentScreen = nil
 		clearPointer()
@@ -41,6 +41,10 @@ class ScreenManager
 		currentScreen\load!
 		currentScreen\open!
 		currentScreen.screenID = screenID
+
+	hasPreviousScreen: () ->
+		print "Has previous screen: #{currentScreen.previousScreenID}"
+		return (currentScreen.previousScreenID != "" and currentScreen.previousScreenID != nil)
 
 	makeScreenElement: (layer, screenElementConfig, secondaryLayer = layer) ->
 		elementID = screenElementConfig.ELEMENT\lower!
@@ -80,7 +84,7 @@ export screenManager = ScreenManager()
 
 class Screen
 
-	new: (@configJson) =>
+	new: (@configJson, @previousScreenID) =>
 
 	load: (onComplete = -> ) =>
 		dataBuffer = MOAIDataBuffer.new!
@@ -227,16 +231,17 @@ export class GameScreen extends Screen
 
 		backgroundLayer\insertProp bgprop
 
+		print "OPENED SCREEN. PREVIOUS SCREEN #{@previousScreenID}"
+
+		if screenManager.hasPreviousScreen!
+			@backButton = SimpleButton LayerMgr\getLayer('screen'), R.ASSETS.TEXTURES.BACK_BUTTON, Rectangle(-64, -64, 64, 64), -200, 140, ( -> 
+				print "Open the previos screen!"
+				screenManager.openPrevious!)
+			@backButton\add()
+
 		for screenElement in *@screenElements
 			screenManager.makeScreenElement(screenLayer, screenElement, secondaryLayer)
 
-		if MOAIInputMgr.device.pointer
-			MOAIInputMgr.device.mouseRight\setCallback( (down) -> 
-				print "OPENING PREVIOUS SCREEN"
-				if down	
-					screenManager.openPrevious! )
-		else
-			MOAIApp.setListener( MOAIApp.BACK_BUTTON_PRESSED, screenManager.openPrevious )
 
 export levelState = {
 	MADE: 0
@@ -248,7 +253,7 @@ export levelState = {
 
 export class Level extends Screen
 
-	new: (@configJson, @levelNO) =>
+	new: (@configJson, @levelNO, @previousScreenID) =>
 		super
 		@state = levelState.MADE
 
@@ -289,10 +294,12 @@ export class Level extends Screen
 		LayerMgr\createLayer('ui', 7, true, false)\render!
 		LayerMgr\createLayer('icon', 8, false, false)\render!
 
-		LayerMgr\createLayer('indicator', 9, true, false)\render!
-		LayerMgr\createLayer('overlay', 10, true, false)\render!
-		LayerMgr\createLayer('info', 11, true, false)\render!
-		LayerMgr\createLayer('pausemenu', 12, true, false)\render!
+		LayerMgr\createLayer('pausemenu', 9, true, false)\render!
+		LayerMgr\createLayer('pausebutton', 10, true, false)\render!
+
+		LayerMgr\createLayer('indicator', 11, true, false)\render!
+		LayerMgr\createLayer('overlay', 12, true, false)\render!
+		LayerMgr\createLayer('info', 13, true, false)\render!
 
 		MOAIGfxDevice\getFrameBuffer()\setClearColor .2980, .1372, .2, 1
 
@@ -372,6 +379,9 @@ export class Level extends Screen
 				buttonX = buttonXInitial
 				buttonY += buttonYOffset
 
+		@pauseButton = SimpleButton LayerMgr\getLayer("pausebutton"), R.ASSETS.TEXTURES.PAUSE_BUTTON, Rectangle(-32, -32, 32, 32), -200, -140, ( -> @\togglePauseScreen!)
+		@pauseButton\add()
+
 		for startingPowerup in *@startingPowerups
 			powerupManager.makePowerup(startingPowerup.ID, startingPowerup.X, startingPowerup.Y)\activate!
  
@@ -392,20 +402,18 @@ export class Level extends Screen
 			@fuelTimer\setListener(MOAITimer.EVENT_TIMER_END_SPAN, @\updatefuelCount)
 			@fuelTimer\start()
 
-		if MOAIInputMgr.device.pointer
-			MOAIInputMgr.device.mouseRight\setCallback( @\togglePauseScreen )
-		else
-			MOAIApp.setListener( MOAIApp.BACK_BUTTON_PRESSED, pause )
-
 		performWithDelay(0.2, -> e\triggerEvent("LEVEL_START"))
 
-	togglePauseScreen: (down) =>
-		if @paused and down
+	togglePauseScreen: () =>
+		if @paused
 			@resume!
 
 			pauseMenuLayer = LayerMgr\getLayer('pausemenu')
 			pauseMenuLayer\removeProp(@pausemenuBackground)
-		elseif down
+			@backButton\remove()
+			@backButton = nil
+			@pausemenuBackground = nil
+		else
 			pauseMenuLayer = LayerMgr\getLayer('pausemenu')
 
 			texture = MOAIGfxQuad2D.new()
@@ -419,6 +427,10 @@ export class Level extends Screen
 			@pausemenuBackground\setColor 1, 1, 1, 0.6
 
 			pauseMenuLayer\insertProp(@pausemenuBackground)
+
+			@backButton = SimpleButton pauseMenuLayer, R.ASSETS.TEXTURES.BACK_BUTTON, Rectangle(-64, -64, 64, 64), -200, 140, ( -> screenManager.openPrevious! )
+			@backButton\add()
+
 			@pause!
 
 	updatefuelCount: () =>
