@@ -16,6 +16,7 @@ require 'indicator'
 require 'screens'
 require 'eventhandler'
 require 'datatracker'
+require 'rotator'
 
 require 'lib/copy'
 export _ = require 'lib/underscore'
@@ -34,7 +35,12 @@ export entityCategory = {
 
 export direction = {
   LEFT: -1,
-  RIGHT: 1
+  RIGHT: 1,
+}
+
+export orientation = {
+  HORIZONTAL: 1,
+  VERTICAL: 2
 }
 
 export splitAtSpaces = (string) ->
@@ -107,3 +113,6 @@ export performWithDelay = (delay, func, repeats, ...) ->
       elseif repeats == 0
         performWithDelay( delay, func, 0, unpack( arg ) ))
   t\start()
+
+export clampNumber = (value, min, max) ->
+  math.min(math.max(value, min), max)

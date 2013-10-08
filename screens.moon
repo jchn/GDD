@@ -53,17 +53,25 @@ class ScreenManager
 				size = screenElementConfig.SIZE
 				
 				button = SimpleButton(layer, R.ASSETS.IMAGES[screenElementConfig.IMAGE], Rectangle(size[1], size[2], size[3], size[4]), screenElementConfig.X, screenElementConfig.Y, (-> screenManager.doScreenElementFunctions(screenElementConfig.FUNCTION)), (-> screenManager.doScreenElementFunctions(screenElementConfig.ENABLE_FUNCTION)) )
-				button\add()
+				return button, elementID
 			when "textbutton"
 				size = screenElementConfig.SIZE
 				
-				button = TextButton(layer, secondaryLayer, R.ASSETS.IMAGES[screenElementConfig.IMAGE], screenElementConfig.TEXT, R.STYLE, Rectangle(size[1], size[2], size[3], size[4]), screenElementConfig.X, screenElementConfig.Y, (-> screenManager.doScreenElementFunctions(screenElementConfig.FUNCTION)), (-> screenManager.doScreenElementFunctions(screenElementConfig.ENABLE_FUNCTION)) )
-				button\add()
+				button =  TextButton(layer, secondaryLayer, R.ASSETS.IMAGES[screenElementConfig.IMAGE], screenElementConfig.TEXT, R.STYLE, Rectangle(size[1], size[2], size[3], size[4]), screenElementConfig.X, screenElementConfig.Y, (-> screenManager.doScreenElementFunctions(screenElementConfig.FUNCTION)), (-> screenManager.doScreenElementFunctions(screenElementConfig.ENABLE_FUNCTION)) )
+				return button, elementID
 			when "imagebutton"
 				size = screenElementConfig.SIZE
 				
-				button = ImageButton(layer, R.ASSETS.IMAGES[screenElementConfig.IMAGE], R.ASSETS.IMAGES[screenElementConfig.BACKGROUND], Rectangle(size[1], size[2], size[3], size[4]), screenElementConfig.X, screenElementConfig.Y, (-> screenManager.doScreenElementFunctions(screenElementConfig.FUNCTION)), (-> screenManager.doScreenElementFunctions(screenElementConfig.ENABLE_FUNCTION)) )
-				button\add()
+				button =  ImageButton(layer, R.ASSETS.IMAGES[screenElementConfig.IMAGE], R.ASSETS.IMAGES[screenElementConfig.BACKGROUND], Rectangle(size[1], size[2], size[3], size[4]), screenElementConfig.X, screenElementConfig.Y, (-> screenManager.doScreenElementFunctions(screenElementConfig.FUNCTION)), (-> screenManager.doScreenElementFunctions(screenElementConfig.ENABLE_FUNCTION)) )
+				return button, elementID
+			when "rotator"
+				size = screenElementConfig.SIZE
+
+				rotator = Rotator(screenElementConfig.VISIBLE_ELEMENTS, screenElementConfig.X, screenElementConfig.Y, Rectangle(size[1], size[2], size[3], size[4]), screenElementConfig.X_OFFSET, screenElementConfig.Y_OFFSET, orientation.HORIZONTAL)
+				for rotatorElement in *screenElementConfig.ELEMENTS do
+					element = screenManager.makeScreenElement(layer, rotatorElement)
+					rotator\addElement(element)
+				return rotator, elementID
 
 	doScreenElementFunctions: (functionInfo) ->
 
@@ -75,6 +83,10 @@ class ScreenManager
 				screenManager.openScreen(functionInfo[2])
 			when "levelunlocked"
 				saveFile.Save.CURRENT_LEVEL >= tonumber(functionInfo[2])
+			when "rotatorshownext"
+				currentScreen.rotator\showNext()
+			when "rotatorshowprevious"
+				currentScreen.rotator\showPrevious()
 			when "true"
 				return true
 			when "false"
@@ -240,7 +252,10 @@ export class GameScreen extends Screen
 			@backButton\add()
 
 		for screenElement in *@screenElements
-			screenManager.makeScreenElement(screenLayer, screenElement, secondaryLayer)
+			element, elementID = screenManager.makeScreenElement(screenLayer, screenElement, secondaryLayer)
+			element\add()
+			if elementID == "rotator"
+				@rotator = element
 
 
 export levelState = {

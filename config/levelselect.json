@@ -4,17 +4,32 @@
 
 		"background" : "BACKGROUND",
 
-		"screenElements" : [
-			{ "ELEMENT": "imagebutton", "X" : -120, "Y" : 0, "IMAGE" : "LEVEL_SELECT_BUTTON", "BACKGROUND" : "LEVEL1_PREVIEW", "FUNCTION" : "openscreen level_1", "ENABLE_FUNCTION" : "levelUnlocked 1", "SIZE" : [-64, -64, 64, 64] },
-			{ "ELEMENT": "imagebutton", "X" : 0, "Y" : 0, "IMAGE" : "LEVEL_SELECT_BUTTON", "BACKGROUND" : "LEVEL1_PREVIEW", "FUNCTION" : "openscreen level_2", "ENABLE_FUNCTION" : "levelUnlocked 2", "SIZE" : [-64, -64, 64, 64] },
-			{ "ELEMENT": "imagebutton", "X" : 120, "Y" : 0, "IMAGE" : "LEVEL_SELECT_BUTTON", "BACKGROUND" : "LEVEL1_PREVIEW", "FUNCTION" : "openscreen level_3", "ENABLE_FUNCTION" : "levelUnlocked 3", "SIZE" : [-64, -64, 64, 64] }
+		"screenElements" :
+		[
+			{ "ELEMENT" : "rotator", "X" : 0, "Y" : 0, "VISIBLE_ELEMENTS" : 3, "ELEMENTS" :
+				[
+					{ "ELEMENT": "imagebutton", "IMAGE" : "LEVEL_SELECT_BUTTON", "BACKGROUND" : "LEVEL1_PREVIEW", "FUNCTION" : "openscreen level_1", "ENABLE_FUNCTION" : "levelUnlocked 1", "SIZE" : [-64, -64, 64, 64] },
+					{ "ELEMENT": "imagebutton", "IMAGE" : "LEVEL_SELECT_BUTTON", "BACKGROUND" : "LEVEL2_PREVIEW", "FUNCTION" : "openscreen level_2", "ENABLE_FUNCTION" : "levelUnlocked 2", "SIZE" : [-64, -64, 64, 64] },
+					{ "ELEMENT": "imagebutton", "IMAGE" : "LEVEL_SELECT_BUTTON", "BACKGROUND" : "LEVEL3_PREVIEW", "FUNCTION" : "openscreen level_3", "ENABLE_FUNCTION" : "levelUnlocked 3", "SIZE" : [-64, -64, 64, 64] },
+					{ "ELEMENT": "imagebutton", "IMAGE" : "LEVEL_SELECT_BUTTON", "BACKGROUND" : "LEVEL4_PREVIEW", "FUNCTION" : "openscreen level_2", "ENABLE_FUNCTION" : "levelUnlocked 2", "SIZE" : [-64, -64, 64, 64] }
+				],
+				"X_OFFSET" : 0, "Y_OFFSET" : 0, "SIZE" : [-64, -64, 64, 64] 
+			},
+
+			{ "ELEMENT" : "button", "IMAGE" : "PLUS_BUTTON", "X" : 220, "Y" : 0, "FUNCTION" : "rotatorShowPrevious", "ENABLE_FUNCTION" : "true", "SIZE" : [-32, -32, 32, 32] },
+			{ "ELEMENT" : "button", "IMAGE" : "MINUS_BUTTON", "X" : -220, "Y" : 0, "FUNCTION" : "rotatorShowNext", "ENABLE_FUNCTION" : "true", "SIZE" : [-32, -32, 32, 32] }
 		],
 
 		"assets" : {
 			"images": {
 				"BACKGROUND" : "resources/menu_bg.png",
 				"LEVEL_SELECT_BUTTON" : "resources/level_select_btn.png",
-				"LEVEL1_PREVIEW" : "resources/level_1_preview.png"
+				"LEVEL1_PREVIEW" : "resources/level_1_preview.png",
+				"LEVEL2_PREVIEW" : "resources/level_2_preview.png",
+				"LEVEL3_PREVIEW" : "resources/level_3_preview.png",
+				"LEVEL4_PREVIEW" : "resources/level_4_preview.png",
+				"PLUS_BUTTON" : "resources/plus_button.png",
+				"MINUS_BUTTON" : "resources/minus_button.png"
 			},
 
 			"textures": {

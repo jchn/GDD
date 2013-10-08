@@ -77,6 +77,9 @@ class Button extends Clickable
   remove: () =>
     @layer\removeProp @prop
 
+  setLoc: (@x, @y) =>
+    @prop\setLoc(@x, @y)
+
 export class SimpleButton extends Button
   new: (@layer, @texture, @rectangle, @x, @y, @onClick, @enableFunction) =>
     @prop = MOAIProp2D.new()
@@ -122,14 +125,18 @@ export class ImageButton extends SimpleButton
     @backgroundImage.clickable = false
     @prop.clickable = false
 
-
   add: () =>
     super @
     @layer\insertProp @backgroundImage
 
   remove: () =>
-    super @
     @layer\removeProp @backgroundImage
+    super @
+    
+
+  setLoc: (@x, @y) =>
+    @prop\setLoc(@x, @y)
+    @backgroundImage\setLoc(@x, @y)
 
 export class TextButton extends SimpleButton
 
@@ -153,6 +160,10 @@ export class TextButton extends SimpleButton
   remove: () =>
     @layer\removeProp @prop
     @textLayer\removeProp @textbox
+
+  setLoc: (@x, @y) =>
+    @textbox\setLoc(@x, @y)
+    @prop\setLoc(@x, @y)
 
 export class AnimatedCooldownButton extends Button
 
@@ -229,3 +240,7 @@ export class AnimatedCooldownButton extends Button
     if @clickable
       @onClick!
       buttonManager.forcefullyDisableButtons()
+
+  setLoc: (@x, @y) =>
+    @icon\setLoc(@x, @y)
+    @prop\setLoc(@x, @y)

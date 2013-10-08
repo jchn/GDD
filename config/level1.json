@@ -138,7 +138,7 @@
         },
         "INTRO4_OVERLAY" : {
           "ID" : "INTRO4",
-          "TEXT" : "Together with you and my alien friends, I can beat that wrestling garbage!",
+          "TEXT" : "With you and my alien friends, I can beat that wrestling garbage!",
           "TEXTURE" : "PYGO",
           "EVENT" : "INTRO3_CLOSE"
         },
