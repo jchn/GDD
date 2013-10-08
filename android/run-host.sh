@@ -24,7 +24,7 @@
 	    shift
 	done
 
-	package=com.getmoai.samples
+	package=com.casualtygames.pygogame
 	package_path=src/com/getmoai/samples
 	out_dir="`pwd`/build"
 	
