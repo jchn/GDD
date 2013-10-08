@@ -58,12 +58,10 @@ class Pointer
 
   forcedPick: (prop, layer) =>
     @pick = prop
-    print "layer.x #{layer.x}, layer.y #{layer.y}"
     @handlePick(layer)
 
   handlePick: (layer) =>
     if @pick and @pick.draggable
-      print 'draggable'
       @pick.isDragged = true
       @pick.parent\beginDrag()
       @pick.parent.isDragged = true
@@ -73,7 +71,6 @@ class Pointer
       @mouseJoint.layer = layer
       @mouseBody\setTransform x, y
     if @pick and @pick.clickable
-      print 'clickable'
       @pick.parent\triggerClick layer.x, layer.y
 
   callback: (x, y) =>

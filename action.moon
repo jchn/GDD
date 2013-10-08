@@ -15,6 +15,25 @@ class Action --behavior
   poll: () =>
     return true, 0
 
+class ChangeDirectionAction extends Action
+
+  execute: () =>
+    if @character.state == Characterstate.IDLE
+      @character.direction *= -1
+      super @character
+      @stop!
+
+  selectCharacters: () =>
+    characterManager.selectCharacters((char) ->
+      x1, y1 = char\getLocation()
+      x2, y2 = @character\getLocation()
+
+      return (char.name == 'hero' or char.name == 'ufo') and char.direction != @character.direction and (x1 >= x2 - 90 and x1 <= x2 + 90) )
+
+  poll: () =>
+    otherCharacters = @selectCharacters()
+    return true, (#otherCharacters * 500)    
+
 class IdleAction extends Action
 
   execute: (otherCharacters = {}) =>
@@ -106,20 +125,25 @@ class RangedAttackAction extends Action
 
       @tileLib = MOAITileDeck2D\new()
       @tileLib\setTexture(texture)
-      @tileLib\setSize(6, 1)
+      @tileLib\setSize(8, 1)
       @tileLib\setRect(rect\get())
 
       @character.prop\setDeck @tileLib
 
       @curve = MOAIAnimCurve.new()
-      @curve\reserveKeys(6)
+      @curve\reserveKeys(11)
 
-      @curve\setKey(1, 0.16, 1)
-      @curve\setKey(2, 0.33, 2)
-      @curve\setKey(3, 0.50, 3)
-      @curve\setKey(4, 0.66, 4)
-      @curve\setKey(5, 0.83, 5)
-      @curve\setKey(6, 1.00, 6)
+      @curve\setKey(1, 0.2, 1)
+      @curve\setKey(2, 0.4, 2)
+      @curve\setKey(3, 0.6, 3)
+      @curve\setKey(4, 0.8, 1)
+      @curve\setKey(5, 1.0, 2)
+      @curve\setKey(6, 1.2, 3)
+      @curve\setKey(7, 1.4, 4)
+      @curve\setKey(8, 1.6, 5)
+      @curve\setKey(9, 1.8, 6)
+      @curve\setKey(10, 2.0, 7)
+      @curve\setKey(11, 2.2, 8)
 
       span = 3
       if @character.stats.ranged_cooldown != nil
@@ -129,12 +153,12 @@ class RangedAttackAction extends Action
       @anim\reserveLinks(1)
       @anim\setLink(1, @curve, @character.prop, MOAIProp2D.ATTR_INDEX)
       @anim\setMode(MOAITimer.NORMAL)
-      @anim\setSpan(span)
+      @anim\setSpan(2.4)
       @anim\start()
       @anim\setListener(MOAITimer.EVENT_TIMER_END_SPAN, @\stop)
 
       @timer = MOAITimer.new()
-      @timer\setSpan(1)
+      @timer\setSpan(2.0)
       @timer\setMode(MOAITimer.NORMAL)
       @timer\setListener(MOAITimer.EVENT_TIMER_END_SPAN, @\update)
       @timer\start()
@@ -150,7 +174,7 @@ class RangedAttackAction extends Action
 
   update: () =>
     x, y = @character\getLocation()
-    bullet = powerupManager.makePowerup("bullet", x, y)
+    bullet = powerupManager.makePowerup("bullet", x, y + 10)
     bullet.body\setLinearVelocity(-200, 0)
     bullet\setPotency(@character.stats.attack * -1)
 
@@ -557,6 +581,9 @@ class ActionManager
 
       when "crash"
         CrashAction(character)
+
+      when "changedirection"
+        ChangeDirectionAction(character)
 
 
 export actionManager = ActionManager()

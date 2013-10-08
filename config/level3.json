@@ -1,10 +1,10 @@
 {
   "Config": {
-    "length": 120,
+    "length": 80,
     "wrestler" : "wrestler",
 
     "spawnableUnits" : [
-      "JUMPWALKER", "ELITE_JUMPWALKER", "SUPREME_JUMPWALKER", "COLLECTOR", "SLOWDOWN"
+      "JUMPWALKER", "ELITE_JUMPWALKER", "SUPREME_JUMPWALKER", "COLLECTOR", "SLOWDOWN", "ELITE_RANGED", "SUPREME_RANGED"
     ],
 
     "startingPowerups" : [
@@ -25,6 +25,8 @@
 
         "SHIELD_ICON" : "resources/shield_icon.png",
 
+        "PROJECTILE" : "resources/puke_ball.png",
+
         "WRESTLER_IDLE" : "resources/wrestler_idle.png",
         "WRESTLER_WALK" : "resources/wrestler_walk.png",
         "WRESTLER_PUNCH" : "resources/wrestler_punch.png",
@@ -41,9 +43,12 @@
         "ELITE_COLLECTOR_WALK" : "resources/collector.png",
         "SUPREME_COLLECTOR_WALK" : "resources/collector.png",
 
-        "RANGED_RANGED_ATTACK" : "resources/jumpwalker.png",
-        "ELITE_RANGED_RANGED_ATTACK" : "resources/elite_jumpwalker.png",
-        "SUPREME_RANGED_RANGED_ATTACK" : "resources/supreme_jumpwalker.png",
+        "RANGED_RANGED_ATTACK" : "resources/ranged.png",
+        "RANGED_ICON" : "resources/ranged_icon.png",
+        "ELITE_RANGED_RANGED_ATTACK" : "resources/elite_ranged.png",
+        "ELITE_RANGED_ICON" : "resources/elite_ranged_icon.png",
+        "SUPREME_RANGED_RANGED_ATTACK" : "resources/supreme_ranged.png",
+        "SUPREME_RANGED_ICON" : "resources/supreme_ranged_icon.png",
 
         "SLOWDOWN_WALL" : "resources/slowdown_wall.png",
         "SLOWDOWN_ICON" : "resources/slowdown_icon.png",

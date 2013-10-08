@@ -153,7 +153,7 @@
 
         "SPAWNED_FIRST_JUMPWALKER_UNIT_OVERLAY" : {
           "ID" : "SPAWNED_FIRST_JUMPWALKER",
-          "TEXT" : "This is a purple Jumpwalker. It's pretty weak, and it's attack also hurts itself.",
+          "TEXT" : "This is a purple Jumpwalker. It's pretty weak, and its attack also hurts itself.",
           "TEXTURE" : "JUMPWALKER_SINGLE",
           "EVENT" : "SPAWNED_FIRST_JUMPWALKER_UNIT"
         },
@@ -172,7 +172,7 @@
         },
         "FIRST_UNIT_DIES2_OVERLAY" : {
           "ID" : "FIRST_UNIT_DIES2",
-          "TEXT" : "When an alien loses it's health, it's transported back to our home planet.",
+          "TEXT" : "When an alien loses its health, it's transported back to our home planet.",
           "TEXTURE" : "JUMPWALKER_SINGLE",
           "EVENT" : "FIRST_UNIT_DIES_CLOSE"
         },
@@ -253,13 +253,13 @@
           "EVENT" : "SPAWNED_FIRST_SUPREME_JUMPWALKER_CLOSE"
         },
         "SPAWNED_FIRST_SUPREME_JUMPWALKER_UNIT3_OVERLAY" : {
-          "ID" : "SPAWNED_FIRST_SUPREME_JUMPWALKER_UNIT3",
+          "ID" : "SPAWNED_FIRST_SUPREME_JUMPWALKER3",
           "TEXT" : "Golden aliens can use powerups. Just drag a powerup to a golden alien and see what happens!",
           "TEXTURE" : "POWERUP_ICONS",
           "EVENT" : "SPAWNED_FIRST_SUPREME_JUMPWALKER2_CLOSE"
         },
         "SPAWNED_FIRST_SUPREME_JUMPWALKER_UNIT4_OVERLAY" : {
-          "ID" : "SPAWNED_FIRST_SUPREME_JUMPWALKER_UNIT4",
+          "ID" : "SPAWNED_FIRST_SUPREME_JUMPWALKER4",
           "TEXT" : "You can use the powerups we've collected to give to golden aliens. Just drag them from our collection in the upper right corner.",
           "TEXTURE" : "POWERUP_ICONS",
           "EVENT" : "SPAWNED_FIRST_SUPREME_JUMPWALKER3_CLOSE"
