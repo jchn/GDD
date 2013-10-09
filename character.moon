@@ -317,7 +317,7 @@ class CharacterManager
     characterManager.updatePowerupCounters!
     
   updatePowerupCounters: () ->
-    x, y = 170, 130
+    x, y = 200, 130
     offsetX, offsetY = -60, 0
 
     for powerupInfobox in *powerupInfoboxes do
