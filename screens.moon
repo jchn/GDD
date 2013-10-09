@@ -123,70 +123,64 @@ class Screen
 		ilayer = LayerMgr\getLayer("indicator")
 		infoLayer = LayerMgr\getLayer("info")
 
-		darkQuad = MOAIGfxQuad2D.new()
-		darkQuad\setTexture( R.ASSETS.TEXTURES.DARK_OVERLAY )
-		darkQuad\setRect( -1024, -1024, 1024, 1024 )
-		darkQuad\setUVRect( 0, 0, 1, 1 )
+		-- darkQuad = MOAIGfxQuad2D.new()
+		-- darkQuad\setTexture( R.ASSETS.TEXTURES.DARK_OVERLAY )
+		-- darkQuad\setRect( -1024, -1024, 1024, 1024 )
+		-- darkQuad\setUVRect( 0, 0, 1, 1 )
 
-		darkBg = MOAIProp2D.new()
-		darkBg\setDeck( darkQuad )
-		olayer\insertProp( darkBg )
-		darkBg\setLoc(0, 0)
-		darkBg\setBlendMode(MOAIProp2D.GL_SRC_ALPHA, MOAIProp2D.GL_ONE_MINUS_DST_ALPHA)
-		darkBg\setColor(0, 0, 0, 1)
-		darkBg\setPriority(30)
+		-- darkBg = MOAIProp2D.new()
+		-- darkBg\setDeck( darkQuad )
+		-- olayer\insertProp( darkBg )
+		-- darkBg\setLoc(0, 0)
+		-- darkBg\setBlendMode(MOAIProp2D.GL_SRC_ALPHA, MOAIProp2D.GL_ONE_MINUS_DST_ALPHA)
+		-- darkBg\setColor(0, 0, 0, 1)
+		-- darkBg\setPriority(30)
 
-		transparentQuad = MOAIGfxQuad2D.new()
-		transparentQuad\setTexture( R.ASSETS.TEXTURES.TRANSPARENT_OVERLAY )
-		transparentQuad\setRect( -240, -160, 240, 160 )
-		transparentQuad\setUVRect( 0, 0, 1, 1 )
+		-- transparentQuad = MOAIGfxQuad2D.new()
+		-- transparentQuad\setTexture( R.ASSETS.TEXTURES.TRANSPARENT_OVERLAY )
+		-- transparentQuad\setRect( -240, -160, 240, 160 )
+		-- transparentQuad\setUVRect( 0, 0, 1, 1 )
 
-		transparentBg = MOAIProp2D.new()
-		transparentBg\setDeck( transparentQuad )
-		ilayer\insertProp( transparentBg )
-		transparentBg\setLoc(0, 0)
-		transparentBg\setBlendMode(MOAIProp2D.GL_ZERO, MOAIProp2D.GL_ONE_MINUS_SRC_COLOR)
-		transparentBg\setColor(0, 0, 0, 1)
-		transparentBg\setPriority(35)
+		-- transparentBg = MOAIProp2D.new()
+		-- transparentBg\setDeck( transparentQuad )
+		-- ilayer\insertProp( transparentBg )
+		-- transparentBg\setLoc(0, 0)
+		-- transparentBg\setBlendMode(MOAIProp2D.GL_ZERO, MOAIProp2D.GL_ONE_MINUS_SRC_COLOR)
+		-- transparentBg\setColor(0, 0, 0, 1)
+		-- transparentBg\setPriority(35)
 
-		-- x,y = prop\getLoc!
-		-- pLayer = LayerMgr\getLayer('characters')
-		-- wndX, wndY = pLayer\worldToWnd x, y
+		-- lightQuad = MOAIGfxQuad2D.new()
+		-- lightQuad\setTexture( R.ASSETS.TEXTURES.INDICATOR64 )
+		-- lightQuad\setRect( -128, -128, 128, 128 )
+		-- lightQuad\setUVRect( 0, 0, 1, 1 )
 
-		-- powerup = powerupManager.makePowerup("", 0, 0)
-		-- newProp = powerup.prop
+		-- lightBg = MOAIProp2D.new()
+		-- lightBg\setDeck( lightQuad )
+		-- ilayer\insertProp( lightBg )
+		-- lightBg\setLoc(0, 0)
+		-- lightBg\setBlendMode(MOAIProp2D.GL_ZERO, MOAIProp2D.GL_ONE_MINUS_SRC_COLOR)
+		-- lightBg\setColor(0, 0, 0, 0.5)
 
-		lightQuad = MOAIGfxQuad2D.new()
-		lightQuad\setTexture( R.ASSETS.TEXTURES.INDICATOR64 )
-		lightQuad\setRect( -128, -128, 128, 128 )
-		lightQuad\setUVRect( 0, 0, 1, 1 )
+		texture = MOAIGfxQuad2D.new()
+		texture\setTexture R.ASSETS.IMAGES.BLACK
+		texture\setRect -1024, -1024, 1024, 1024
 
-		lightBg = MOAIProp2D.new()
-		lightBg\setDeck( lightQuad )
-		ilayer\insertProp( lightBg )
-		-- newProp\setLoc(prop\getLoc!)
-		lightBg\setLoc(0, 0)
-		-- newProp\setLoc(layer\worldToWnd(prop\getLoc!))
-		lightBg\setBlendMode(MOAIProp2D.GL_ZERO, MOAIProp2D.GL_ONE_MINUS_SRC_COLOR)
-		lightBg\setColor(0, 0, 0, 0.5)
-		-- newProp\setColor 0, 0, 0, 0.5
-		-- lightBg\setPriority(40)
-		-- newProp\setPriority 40
+		@pausemenuBackground = MOAIProp2D.new()
+		@pausemenuBackground\setDeck texture
+		@pausemenuBackground\setLoc(0, 0)
+		@pausemenuBackground\setBlendMode(MOAIProp2D.GL_SRC_ALPHA, MOAIProp2D.GL_ONE_MINUS_SRC_ALPHA)
+		@pausemenuBackground\setColor 1, 1, 1, 0.6
 
-		-- Set the image in center
+		olayer\insertProp(@pausemenuBackground)
 
 		imageQuad = MOAIGfxQuad2D.new()
 		imageQuad\setTexture( overlay.TEXTURE )
 		imageQuad\setRect( -64, -64, 64, 64 )
-		imageQuad\setUVRect( 0, 0, 1, 1 )
 
 		imageBg = MOAIProp2D.new()
 		imageBg\setDeck( imageQuad )
-		-- infoLayer\insertProp( imageBg )
 		imageBg\setLoc(0, 0)
-		-- imageBg\setBlendMode(MOAIProp2D.GL_ZERO, MOAIProp2D.GL_ONE_MINUS_SRC_ALPHA)
-		-- imageBg\setColor(0, 0, 0, 1)
-		-- imageBg\setPriority(35)
+		
 
 		textbox = MOAITextBox.new!
 		textbox\setStyle(R.ASSETS.STYLES.ARIAL)
@@ -197,11 +191,11 @@ class Screen
 		textbox\setRect(-128, -128, 128, 128)
 		textbox\setAlignment(MOAITextBox.CENTER_JUSTIFY, MOAITextBox.CENTER_JUSTIFY)
 		textbox\spool!
-
+		
+		infoLayer\insertProp(imageBg)
 		infoLayer\insertProp(textbox)
 
-		txtBtn = SimpleButton(infoLayer, overlay.TEXTURE, Rectangle(-64, -64, 64, 64), 0, 0, -> @closeOverlay(overlay))\add!
-		-- buttonManager\registerButton txtBtn
+		txtBtn = SimpleButton(infoLayer, R.ASSETS.IMAGES.TRANSPARENT, Rectangle(-1024, -1024, 1024, 1024), 0, 0, -> @closeOverlay(overlay))\add!
 		e\triggerEvent("OPEN_#{overlay.ID}")
 
 
@@ -256,6 +250,10 @@ export class GameScreen extends Screen
 			element\add()
 			if elementID == "rotator"
 				@rotator = element
+				if screenElement.STARTING_ELEMENT == "lastPlayedLevel"
+					@rotator\gotoElement(saveFile.Save.LAST_PLAYED)
+				else
+					@rotator\gotoElement(tonumber(screenElement.STARTING_ELEMENT))
 
 
 export levelState = {
@@ -282,14 +280,17 @@ export class Level extends Screen
 		@state = levelState.LOADED
 
 		@world = MOAIBox2DWorld.new()
-		@world\setGravity( 0, -10 ) -- Zwaartekracht
-		@world\setUnitsToMeters( 1/30 ) -- Hoeveel units in een meter. Let op dat Units niet per se pixels zijn, dat hangt af van de scale van de viewport
+		@world\setGravity( 0, -10 )
+		@world\setUnitsToMeters( 1/30 )
 		@world\start()
 
 		Pntr\setWorld(@world)
 
 
 	open: () =>
+
+		saveFile.Save.LAST_PLAYED = @levelNO
+		save()
 
 		@fuel = @length
 
@@ -379,12 +380,15 @@ export class Level extends Screen
 		@wrestler = characterManager.makeCharacter(@wrestler)\add()
 		@ufo = characterManager.makeCharacter("ufo")\add()
 
+		@rotator = Rotator(1, 0, 0, Rectangle(-32, -32, 32, 32), 0, 0, orientation.VERTICAL)
+
 		buttonX = 200
 		buttonXInitial = buttonX
 		buttonY = -90
 		buttonYOffset = -50
 		buttonXOffset = -50
 		buttonCount = 0
+
 		for spawnableUnit in *@spawnableUnits 
 			button = AnimatedCooldownButton LayerMgr\getLayer("ui"), R.ASSETS.IMAGES.UNIT_BUTTON, R.ASSETS.IMAGES[spawnableUnit .. "_ICON"] ,Rectangle(-32, -32, 32, 32), Rectangle(-8, -8, 8, 8), buttonX, buttonY, (-> characterManager.makeCharacter(spawnableUnit)), (-> return characterManager.checkEnemySpawnable(spawnableUnit))
 			button\add()
@@ -393,6 +397,8 @@ export class Level extends Screen
 			if buttonCount % 9 == 0
 				buttonX = buttonXInitial
 				buttonY += buttonYOffset
+			unitInfo = UnitInfo(LayerMgr\getLayer("pausemenu"), R.ASSETS.TEXTURES[spawnableUnit .. "_SINGLE"], Rectangle(-64, -64, 64, 64), Rectangle(-160, -64, 160, 64), characterManager.getConfigTable(spawnableUnit))
+			@rotator\addElement(unitInfo)
 
 		@pauseButton = SimpleButton LayerMgr\getLayer("pausebutton"), R.ASSETS.TEXTURES.PAUSE_BUTTON, Rectangle(-32, -32, 32, 32), -200, -140, ( -> @\togglePauseScreen!)
 		@pauseButton\add()
@@ -400,7 +406,6 @@ export class Level extends Screen
 		for startingPowerup in *@startingPowerups
 			powerupManager.makePowerup(startingPowerup.ID, startingPowerup.X, startingPowerup.Y)\activate!
  
-		
 		@paused = false
 		@running = true
 		@thread = MOAIThread.new()
@@ -426,6 +431,9 @@ export class Level extends Screen
 			pauseMenuLayer = LayerMgr\getLayer('pausemenu')
 			pauseMenuLayer\removeProp(@pausemenuBackground)
 			@backButton\remove()
+			@rotator\remove()
+			@plusButton\remove()
+			@minusButton\remove()
 			@backButton = nil
 			@pausemenuBackground = nil
 		else
@@ -445,6 +453,13 @@ export class Level extends Screen
 
 			@backButton = SimpleButton pauseMenuLayer, R.ASSETS.TEXTURES.BACK_BUTTON, Rectangle(-64, -64, 64, 64), -200, 140, ( -> screenManager.openPrevious! )
 			@backButton\add()
+
+			@plusButton = SimpleButton(LayerMgr\getLayer("pausebutton"), R.ASSETS.IMAGES.PLUS_BUTTON, Rectangle(-32, -32, 32, 32), 0, 140, -> @rotator\showPrevious(), -> true)
+			@minusButton = SimpleButton(LayerMgr\getLayer("pausebutton"), R.ASSETS.IMAGES.MINUS_BUTTON, Rectangle(-32, -32, 32, 32), 0, -140, -> @rotator\showNext(), -> true)
+
+			@rotator\add()
+			@plusButton\add()
+			@minusButton\add()
 
 			@pause!
 

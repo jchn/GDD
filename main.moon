@@ -78,6 +78,7 @@ export resetSave = () =>
   saveFile = {}
   saveFile.Save = {}
   saveFile.Save.CURRENT_LEVEL = 1
+  saveFile.Save.LAST_PLAYED = saveFile.Save.CURRENT_LEVEL
   save()
 
 if saveFile == nil

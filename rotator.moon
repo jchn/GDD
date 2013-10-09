@@ -7,6 +7,9 @@ export class Rotator
 	addElement: (element) =>
 		@elements[#@elements + 1 ] = element
 
+	gotoElement: (@currentIndex) =>
+		@showElements()
+
 	showNext: () =>
 		@currentIndex += 1
 		@showElements()
@@ -18,8 +21,7 @@ export class Rotator
 	showElements: () =>
 		startingIndex = @currentIndex
 
-		for element in *@elements do
-			element\remove!
+		@remove!
 
 		elementsToEitherSide = math.floor(@NumberOfVisibleElements / 2)
 
@@ -56,6 +58,10 @@ export class Rotator
 
 	add: () =>
 		@showElements(@currentIndex)
+
+	remove: () =>
+		for element in *@elements do
+			element\remove!
 			
 			
 

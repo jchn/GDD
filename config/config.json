@@ -38,6 +38,14 @@
 				"TYPE" : "Level",
 				"LEVEL_NO" : 3,
 				"PREVIOUS" : "levelSelect"
+			},
+
+			{
+				"NAME": "level_4",
+				"FILE" : "level4.json",
+				"TYPE" : "Level",
+				"LEVEL_NO" : 4,
+				"PREVIOUS" : "levelSelect"
 			}
 		],
 
@@ -125,7 +133,8 @@
 				"SPAWNLOCATION_OFFSET" : -50,
 				"MIN_LOOT": 1,
 				"MAX_LOOT": 1,
-				"POSSIBLE_LOOT" : [ "health" ]
+				"POSSIBLE_LOOT" : [ "health" ],
+				"TEXT_ENTRY" : "This is your basic purple Jumpwalker. They attack by jumping into enemies, which also causes them damage."
 			},
 
 			"ELITE_JUMPWALKER" : {
@@ -151,7 +160,8 @@
 				"SPAWNLOCATION_OFFSET" : -50,
 				"MIN_LOOT": 1,
 				"MAX_LOOT": 2,
-				"POSSIBLE_LOOT" : [ "health", "shield", "shield" ]
+				"POSSIBLE_LOOT" : [ "health", "shield", "shield" ],
+				"TEXT_ENTRY" : "These red Jumpwalkers are protected by a shield."
 			},
 
 			"SUPREME_JUMPWALKER" : {
@@ -175,7 +185,8 @@
 				"RECTANGLE" : [-32, -32, 32, 32 ],
 				"BODYRECTANGLE" : [-20, -20, 20, 20],
 				"SPAWNLOCATION_OFFSET" : -50,
-				"CAN_USE_POWERUPS" : true
+				"CAN_USE_POWERUPS" : true,
+				"TEXT_ENTRY" : "These golden Jumpwalkers are the strongest of their species!"
 			},
 
 			"RANGED" : {
@@ -198,7 +209,8 @@
 				"SPAWNLOCATION_OFFSET" : -40,
 				"MIN_LOOT": 1,
 				"MAX_LOOT": 1,
-				"POSSIBLE_LOOT" : [ "strength" ]
+				"POSSIBLE_LOOT" : [ "strength" ],
+				"TEXT_ENTRY" : "This alien can shoot a special acid from their mouth, which pierces through shields."
 			},
 
 			"ELITE_RANGED" : {
@@ -223,7 +235,8 @@
 				"SPAWNLOCATION_OFFSET" : -40,
 				"MIN_LOOT": 1,
 				"MAX_LOOT": 2,
-				"POSSIBLE_LOOT" : [ "strength" ]
+				"POSSIBLE_LOOT" : [ "strength" ],
+				"TEXT_ENTRY" : "This alien shoots balls of acid, allowing them to damage enemies protected by a shield."
 			},
 
 			"SUPREME_RANGED" : {
@@ -250,7 +263,8 @@
 				"CAN_USE_POWERUPS" : true,
 				"MIN_LOOT": 1,
 				"MAX_LOOT": 2,
-				"POSSIBLE_LOOT" : [ "health", "strength" ]
+				"POSSIBLE_LOOT" : [ "health", "strength" ],
+				"TEXT_ENTRY" : "This golden alien shoots balls with a very high concentration of acid."
 			},
 
 			"SLOWDOWN" : {
@@ -273,7 +287,8 @@
 				"SPAWNLOCATION_OFFSET" : -35,
 				"MIN_LOOT": 1,
 				"MAX_LOOT": 1,
-				"POSSIBLE_LOOT" : [ "shield" ]
+				"POSSIBLE_LOOT" : [ "shield" ],
+				"TEXT_ENTRY" : "This purple alien is so fat, it can't move or attack. It's a living wall."
 			},
 
 			"COLLECTOR" : {
@@ -294,7 +309,8 @@
 					"walk", "changedirection"
 				],
 				"RECTANGLE" : [-32, -32, 32, 32 ],
-				"SPAWNLOCATION_OFFSET" : -35
+				"SPAWNLOCATION_OFFSET" : -35,
+				"TEXT_ENTRY" : "This alien collects powerups for you. Use it wisely."
 			},
 
 			"ELITE_COLLECTOR" : {
@@ -317,32 +333,9 @@
 					"walk"
 				],
 				"RECTANGLE" : [-32, -32, 32, 32 ],
-				"SPAWNLOCATION_OFFSET" : -35
-			},
-
-			"SUPREME_COLLECTOR" : {
-				"COST" : {
-					"health" : 2
-				},
-				"STATS" : {
-					"health" : 1,
-					"attack" : 0,
-					"speed" : 40,
-					"shield" : 0,
-					"collectSkill" : 3
-				},
-				"POWERUP_STATS" : {
-					"health" : 0,
-					"attack" : 0,
-					"shield" : 0
-				},
-				"ACTIONS" : [
-					"walk"
-				],
-				"RECTANGLE" : [-32, -32, 32, 32 ],
-				"SPAWNLOCATION_OFFSET" : -35
+				"SPAWNLOCATION_OFFSET" : -35,
+				"TEXT_ENTRY" : "when this alien collects a powerup for you, it counts as 2 powerups."
 			}
-
 		}
 	}
 }

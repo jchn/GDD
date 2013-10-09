@@ -11,9 +11,9 @@
 					{ "ELEMENT": "imagebutton", "IMAGE" : "LEVEL_SELECT_BUTTON", "BACKGROUND" : "LEVEL1_PREVIEW", "FUNCTION" : "openscreen level_1", "ENABLE_FUNCTION" : "levelUnlocked 1", "SIZE" : [-64, -64, 64, 64] },
 					{ "ELEMENT": "imagebutton", "IMAGE" : "LEVEL_SELECT_BUTTON", "BACKGROUND" : "LEVEL2_PREVIEW", "FUNCTION" : "openscreen level_2", "ENABLE_FUNCTION" : "levelUnlocked 2", "SIZE" : [-64, -64, 64, 64] },
 					{ "ELEMENT": "imagebutton", "IMAGE" : "LEVEL_SELECT_BUTTON", "BACKGROUND" : "LEVEL3_PREVIEW", "FUNCTION" : "openscreen level_3", "ENABLE_FUNCTION" : "levelUnlocked 3", "SIZE" : [-64, -64, 64, 64] },
-					{ "ELEMENT": "imagebutton", "IMAGE" : "LEVEL_SELECT_BUTTON", "BACKGROUND" : "LEVEL4_PREVIEW", "FUNCTION" : "openscreen level_2", "ENABLE_FUNCTION" : "levelUnlocked 2", "SIZE" : [-64, -64, 64, 64] }
+					{ "ELEMENT": "imagebutton", "IMAGE" : "LEVEL_SELECT_BUTTON", "BACKGROUND" : "LEVEL4_PREVIEW", "FUNCTION" : "openscreen level_4", "ENABLE_FUNCTION" : "levelUnlocked 4", "SIZE" : [-64, -64, 64, 64] }
 				],
-				"X_OFFSET" : 0, "Y_OFFSET" : 0, "SIZE" : [-64, -64, 64, 64] 
+				"X_OFFSET" : 0, "Y_OFFSET" : 0, "SIZE" : [-64, -64, 64, 64], "STARTING_ELEMENT" : "lastPlayedLevel"
 			},
 
 			{ "ELEMENT" : "button", "IMAGE" : "PLUS_BUTTON", "X" : 220, "Y" : 0, "FUNCTION" : "rotatorShowPrevious", "ENABLE_FUNCTION" : "true", "SIZE" : [-32, -32, 32, 32] },
@@ -33,9 +33,8 @@
 			},
 
 			"textures": {
-
-		        "PAUSE_BUTTON" : "resources/pause_button.png",
-		        "BACK_BUTTON" : "resources/back_button.png"
+        "PAUSE_BUTTON" : "resources/pause_button.png",
+        "BACK_BUTTON" : "resources/back_button.png"
 			}
 		}
 	}

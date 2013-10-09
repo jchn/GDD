@@ -4,7 +4,7 @@
     "wrestler" : "wrestler",
 
     "spawnableUnits" : [
-      "JUMPWALKER", "ELITE_JUMPWALKER", "SUPREME_JUMPWALKER", "COLLECTOR", "SLOWDOWN", "ELITE_RANGED", "SUPREME_RANGED"
+      "JUMPWALKER", "ELITE_JUMPWALKER", "SUPREME_JUMPWALKER"
     ],
 
     "startingPowerups" : [
@@ -50,7 +50,7 @@
         "SUPREME_RANGED_RANGED_ATTACK" : "resources/supreme_ranged.png",
         "SUPREME_RANGED_ICON" : "resources/supreme_ranged_icon.png",
 
-        "SLOWDOWN_WALL" : "resources/slowdown_wall.png",
+        "SLOWDOWN_WALL" : "resources/slowdown.png",
         "SLOWDOWN_ICON" : "resources/slowdown_icon.png",
 
         "UFO" : "resources/ufo2.png",
@@ -58,7 +58,11 @@
         "RED" : "resources/red_health.png",
         "GREEN" : "resources/green_health.png",
         "YELLOW" : "resources/yellow_health.png",
-        "BLACK" : "resources/black_health.png"
+        "BLACK" : "resources/black_health.png",
+        "TRANSPARENT" : "resources/transparent.png",
+
+        "PLUS_BUTTON" : "resources/up_button.png",
+        "MINUS_BUTTON" : "resources/down_button.png"
       },
       
       "textures": {
@@ -83,7 +87,11 @@
         "INDICATOR_BASE" : "resources/indicator_base.png",
         "INDICATOR" : "resources/indicator.png",
         "GAME_OVER" : "resources/game_over.png",
-        "WIN_GAME" : "resources/win_game.png"
+        "WIN_GAME" : "resources/win_game.png",
+        
+        "JUMPWALKER_SINGLE" : "resources/jumpwalker_single.png",
+        "ELITE_JUMPWALKER_SINGLE" : "resources/elite_jumpwalker_single.png",
+        "SUPREME_JUMPWALKER_SINGLE" : "resources/supreme_jumpwalker_single.png"
       },
       "fonts": {
         "ARIAL" : {

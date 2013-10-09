@@ -44,7 +44,7 @@
         "ELITE_RANGED_RANGED_ATTACK" : "resources/elite_jumpwalker.png",
         "SUPREME_RANGED_RANGED_ATTACK" : "resources/supreme_jumpwalker.png",
 
-        "SLOWDOWN_WALL" : "resources/slowdown_wall.png",
+        "SLOWDOWN_WALL" : "resources/slowdown.png",
         "SLOWDOWN_ICON" : "resources/slowdown_icon.png",
 
         "UFO" : "resources/ufo2.png",
@@ -52,7 +52,11 @@
         "RED" : "resources/red_health.png",
         "GREEN" : "resources/green_health.png",
         "YELLOW" : "resources/yellow_health.png",
-        "BLACK" : "resources/black_health.png"
+        "BLACK" : "resources/black_health.png",
+        "TRANSPARENT" : "resources/transparent.png",
+
+        "PLUS_BUTTON" : "resources/up_button.png",
+        "MINUS_BUTTON" : "resources/down_button.png"
       },
       
       "textures": {
@@ -84,11 +88,9 @@
 
         "HEALTH" : "resources/health.png",
         "PYGO" : "resources/pygo.png",
-        "ELITE_JUMPWALKER_SINGLE" : "resources/elite_jumpwalker_single.png",
         "JUMPWALKER_SINGLE" : "resources/jumpwalker_single.png",
+        "ELITE_JUMPWALKER_SINGLE" : "resources/elite_jumpwalker_single.png",
         "SUPREME_JUMPWALKER_SINGLE" : "resources/supreme_jumpwalker_single.png",
-        "SLOWDOWN_WALL_SINGLE" : "resources/slowdown_wall_single.png",
-        "COLLECTOR_SINGLE" : "resources/collector_single.png",
         "POWERUP_ICONS" : "resources/power-up_icons_single.png",
         "HEALTH_SINGLE" : "resources/health_single.png",
         "SHIELD_SINGLE" : "resources/shield_single.png"

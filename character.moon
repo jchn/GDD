@@ -174,6 +174,9 @@ class Hero extends PowerupUser
   name: 'hero'
 
   alterHealth: (deltaHealth, pierce) =>
+    if pierce and @stats.shield > 0
+      deltaHealth *= 2
+
     super deltaHealth, pierce
     if deltaHealth >= 0
       @showFloatingNumber("+#{deltaHealth}", 2, R.GREENSTYLE)
@@ -323,6 +326,7 @@ class CharacterManager
     for powerUpID, amount in pairs collectedPowerups do
       graphic = powerupManager.getGraphic(powerUpID)
       powerupInfobox = PowerupInfobox(graphic, Rectangle(-16, -16, 16, 16), "#{amount}", Rectangle(0, 0, 30, 25), R.ASSETS.STYLES.ARIAL, LayerMgr\getLayer("ui"), x, y, powerUpID)
+      powerupInfobox\add()
       x += offsetX
       y += offsetY
       table.insert(powerupInfoboxes, powerupInfobox)
