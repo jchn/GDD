@@ -563,6 +563,7 @@ export class Level extends Screen
 			if saveFile.Save.CURRENT_LEVEL <= @levelNO
 				saveFile.Save.CURRENT_LEVEL = @levelNO + 1
 				save()
+			@pauseButton\remove()
 
 			performWithDelay(2, -> screenManager.openScreen("levelSelect"))
 		
@@ -591,6 +592,7 @@ export class Level extends Screen
 	    LayerMgr\getLayer("ui")\insertProp prop
 	    buttonManager.forcefullyDisableButtons!
 	    buttonManager.removeButtons()
+	    @pauseButton\remove()
 
 export class TutLevel extends Level
 
