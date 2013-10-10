@@ -19,7 +19,6 @@ class DataTracker
       e\triggerEvent(powerup.specificName\upper!.."_FOR_"..character.name, powerup)
       @powerups[character.name][powerup.specificName] += 1
 
-
   addSpawnedUnit: (unit) =>
     return if not unit.characterID
     if not @units[unit.characterID]

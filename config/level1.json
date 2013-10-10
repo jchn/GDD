@@ -26,7 +26,7 @@
 
         "WRESTLER_IDLE" : "resources/wrestler_idle.png",
         "WRESTLER_WALK" : "resources/wrestler_walk.png",
-        "WRESTLER_PUNCH" : "resources/wrestler_punch.png",
+        "WRESTLER_KICK" : "resources/wrestler_kick.png",
 
         "JUMPWALKER_JUMPWALK" : "resources/jumpwalker.png",
         "JUMPWALKER_ICON" : "resources/jumpwalker_icon.png",
@@ -44,7 +44,7 @@
         "ELITE_RANGED_RANGED_ATTACK" : "resources/elite_jumpwalker.png",
         "SUPREME_RANGED_RANGED_ATTACK" : "resources/supreme_jumpwalker.png",
 
-        "SLOWDOWN_WALL" : "resources/slowdown_wall.png",
+        "SLOWDOWN_WALL" : "resources/slowdown.png",
         "SLOWDOWN_ICON" : "resources/slowdown_icon.png",
 
         "UFO" : "resources/ufo2.png",
@@ -52,10 +52,18 @@
         "RED" : "resources/red_health.png",
         "GREEN" : "resources/green_health.png",
         "YELLOW" : "resources/yellow_health.png",
-        "BLACK" : "resources/black_health.png"
+        "BLACK" : "resources/black_health.png",
+        "TRANSPARENT" : "resources/transparent.png",
+
+        "PLUS_BUTTON" : "resources/up_button.png",
+        "MINUS_BUTTON" : "resources/down_button.png"
       },
       
       "textures": {
+
+        "PAUSE_BUTTON" : "resources/pause_button.png",
+        "BACK_BUTTON" : "resources/back_button.png",
+
         "JUMPWALKER_BUTTON" : "resources/button_alien_rank1.png",
         "ELITE_JUMPWALKER_BUTTON" : "resources/button_alien_rank2.png",
         "SUPREME_JUMPWALKER_BUTTON" : "resources/button_alien_rank3.png",
@@ -80,14 +88,19 @@
 
         "HEALTH" : "resources/health.png",
         "PYGO" : "resources/pygo.png",
-        "ELITE_JUMPWALKER_SINGLE" : "resources/elite_jumpwalker_single.png",
         "JUMPWALKER_SINGLE" : "resources/jumpwalker_single.png",
+        "ELITE_JUMPWALKER_SINGLE" : "resources/elite_jumpwalker_single.png",
         "SUPREME_JUMPWALKER_SINGLE" : "resources/supreme_jumpwalker_single.png",
-        "SLOWDOWN_WALL_SINGLE" : "resources/slowdown_wall_single.png",
-        "COLLECTOR_SINGLE" : "resources/collector_single.png",
         "POWERUP_ICONS" : "resources/power-up_icons_single.png",
         "HEALTH_SINGLE" : "resources/health_single.png",
-        "SHIELD_SINGLE" : "resources/shield_single.png"
+        "SHIELD_SINGLE" : "resources/shield_single.png",
+
+        "BUTTON_EXPLANATION" : "resources/unit_spawn_button.png",
+        "DRAG_POWERUP_EXPLANATION" : "resources/drag_powerup_explanation.png",
+        "GIVE_POWERUP_TO_GOLDEN_UNIT_EXPLANATION" : "resources/give_powerup_to_golden_unit_explanation.png",
+        "POWERUP_FROM_COLLECTION_EXPLANATION" : "resources/powerup_from_collection_explanation.png",
+        "ELITE_JUMPWALKER_COST_EXPLANATION" : "resources/elite_jumpwalker_cost_explanation.png",
+        "SUPREME_JUMPWALKER_COST_EXPLANATION" : "resources/supreme_jumpwalker_cost_explanation.png"
       },
       "fonts": {
         "ARIAL" : {
@@ -134,14 +147,14 @@
         },
         "INTRO4_OVERLAY" : {
           "ID" : "INTRO4",
-          "TEXT" : "Together with you and my alien friends, I can beat that wrestling garbage!",
+          "TEXT" : "With you and my alien friends, I can beat that wrestling garbage!",
           "TEXTURE" : "PYGO",
           "EVENT" : "INTRO3_CLOSE"
         },
         "INTRO5_OVERLAY" : {
           "ID" : "INTRO5",
-          "TEXT" : "I can use the buttons on the lower right corner of the screen to transport my friends to this planet.",
-          "TEXTURE" : "PYGO",
+          "TEXT" : "Use the buttons on the lower right corner of the screen to transport my friends to this planet.",
+          "TEXTURE" : "BUTTON_EXPLANATION",
           "EVENT" : "INTRO4_CLOSE"
         },
         "INTRO6_OVERLAY" : {
@@ -185,7 +198,7 @@
         "FIRST_UNIT_DIES4_OVERLAY" : {
           "ID" : "FIRST_UNIT_DIES4",
           "TEXT" : "You can drag the powerup across the screen to my UFO. Let's give it a try.",
-          "TEXTURE" : "HEALTH_SINGLE",
+          "TEXTURE" : "DRAG_POWERUP_EXPLANATION",
           "EVENT" : "FIRST_UNIT_DIES3_CLOSE"
         },
 
@@ -209,8 +222,8 @@
         },
         "FIRST_HEALTH_POWERUP4_OVERLAY" : {
           "ID" : "FIRST_HEALTH_POWERUP4",
-          "TEXT" : "Transporting this red Jumpwalker takes 1 health powerup. Let's give it a try.",
-          "TEXTURE" : "ELITE_JUMPWALKER_SINGLE",
+          "TEXT" : "Transporting a Jumpwalker takes 1 health powerup. Let's give it a try.",
+          "TEXTURE" : "ELITE_JUMPWALKER_COST_EXPLANATION",
           "EVENT" : "FIRST_HEALTH_POWERUP3_CLOSE"
         },
 
@@ -229,8 +242,8 @@
 
         "FIRST_SHIELD_POWERUP_OVERLAY" : {
           "ID" : "FIRST_SHIELD_POWERUP",
-          "TEXT" : "This is a shield powerup. Let's see what happens when we collect 4 of those.",
-          "TEXTURE" : "SHIELD_SINGLE",
+          "TEXT" : "This is a shield powerup. Collecting 4 of those'll allow me to transport a golden Jumpwalker.",
+          "TEXTURE" : "SUPREME_JUMPWALKER_COST_EXPLANATION",
           "EVENT" : "FIRST_SHIELD_FOR_UFO"
         },
         "FIRST_SHIELD_POWERUP_OVERLAY2" : {
@@ -242,7 +255,7 @@
 
         "SPAWNED_FIRST_SUPREME_JUMPWALKER_UNIT_OVERLAY" : {
           "ID" : "SPAWNED_FIRST_SUPREME_JUMPWALKER",
-          "TEXT" : "A golden alien! They are better than red and pruple aliens.",
+          "TEXT" : "A golden alien! They are better than red and purple aliens.",
           "TEXTURE" : "SUPREME_JUMPWALKER_SINGLE",
           "EVENT" : "SPAWNED_FIRST_SUPREME_JUMPWALKER_UNIT"
         },
@@ -255,13 +268,13 @@
         "SPAWNED_FIRST_SUPREME_JUMPWALKER_UNIT3_OVERLAY" : {
           "ID" : "SPAWNED_FIRST_SUPREME_JUMPWALKER3",
           "TEXT" : "Golden aliens can use powerups. Just drag a powerup to a golden alien and see what happens!",
-          "TEXTURE" : "POWERUP_ICONS",
+          "TEXTURE" : "GIVE_POWERUP_TO_GOLDEN_UNIT_EXPLANATION",
           "EVENT" : "SPAWNED_FIRST_SUPREME_JUMPWALKER2_CLOSE"
         },
         "SPAWNED_FIRST_SUPREME_JUMPWALKER_UNIT4_OVERLAY" : {
           "ID" : "SPAWNED_FIRST_SUPREME_JUMPWALKER4",
           "TEXT" : "You can use the powerups we've collected to give to golden aliens. Just drag them from our collection in the upper right corner.",
-          "TEXTURE" : "POWERUP_ICONS",
+          "TEXTURE" : "POWERUP_FROM_COLLECTION_EXPLANATION",
           "EVENT" : "SPAWNED_FIRST_SUPREME_JUMPWALKER3_CLOSE"
         }
       }

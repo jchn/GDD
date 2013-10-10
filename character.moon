@@ -30,7 +30,7 @@ class Character
     @actions = {}
     for actionID in *actionIDs do
       @addAction(actionID)
-
+    @immortal = false
     @add()
     @update()
 
@@ -45,6 +45,8 @@ class Character
 
   getLocation: () =>
     return @body\getPosition()
+
+  setImmortal: (@immortal) =>
 
   showFloatingNumber: (text, length, style, offsetX = 0, offsetY = 0) =>
     x, y = @getLocation()
@@ -72,7 +74,8 @@ class Character
           return
       @colorBlink(1.0, 0.0, 0.0)
 
-    @stats.health += deltaHealth
+    if @immortal == false
+      @stats.health += deltaHealth
 
     if @stats.health > @stats.maxHealth
       @stats.maxHealth = @stats.health
@@ -174,6 +177,9 @@ class Hero extends PowerupUser
   name: 'hero'
 
   alterHealth: (deltaHealth, pierce) =>
+    if pierce and @stats.shield > 0
+      deltaHealth *= 2
+
     super deltaHealth, pierce
     if deltaHealth >= 0
       @showFloatingNumber("+#{deltaHealth}", 2, R.GREENSTYLE)
@@ -194,28 +200,21 @@ class Unit extends PowerupUser
   die: () =>
     x, y = @getLocation()
     super super
-    if not @minDrops
-      @minDrops = 1
+    if @minDrops != nil and @maxDrops != nil and @possibleDrops != nil
 
-    if not @maxDrops
-      @maxDrops = 1
+      drops = math.random(@minDrops, @maxDrops)
 
-    if not @possibleDrops
-      @possibleDrops = { "health" }
+      for i  = 1, drops do
+        dropping = math.random(#@possibleDrops)
 
-    drops = math.random(@minDrops, @maxDrops)
-
-    for i  = 1, drops do
-      dropping = math.random(#@possibleDrops)
-
-      powerup = powerupManager.makePowerup(@possibleDrops[dropping], (x - 10 + (i * 10)) , y)
-      powerup.body\applyLinearImpulse(100,100)
-      timer = MOAITimer.new()
-      timer\setSpan(1)
-      timer\setMode(MOAITimer.NORMAL)
-      timer\setListener(MOAITimer.EVENT_TIMER_END_SPAN, ->
-        powerup\activate!)
-      timer\start()
+        powerup = powerupManager.makePowerup(@possibleDrops[dropping], (x - 10 + (i * 10)) , y)
+        powerup.body\applyLinearImpulse(100,100)
+        timer = MOAITimer.new()
+        timer\setSpan(1)
+        timer\setMode(MOAITimer.NORMAL)
+        timer\setListener(MOAITimer.EVENT_TIMER_END_SPAN, ->
+          powerup\activate!)
+        timer\start()
     performWithDelay(0.2, -> dt\addDeadUnit(@))
 
 class CollectorUnit extends Unit
@@ -276,6 +275,7 @@ class CharacterManager
   comboCounter = 0
   powerupInfoboxes =  {}
   configTable = {}
+  spawnedCharacters = {}
 
   updateCharacters: () ->
     for character in *characters do
@@ -314,7 +314,7 @@ class CharacterManager
     characterManager.updatePowerupCounters!
     
   updatePowerupCounters: () ->
-    x, y = 170, 130
+    x, y = 200, 130
     offsetX, offsetY = -60, 0
 
     for powerupInfobox in *powerupInfoboxes do
@@ -323,6 +323,7 @@ class CharacterManager
     for powerUpID, amount in pairs collectedPowerups do
       graphic = powerupManager.getGraphic(powerUpID)
       powerupInfobox = PowerupInfobox(graphic, Rectangle(-16, -16, 16, 16), "#{amount}", Rectangle(0, 0, 30, 25), R.ASSETS.STYLES.ARIAL, LayerMgr\getLayer("ui"), x, y, powerUpID)
+      powerupInfobox\add()
       x += offsetX
       y += offsetY
       table.insert(powerupInfoboxes, powerupInfobox)
@@ -386,6 +387,20 @@ class CharacterManager
     lastTimestamp = 0
     comboCounter = 0
     powerupInfoboxes = {}
+    spawnedCharacters = {}
+
+  saveSpawnedUnits: () ->
+    for char in *spawnedCharacters do
+      alreadySaved = false
+
+      for char2 in *saveFile.Save.SPAWNED_UNITS
+        if char == char2
+          alreadySaved = true
+
+      if alreadySaved == false
+        table.insert(saveFile.Save.SPAWNED_UNITS, char)
+
+    save()
 
   makeCharacter: (characterID) ->
     characterID = characterID\upper()
@@ -412,6 +427,8 @@ class CharacterManager
     maxLoot = characterConfig.MAX_LOOT
     possibleLoot = characterConfig.POSSIBLE_LOOT
     canUsePowerups = characterConfig.CAN_USE_POWERUPS
+    characterType = characterConfig.TYPE
+    immortal = characterConfig.IMMORTAL
 
     proxyID = characterConfig.PROXY_ID
     if proxyID != nil
@@ -425,14 +442,16 @@ class CharacterManager
     switch characterID
       when "WRESTLER"
         newCharacter = Hero(characterID, prop, layer, world, direction.RIGHT, rectangle, bodyRectangle, stats, actions, x, y, powerupStats)
-        newCharacter\setHealthbar(Healthbar(LayerMgr\getLayer("ui"), 100, 10))
+        if immortal == false or immortal == nil
+          newCharacter\setHealthbar(Healthbar(LayerMgr\getLayer("ui"), 100, 10))
+        else
+          newCharacter\setImmortal(true)
         newCharacter\setFilter(entityCategory.CHARACTER, entityCategory.POWERUP + entityCategory.BOUNDARY + entityCategory.BULLET)
       when "COLLECTOR", "ELITE_COLLECTOR", "SUPREME_COLLECTOR"
         x = ufo\getLocation()
         newCharacter = CollectorUnit(characterID, prop, layer, world, direction.LEFT, rectangle, bodyRectangle, stats, actions, x, y)
         newCharacter\setFilter(entityCategory.CHARACTER, entityCategory.POWERUP + entityCategory.BOUNDARY + entityCategory.INACTIVEPOWERUP + entityCategory.DRAGGEDPOWERUP)
         newCharacter\setHealthbar(Healthbar(LayerMgr\getLayer("characters"), newCharacter\getWidth(), 4), false)
-        newCharacter\setPowerupDrops(minLoot, maxLoot, possibleLoot )
         ufo\doAction("spawn")
       when "UFO"
         newCharacter = UFO(characterID, prop, layer, world, direction.LEFT, rectangle, bodyRectangle, stats, actions, 0, y, nil, false)
@@ -450,11 +469,11 @@ class CharacterManager
         newCharacter = Unit(characterID, prop, layer, world, direction.LEFT, rectangle, bodyRectangle, stats, actions, x, y, powerupStats)
         newCharacter\setFilter(entityCategory.CHARACTER, entityCategory.BOUNDARY)
         newCharacter\setHealthbar(Healthbar(LayerMgr\getLayer("characters"), newCharacter\getWidth(), 4), false)
-
-        if minLoot != nil and maxLoot != nil and possibleLoot != nil
-          newCharacter\setPowerupDrops(minLoot, maxLoot, possibleLoot )
         ufo\doAction("spawn")
 
+    if minLoot != nil and maxLoot != nil and possibleLoot != nil
+      newCharacter\setPowerupDrops(minLoot, maxLoot, possibleLoot )
+    
     if newCharacter.stats.shield > 0
       newCharacter.icon = powerupManager.makePowerupIcon("shield")
 
@@ -464,9 +483,15 @@ class CharacterManager
     table.insert(characters, newCharacter)
     newCharacter\add()
 
-    performWithDelay(0.2, -> dt\addSpawnedUnit(newCharacter))
-    
+    if characterType == "unit"
+      performWithDelay(0.2, -> dt\addSpawnedUnit(newCharacter))
+      hasSpawnedThisUnit = false
+      for char in *spawnedCharacters do
+        if char == characterID
+          hasSpawnedThisUnit = true
 
+      if hasSpawnedThisUnit == false
+        table.insert(spawnedCharacters, characterID)
     return newCharacter
 
 export characterManager = CharacterManager()

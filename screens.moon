@@ -2,7 +2,6 @@ class ScreenManager
 
 	screens = {}
 	currentScreen = nil
-	previousScreenID = ""
 
 	EVENTS = {
 		IDLE: 0,
@@ -14,6 +13,7 @@ class ScreenManager
 		GET_POWERUP_FROM_UI: 6,
 		UNIT_DIES: 7
 	}
+	previousScreenID = ""
 
 	levelRunning: () ->
 		return currentScreen.running
@@ -22,12 +22,12 @@ class ScreenManager
 		screens[screenID] = screen
 
 	openPrevious: () ->
-		if previousScreenID != nil and previousScreenID != ""
-			screenManager.openScreen(previousScreenID)
+		print "Previous screen: #{previousScreenID}"
+		if screenManager.hasPreviousScreen!
+			screenManager.openScreen(currentScreen.previousScreenID)
 
 	closePrevious: () ->
 		if currentScreen != nil
-			previousScreenID = currentScreen.screenID
 			currentScreen\close!
 			currentScreen = nil
 		clearPointer()
@@ -42,6 +42,10 @@ class ScreenManager
 		currentScreen\open!
 		currentScreen.screenID = screenID
 
+	hasPreviousScreen: () ->
+		print "Has previous screen: #{currentScreen.previousScreenID}"
+		return (currentScreen.previousScreenID != "" and currentScreen.previousScreenID != nil)
+
 	makeScreenElement: (layer, screenElementConfig, secondaryLayer = layer) ->
 		elementID = screenElementConfig.ELEMENT\lower!
 		switch elementID
@@ -49,21 +53,29 @@ class ScreenManager
 				size = screenElementConfig.SIZE
 				
 				button = SimpleButton(layer, R.ASSETS.IMAGES[screenElementConfig.IMAGE], Rectangle(size[1], size[2], size[3], size[4]), screenElementConfig.X, screenElementConfig.Y, (-> screenManager.doScreenElementFunctions(screenElementConfig.FUNCTION)), (-> screenManager.doScreenElementFunctions(screenElementConfig.ENABLE_FUNCTION)) )
-				button\add()
+				return button, elementID
 			when "textbutton"
 				size = screenElementConfig.SIZE
 				
-				button = TextButton(layer, secondaryLayer, R.ASSETS.IMAGES[screenElementConfig.IMAGE], screenElementConfig.TEXT, R.STYLE, Rectangle(size[1], size[2], size[3], size[4]), screenElementConfig.X, screenElementConfig.Y, (-> screenManager.doScreenElementFunctions(screenElementConfig.FUNCTION)), (-> screenManager.doScreenElementFunctions(screenElementConfig.ENABLE_FUNCTION)) )
-				button\add()
+				button =  TextButton(layer, secondaryLayer, R.ASSETS.IMAGES[screenElementConfig.IMAGE], screenElementConfig.TEXT, R.STYLE, Rectangle(size[1], size[2], size[3], size[4]), screenElementConfig.X, screenElementConfig.Y, (-> screenManager.doScreenElementFunctions(screenElementConfig.FUNCTION)), (-> screenManager.doScreenElementFunctions(screenElementConfig.ENABLE_FUNCTION)) )
+				return button, elementID
 			when "imagebutton"
 				size = screenElementConfig.SIZE
 				
-				button = ImageButton(layer, R.ASSETS.IMAGES[screenElementConfig.IMAGE], R.ASSETS.IMAGES[screenElementConfig.BACKGROUND], Rectangle(size[1], size[2], size[3], size[4]), screenElementConfig.X, screenElementConfig.Y, (-> screenManager.doScreenElementFunctions(screenElementConfig.FUNCTION)), (-> screenManager.doScreenElementFunctions(screenElementConfig.ENABLE_FUNCTION)) )
-				button\add()
+				button =  ImageButton(layer, R.ASSETS.IMAGES[screenElementConfig.IMAGE], R.ASSETS.IMAGES[screenElementConfig.BACKGROUND], Rectangle(size[1], size[2], size[3], size[4]), screenElementConfig.X, screenElementConfig.Y, (-> screenManager.doScreenElementFunctions(screenElementConfig.FUNCTION)), (-> screenManager.doScreenElementFunctions(screenElementConfig.ENABLE_FUNCTION)) )
+				return button, elementID
+			when "rotator"
+				size = screenElementConfig.SIZE
+
+				rotator = Rotator(screenElementConfig.VISIBLE_ELEMENTS, screenElementConfig.X, screenElementConfig.Y, Rectangle(size[1], size[2], size[3], size[4]), screenElementConfig.X_OFFSET, screenElementConfig.Y_OFFSET, orientation.HORIZONTAL)
+				for rotatorElement in *screenElementConfig.ELEMENTS do
+					element = screenManager.makeScreenElement(layer, rotatorElement)
+					rotator\addElement(element)
+				return rotator, elementID
 
 	doScreenElementFunctions: (functionInfo) ->
 
-		functionInfo = splitAtSpaces(functionInfo)
+		functionInfo = _.to_array(string.gmatch(functionInfo, "%S+"))
 		functionInfo[1] = functionInfo[1]\lower!
 
 		switch functionInfo[1]
@@ -71,6 +83,12 @@ class ScreenManager
 				screenManager.openScreen(functionInfo[2])
 			when "levelunlocked"
 				saveFile.Save.CURRENT_LEVEL >= tonumber(functionInfo[2])
+			when "spawnedunits"
+				#saveFile.Save.SPAWNED_UNITS >= tonumber(functionInfo[2])
+			when "rotatorshownext"
+				currentScreen.rotator\showNext()
+			when "rotatorshowprevious"
+				currentScreen.rotator\showPrevious()
 			when "true"
 				return true
 			when "false"
@@ -80,7 +98,7 @@ export screenManager = ScreenManager()
 
 class Screen
 
-	new: (@configJson) =>
+	new: (@configJson, @previousScreenID) =>
 
 	load: (onComplete = -> ) =>
 		dataBuffer = MOAIDataBuffer.new!
@@ -107,70 +125,26 @@ class Screen
 		ilayer = LayerMgr\getLayer("indicator")
 		infoLayer = LayerMgr\getLayer("info")
 
-		darkQuad = MOAIGfxQuad2D.new()
-		darkQuad\setTexture( R.ASSETS.TEXTURES.DARK_OVERLAY )
-		darkQuad\setRect( -1024, -1024, 1024, 1024 )
-		darkQuad\setUVRect( 0, 0, 1, 1 )
+		texture = MOAIGfxQuad2D.new()
+		texture\setTexture R.ASSETS.IMAGES.BLACK
+		texture\setRect -1024, -1024, 1024, 1024
 
-		darkBg = MOAIProp2D.new()
-		darkBg\setDeck( darkQuad )
-		olayer\insertProp( darkBg )
-		darkBg\setLoc(0, 0)
-		darkBg\setBlendMode(MOAIProp2D.GL_SRC_ALPHA, MOAIProp2D.GL_ONE_MINUS_DST_ALPHA)
-		darkBg\setColor(0, 0, 0, 1)
-		darkBg\setPriority(30)
+		@pausemenuBackground = MOAIProp2D.new()
+		@pausemenuBackground\setDeck texture
+		@pausemenuBackground\setLoc(0, 0)
+		@pausemenuBackground\setBlendMode(MOAIProp2D.GL_SRC_ALPHA, MOAIProp2D.GL_ONE_MINUS_SRC_ALPHA)
+		@pausemenuBackground\setColor 1, 1, 1, 0.6
 
-		transparentQuad = MOAIGfxQuad2D.new()
-		transparentQuad\setTexture( R.ASSETS.TEXTURES.TRANSPARENT_OVERLAY )
-		transparentQuad\setRect( -240, -160, 240, 160 )
-		transparentQuad\setUVRect( 0, 0, 1, 1 )
-
-		transparentBg = MOAIProp2D.new()
-		transparentBg\setDeck( transparentQuad )
-		ilayer\insertProp( transparentBg )
-		transparentBg\setLoc(0, 0)
-		transparentBg\setBlendMode(MOAIProp2D.GL_ZERO, MOAIProp2D.GL_ONE_MINUS_SRC_COLOR)
-		transparentBg\setColor(0, 0, 0, 1)
-		transparentBg\setPriority(35)
-
-		-- x,y = prop\getLoc!
-		-- pLayer = LayerMgr\getLayer('characters')
-		-- wndX, wndY = pLayer\worldToWnd x, y
-
-		-- powerup = powerupManager.makePowerup("", 0, 0)
-		-- newProp = powerup.prop
-
-		lightQuad = MOAIGfxQuad2D.new()
-		lightQuad\setTexture( R.ASSETS.TEXTURES.INDICATOR64 )
-		lightQuad\setRect( -128, -128, 128, 128 )
-		lightQuad\setUVRect( 0, 0, 1, 1 )
-
-		lightBg = MOAIProp2D.new()
-		lightBg\setDeck( lightQuad )
-		ilayer\insertProp( lightBg )
-		-- newProp\setLoc(prop\getLoc!)
-		lightBg\setLoc(0, 0)
-		-- newProp\setLoc(layer\worldToWnd(prop\getLoc!))
-		lightBg\setBlendMode(MOAIProp2D.GL_ZERO, MOAIProp2D.GL_ONE_MINUS_SRC_COLOR)
-		lightBg\setColor(0, 0, 0, 0.5)
-		-- newProp\setColor 0, 0, 0, 0.5
-		-- lightBg\setPriority(40)
-		-- newProp\setPriority 40
-
-		-- Set the image in center
+		olayer\insertProp(@pausemenuBackground)
 
 		imageQuad = MOAIGfxQuad2D.new()
 		imageQuad\setTexture( overlay.TEXTURE )
 		imageQuad\setRect( -64, -64, 64, 64 )
-		imageQuad\setUVRect( 0, 0, 1, 1 )
 
 		imageBg = MOAIProp2D.new()
 		imageBg\setDeck( imageQuad )
-		-- infoLayer\insertProp( imageBg )
 		imageBg\setLoc(0, 0)
-		-- imageBg\setBlendMode(MOAIProp2D.GL_ZERO, MOAIProp2D.GL_ONE_MINUS_SRC_ALPHA)
-		-- imageBg\setColor(0, 0, 0, 1)
-		-- imageBg\setPriority(35)
+		
 
 		textbox = MOAITextBox.new!
 		textbox\setStyle(R.ASSETS.STYLES.ARIAL)
@@ -181,11 +155,15 @@ class Screen
 		textbox\setRect(-128, -128, 128, 128)
 		textbox\setAlignment(MOAITextBox.CENTER_JUSTIFY, MOAITextBox.CENTER_JUSTIFY)
 		textbox\spool!
-
+		
+		infoLayer\insertProp(imageBg)
 		infoLayer\insertProp(textbox)
 
-		txtBtn = SimpleButton(infoLayer, overlay.TEXTURE, Rectangle(-64, -64, 64, 64), 0, 0, -> @closeOverlay(overlay))\add!
-		-- buttonManager\registerButton txtBtn
+		txtBtn = SimpleButton(infoLayer, R.ASSETS.IMAGES.TRANSPARENT, Rectangle(-1024, -1024, 1024, 1024), 0, 0, ->
+			if textbox\isBusy!
+				textbox\setSpeed(10000)
+			else
+				@closeOverlay(overlay))\add!
 		e\triggerEvent("OPEN_#{overlay.ID}")
 
 
@@ -227,16 +205,24 @@ export class GameScreen extends Screen
 
 		backgroundLayer\insertProp bgprop
 
-		for screenElement in *@screenElements
-			screenManager.makeScreenElement(screenLayer, screenElement, secondaryLayer)
+		print "OPENED SCREEN. PREVIOUS SCREEN #{@previousScreenID}"
 
-		if MOAIInputMgr.device.pointer
-			MOAIInputMgr.device.mouseRight\setCallback( (down) -> 
-				print "OPENING PREVIOUS SCREEN"
-				if down	
-					screenManager.openPrevious! )
-		else
-			MOAIApp.setListener( MOAIApp.BACK_BUTTON_PRESSED, screenManager.openPrevious )
+		if screenManager.hasPreviousScreen!
+			@backButton = SimpleButton LayerMgr\getLayer('screen'), R.ASSETS.TEXTURES.BACK_BUTTON, Rectangle(-64, -64, 64, 64), -200, 140, ( -> 
+				print "Open the previos screen!"
+				screenManager.openPrevious!)
+			@backButton\add()
+
+		for screenElement in *@screenElements
+			element, elementID = screenManager.makeScreenElement(screenLayer, screenElement, secondaryLayer)
+			element\add()
+			if elementID == "rotator"
+				@rotator = element
+				if screenElement.STARTING_ELEMENT == "lastPlayedLevel"
+					@rotator\gotoElement(saveFile.Save.LAST_PLAYED)
+				else
+					@rotator\gotoElement(tonumber(screenElement.STARTING_ELEMENT))
+
 
 export levelState = {
 	MADE: 0
@@ -248,7 +234,7 @@ export levelState = {
 
 export class Level extends Screen
 
-	new: (@configJson, @levelNO) =>
+	new: (@configJson, @levelNO, @previousScreenID) =>
 		super
 		@state = levelState.MADE
 
@@ -262,14 +248,17 @@ export class Level extends Screen
 		@state = levelState.LOADED
 
 		@world = MOAIBox2DWorld.new()
-		@world\setGravity( 0, -10 ) -- Zwaartekracht
-		@world\setUnitsToMeters( 1/30 ) -- Hoeveel units in een meter. Let op dat Units niet per se pixels zijn, dat hangt af van de scale van de viewport
+		@world\setGravity( 0, -10 )
+		@world\setUnitsToMeters( 1/30 )
 		@world\start()
 
 		Pntr\setWorld(@world)
 
 
 	open: () =>
+
+		saveFile.Save.LAST_PLAYED = @levelNO
+		save()
 
 		@fuel = @length
 
@@ -289,10 +278,12 @@ export class Level extends Screen
 		LayerMgr\createLayer('ui', 7, true, false)\render!
 		LayerMgr\createLayer('icon', 8, false, false)\render!
 
-		LayerMgr\createLayer('indicator', 9, true, false)\render!
-		LayerMgr\createLayer('overlay', 10, true, false)\render!
-		LayerMgr\createLayer('info', 11, true, false)\render!
-		LayerMgr\createLayer('pausemenu', 12, true, false)\render!
+		LayerMgr\createLayer('pausemenu', 9, true, false)\render!
+		LayerMgr\createLayer('pausebutton', 10, true, false)\render!
+
+		LayerMgr\createLayer('indicator', 11, true, false)\render!
+		LayerMgr\createLayer('overlay', 12, true, false)\render!
+		LayerMgr\createLayer('info', 13, true, false)\render!
 
 		MOAIGfxDevice\getFrameBuffer()\setClearColor .2980, .1372, .2, 1
 
@@ -357,12 +348,15 @@ export class Level extends Screen
 		@wrestler = characterManager.makeCharacter(@wrestler)\add()
 		@ufo = characterManager.makeCharacter("ufo")\add()
 
+		@rotator = Rotator(1, 0, 0, Rectangle(-32, -32, 32, 32), 0, 0, orientation.VERTICAL)
+
 		buttonX = 200
 		buttonXInitial = buttonX
-		buttonY = -90
+		buttonY = -120
 		buttonYOffset = -50
 		buttonXOffset = -50
 		buttonCount = 0
+
 		for spawnableUnit in *@spawnableUnits 
 			button = AnimatedCooldownButton LayerMgr\getLayer("ui"), R.ASSETS.IMAGES.UNIT_BUTTON, R.ASSETS.IMAGES[spawnableUnit .. "_ICON"] ,Rectangle(-32, -32, 32, 32), Rectangle(-8, -8, 8, 8), buttonX, buttonY, (-> characterManager.makeCharacter(spawnableUnit)), (-> return characterManager.checkEnemySpawnable(spawnableUnit))
 			button\add()
@@ -371,11 +365,15 @@ export class Level extends Screen
 			if buttonCount % 9 == 0
 				buttonX = buttonXInitial
 				buttonY += buttonYOffset
+			unitInfo = UnitInfo(LayerMgr\getLayer("pausemenu"), R.ASSETS.TEXTURES[spawnableUnit .. "_SINGLE"], Rectangle(-64, -64, 64, 64), Rectangle(-160, -64, 160, 64), characterManager.getConfigTable(spawnableUnit))
+			@rotator\addElement(unitInfo)
+
+		@pauseButton = SimpleButton LayerMgr\getLayer("pausebutton"), R.ASSETS.TEXTURES.PAUSE_BUTTON, Rectangle(-32, -32, 32, 32), -200, -140, ( -> @\togglePauseScreen!)
+		@pauseButton\add()
 
 		for startingPowerup in *@startingPowerups
 			powerupManager.makePowerup(startingPowerup.ID, startingPowerup.X, startingPowerup.Y)\activate!
  
-		
 		@paused = false
 		@running = true
 		@thread = MOAIThread.new()
@@ -392,20 +390,21 @@ export class Level extends Screen
 			@fuelTimer\setListener(MOAITimer.EVENT_TIMER_END_SPAN, @\updatefuelCount)
 			@fuelTimer\start()
 
-		if MOAIInputMgr.device.pointer
-			MOAIInputMgr.device.mouseRight\setCallback( @\togglePauseScreen )
-		else
-			MOAIApp.setListener( MOAIApp.BACK_BUTTON_PRESSED, pause )
-
 		performWithDelay(0.2, -> e\triggerEvent("LEVEL_START"))
 
-	togglePauseScreen: (down) =>
-		if @paused and down
+	togglePauseScreen: () =>
+		if @paused
 			@resume!
 
 			pauseMenuLayer = LayerMgr\getLayer('pausemenu')
 			pauseMenuLayer\removeProp(@pausemenuBackground)
-		elseif down
+			@backButton\remove()
+			@rotator\remove()
+			@plusButton\remove()
+			@minusButton\remove()
+			@backButton = nil
+			@pausemenuBackground = nil
+		else
 			pauseMenuLayer = LayerMgr\getLayer('pausemenu')
 
 			texture = MOAIGfxQuad2D.new()
@@ -419,10 +418,20 @@ export class Level extends Screen
 			@pausemenuBackground\setColor 1, 1, 1, 0.6
 
 			pauseMenuLayer\insertProp(@pausemenuBackground)
+
+			@backButton = SimpleButton pauseMenuLayer, R.ASSETS.TEXTURES.BACK_BUTTON, Rectangle(-64, -64, 64, 64), -200, 140, ( -> screenManager.openPrevious! )
+			@backButton\add()
+
+			@plusButton = SimpleButton(LayerMgr\getLayer("pausebutton"), R.ASSETS.IMAGES.PLUS_BUTTON, Rectangle(-32, -32, 32, 32), 0, 140, -> @rotator\showPrevious(), -> true)
+			@minusButton = SimpleButton(LayerMgr\getLayer("pausebutton"), R.ASSETS.IMAGES.MINUS_BUTTON, Rectangle(-32, -32, 32, 32), 0, -140, -> @rotator\showNext(), -> true)
+
+			@rotator\add()
+			@plusButton\add()
+			@minusButton\add()
+
 			@pause!
 
 	updatefuelCount: () =>
-		
 		@fuel -= 1
 		difference = @length - @fuel
 		@indicator\update difference
@@ -520,8 +529,10 @@ export class Level extends Screen
 
 			if saveFile.Save.CURRENT_LEVEL <= @levelNO
 				saveFile.Save.CURRENT_LEVEL = @levelNO + 1
-				save()
-
+				
+			@pauseButton\remove()
+			characterManager.saveSpawnedUnits()
+			save()
 			performWithDelay(2, -> screenManager.openScreen("levelSelect"))
 		
 	gameOver: () =>
@@ -549,6 +560,7 @@ export class Level extends Screen
 	    LayerMgr\getLayer("ui")\insertProp prop
 	    buttonManager.forcefullyDisableButtons!
 	    buttonManager.removeButtons()
+	    @pauseButton\remove()
 
 export class TutLevel extends Level
 
@@ -566,3 +578,9 @@ export class TutLevel extends Level
 	changeWrestlerActions: () =>
 		@wrestler\addAction("walk")
 		@wrestler\addAction("run")
+
+export class SandboxLevel extends Level
+
+	load: (onComplete = -> ) =>
+		super (onComplete)
+		@spawnableUnits = saveFile.Save.SPAWNED_UNITS

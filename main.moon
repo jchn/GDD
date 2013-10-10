@@ -16,6 +16,7 @@ require 'indicator'
 require 'screens'
 require 'eventhandler'
 require 'datatracker'
+require 'rotator'
 
 require 'lib/copy'
 export _ = require 'lib/underscore'
@@ -34,14 +35,13 @@ export entityCategory = {
 
 export direction = {
   LEFT: -1,
-  RIGHT: 1
+  RIGHT: 1,
 }
 
-export splitAtSpaces = (string) ->
-  words = {}
-  for word in string\gmatch("%S+") do
-    table.insert(words, word)
-  return words
+export orientation = {
+  HORIZONTAL: 1,
+  VERTICAL: 2
+}
 
 -- Openen window
 screenWidth = R.DEVICE_WIDTH
@@ -72,10 +72,20 @@ export resetSave = () =>
   saveFile = {}
   saveFile.Save = {}
   saveFile.Save.CURRENT_LEVEL = 1
+  saveFile.Save.LAST_PLAYED = saveFile.Save.CURRENT_LEVEL
+  saveFile.Save.SPAWNED_UNITS = {}
   save()
 
 if saveFile == nil
   resetSave()
+
+if saveFile.LAST_PLAYED == nil
+  saveFile.LAST_PLAYED = saveFile.CURRENT_LEVEL
+  save()
+
+if saveFile.Save.SPAWNED_UNITS == nil
+  saveFile.Save.SPAWNED_UNITS = {}
+  save()
 
 characterManager.setConfigTable(configTable.Characters)
 
@@ -84,11 +94,14 @@ for screen in *configTable.Screens do
   newScreen = nil
   switch screenType
     when "level"
-      newScreen = Level("config/" .. screen.FILE, screen.LEVEL_NO)
+      print "NEW LEVEL WITH PREVIOUS SCREEN: #{screen.PREVIOUS}"
+      newScreen = Level("config/" .. screen.FILE, screen.LEVEL_NO, screen.PREVIOUS)
     when "tutlevel"
-      newScreen = TutLevel("config/" .. screen.FILE, screen.LEVEL_NO)
+      newScreen = TutLevel("config/" .. screen.FILE, screen.LEVEL_NO, screen.PREVIOUS)
+    when "sandboxlevel"
+      newScreen = SandboxLevel("config/" .. screen.FILE, screen.LEVEL_NO, screen.PREVIOUS)
     else
-      newScreen = GameScreen("config/" .. screen.FILE)
+      newScreen = GameScreen("config/" .. screen.FILE, screen.PREVIOUS)
   screenManager.registerScreen(screen.NAME, newScreen)
   if screen.DEFAULTOPEN
     screenManager.openScreen(screen.NAME)
@@ -106,3 +119,6 @@ export performWithDelay = (delay, func, repeats, ...) ->
       elseif repeats == 0
         performWithDelay( delay, func, 0, unpack( arg ) ))
   t\start()
+
+export clampNumber = (value, min, max) ->
+  math.min(math.max(value, min), max)

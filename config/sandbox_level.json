@@ -1,18 +1,9 @@
 {
   "Config": {
-    "length": 100,
-    "wrestler" : "wrestler",
+    "length": 0,
+    "wrestler" : "immortal_wrestler",
 
-    "spawnableUnits" : [
-      "JUMPWALKER", "ELITE_JUMPWALKER", "SUPREME_JUMPWALKER", "COLLECTOR", "SLOWDOWN"
-    ],
-
-    "startingPowerups" : [
-      { "ID" : "health", "X" : 170, "Y": 0},
-      { "ID" : "health", "X" : 200, "Y": 0},
-      { "ID" : "health", "X" : 230, "Y": 0},
-      { "ID" : "health", "X" : 260, "Y": 0}
-    ],
+    "startingPowerups" : [],
 
     "assets" : {
       "images": {
@@ -47,9 +38,12 @@
         "ELITE_COLLECTOR_WALK" : "resources/collector.png",
         "SUPREME_COLLECTOR_WALK" : "resources/collector.png",
 
-        "RANGED_RANGED_ATTACK" : "resources/jumpwalker.png",
-        "ELITE_RANGED_RANGED_ATTACK" : "resources/elite_jumpwalker.png",
-        "SUPREME_RANGED_RANGED_ATTACK" : "resources/supreme_jumpwalker.png",
+        "RANGED_RANGED_ATTACK" : "resources/ranged.png",
+        "RANGED_ICON" : "resources/ranged_icon.png",
+        "ELITE_RANGED_RANGED_ATTACK" : "resources/elite_ranged.png",
+        "ELITE_RANGED_ICON" : "resources/elite_ranged_icon.png",
+        "SUPREME_RANGED_RANGED_ATTACK" : "resources/supreme_ranged.png",
+        "SUPREME_RANGED_ICON" : "resources/supreme_ranged_icon.png",
 
         "SLOWDOWN_WALL" : "resources/slowdown.png",
         "SLOWDOWN_ICON" : "resources/slowdown_icon.png",
@@ -89,21 +83,15 @@
         "INDICATOR" : "resources/indicator.png",
         "GAME_OVER" : "resources/game_over.png",
         "WIN_GAME" : "resources/win_game.png",
-        "DARK_OVERLAY" : "resources/dark_overlay.png",
-        "INDICATOR64" : "resources/indicator64.png",
-        "TRANSPARENT_OVERLAY" : "resources/transparent_overlay.png",
-
-        "HEALTH" : "resources/health.png",
-        "PYGO" : "resources/pygo.png",
-        "POWERUP_ICONS" : "resourecs/powerup_icons.png",
-        "HEALTH_SINGLE" : "resources/health_single.png",
-        "SHIELD_SINGLE" : "resources/shield_single.png",
 
         "JUMPWALKER_SINGLE" : "resources/jumpwalker_single.png",
         "ELITE_JUMPWALKER_SINGLE" : "resources/elite_jumpwalker_single.png",
         "SUPREME_JUMPWALKER_SINGLE" : "resources/supreme_jumpwalker_single.png",
         "COLLECTOR_SINGLE" : "resources/collector_single.png",
-        "SLOWDOWN_SINGLE" : "resources/slowdown_single.png"
+        "SLOWDOWN_SINGLE" : "resources/slowdown_single.png",
+        "ELITE_RANGED_SINGLE" : "resources/elite_ranged_single.png",
+        "SUPREME_RANGED_SINGLE" : "resources/supreme_ranged_single.png"
+
       },
       "fonts": {
         "ARIAL" : {
@@ -128,28 +116,6 @@
 
             }
           }
-      },
-      "overlays" : {
-        "INTRO1_OVERLAY" : {
-          "ID" : "INTRO1",
-          "TEXT" : "Keep an eye on the fuel gauge in the top left corner of the screen. If it runs out, my UFO crashes.",
-          "TEXTURE" : "PYGO",
-          "EVENT" : "LEVEL_START"
-        },
-
-        "SPAWNED_FIRST_COLLECTOR_UNIT_OVERLAY" : {
-          "ID" : "SPAWNED_FIRST_COLLECTOR_UNIT",
-          "TEXT" : "This is a collector. It collects powerups for you.",
-          "TEXTURE" : "COLLECTOR_SINGLE",
-          "EVENT" : "SPAWNED_FIRST_COLLECTOR_UNIT"
-        },
-        "SPAWNED_FIRST_SLOWDOWN_UNIT_OVERLAY" : {
-          "ID" : "SPAWNED_FIRST_SLOWDOWN_UNIT",
-          "TEXT" : "This is an immovable alien. You can use it to keep the wrestler busy.",
-          "TEXTURE" : "SLOWDOWN_SINGLE",
-          "EVENT" : "SPAWNED_FIRST_SLOWDOWN_UNIT"
-        }
-        
       }
     }
   }

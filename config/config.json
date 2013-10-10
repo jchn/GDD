@@ -12,28 +12,48 @@
 			{
 				"NAME" : "levelSelect",
 				"FILE" : "levelselect.json",
-				"TYPE" : "GameScreen"
+				"TYPE" : "GameScreen",
+				"PREVIOUS" : "mainMenu"
 			},
 
 			{ 
 				"NAME": "level_1",
 				"FILE" : "level1.json",
 				"TYPE" : "TutLevel",
-				"LEVEL_NO" : 1
+				"LEVEL_NO" : 1,
+				"PREVIOUS" : "levelSelect"
 			},
 
 			{
 				"NAME": "level_2",
 				"FILE" : "level2.json",
 				"TYPE" : "Level",
-				"LEVEL_NO" : 2
+				"LEVEL_NO" : 2,
+				"PREVIOUS" : "levelSelect"
 			},
 
 			{
 				"NAME": "level_3",
 				"FILE" : "level3.json",
 				"TYPE" : "Level",
-				"LEVEL_NO" : 3
+				"LEVEL_NO" : 3,
+				"PREVIOUS" : "levelSelect"
+			},
+
+			{
+				"NAME": "level_4",
+				"FILE" : "level4.json",
+				"TYPE" : "Level",
+				"LEVEL_NO" : 4,
+				"PREVIOUS" : "levelSelect"
+			},
+
+			{
+				"NAME": "sandboxLevel",
+				"FILE" : "sandbox_level.json",
+				"TYPE" : "SandboxLevel",
+				"LEVEL_NO" : 0,
+				"PREVIOUS" : "mainMenu"
 			}
 		],
 
@@ -56,8 +76,32 @@
 				"ACTIONS" : [
 					"idle"
 				],
-				"RECTANGLE" : [-32, -32, 32, 32 ],
-				"SPAWNLOCATION_OFFSET" : -35
+				"RECTANGLE" : [-64, -64, 64, 64 ],
+				"BODYRECTANGLE" : [ -30, -64, 30, 64 ],
+				"SPAWNLOCATION_OFFSET" : -10
+			},
+
+			"IMMORTAL_WRESTLER" : {
+				"PROXY_ID" : "WRESTLER",
+				"COST" : {},
+				"STATS" : {
+					"health" : 50,
+					"attack" : 5,
+					"speed" : 40,
+					"shield" : 0
+				},
+				"POWERUP_STATS" : {
+					"health" : 5,
+					"attack" : 1,
+					"shield" : 1
+				},
+				"ACTIONS" : [
+					"idle", "walk", "run", "punch"
+				],
+				"RECTANGLE" : [-64, -64, 64, 64 ],
+				"BODYRECTANGLE" : [ -30, -64, 30, 64 ],
+				"SPAWNLOCATION_OFFSET" : -10,
+				"IMMORTAL" : true
 			},
 
 			"WRESTLER" : {
@@ -76,8 +120,9 @@
 				"ACTIONS" : [
 					"idle", "walk", "run", "punch"
 				],
-				"RECTANGLE" : [-32, -32, 32, 32 ],
-				"SPAWNLOCATION_OFFSET" : -35
+				"RECTANGLE" : [-64, -64, 64, 64 ],
+				"BODYRECTANGLE" : [ -30, -64, 30, 64 ],
+				"SPAWNLOCATION_OFFSET" : -10
 			},
 
 			"UFO" : {
@@ -101,6 +146,7 @@
 			},
 
 			"JUMPWALKER" : {
+				"TYPE" : "unit",
 				"COST" : {},
 				"STATS" : {
 					"health" : 10,
@@ -121,10 +167,12 @@
 				"SPAWNLOCATION_OFFSET" : -50,
 				"MIN_LOOT": 1,
 				"MAX_LOOT": 1,
-				"POSSIBLE_LOOT" : [ "health" ]
+				"POSSIBLE_LOOT" : [ "health" ],
+				"TEXT_ENTRY" : "This is your basic purple Jumpwalker. They attack by jumping into enemies, which also causes them damage."
 			},
 
 			"ELITE_JUMPWALKER" : {
+				"TYPE" : "unit",
 				"COST" : {
 						"health" : 1
 					},
@@ -147,10 +195,12 @@
 				"SPAWNLOCATION_OFFSET" : -50,
 				"MIN_LOOT": 1,
 				"MAX_LOOT": 2,
-				"POSSIBLE_LOOT" : [ "health", "shield", "shield" ]
+				"POSSIBLE_LOOT" : [ "health", "shield", "shield" ],
+				"TEXT_ENTRY" : "These red Jumpwalkers are protected by a shield."
 			},
 
 			"SUPREME_JUMPWALKER" : {
+				"TYPE" : "unit",
 				"COST" : {
 						"shield" : 4
 					},
@@ -171,10 +221,12 @@
 				"RECTANGLE" : [-32, -32, 32, 32 ],
 				"BODYRECTANGLE" : [-20, -20, 20, 20],
 				"SPAWNLOCATION_OFFSET" : -50,
-				"CAN_USE_POWERUPS" : true
+				"CAN_USE_POWERUPS" : true,
+				"TEXT_ENTRY" : "These golden Jumpwalkers are the strongest of their species!"
 			},
 
 			"RANGED" : {
+				"TYPE" : "unit",
 				"COST" : {},
 				"STATS" : {
 					"health" : 4,
@@ -194,10 +246,12 @@
 				"SPAWNLOCATION_OFFSET" : -40,
 				"MIN_LOOT": 1,
 				"MAX_LOOT": 1,
-				"POSSIBLE_LOOT" : [ "strength" ]
+				"POSSIBLE_LOOT" : [ "strength" ],
+				"TEXT_ENTRY" : "This alien can shoot a special acid from their mouth, which pierces through shields."
 			},
 
 			"ELITE_RANGED" : {
+				"TYPE" : "unit",
 				"COST" : {
 					"health" : 3
 				},
@@ -219,10 +273,12 @@
 				"SPAWNLOCATION_OFFSET" : -40,
 				"MIN_LOOT": 1,
 				"MAX_LOOT": 2,
-				"POSSIBLE_LOOT" : [ "strength" ]
+				"POSSIBLE_LOOT" : [ "strength" ],
+				"TEXT_ENTRY" : "This alien shoots balls of acid, allowing it to damage enemies protected by a shield."
 			},
 
 			"SUPREME_RANGED" : {
+				"TYPE" : "unit",
 				"COST" : {
 					"strength" : 4
 				},
@@ -246,10 +302,12 @@
 				"CAN_USE_POWERUPS" : true,
 				"MIN_LOOT": 1,
 				"MAX_LOOT": 2,
-				"POSSIBLE_LOOT" : [ "health", "strength" ]
+				"POSSIBLE_LOOT" : [ "health", "strength" ],
+				"TEXT_ENTRY" : "This golden alien shoots balls with a very high concentration of acid."
 			},
 
 			"SLOWDOWN" : {
+				"TYPE" : "unit",
 				"COST" : {},
 				"STATS" : {
 					"health" : 20,
@@ -269,10 +327,12 @@
 				"SPAWNLOCATION_OFFSET" : -35,
 				"MIN_LOOT": 1,
 				"MAX_LOOT": 1,
-				"POSSIBLE_LOOT" : [ "shield" ]
+				"POSSIBLE_LOOT" : [ "shield" ],
+				"TEXT_ENTRY" : "This purple alien is so fat, it can't move or attack. It's a living wall."
 			},
 
 			"COLLECTOR" : {
+				"TYPE" : "unit",
 				"COST" : {},
 				"STATS" : {
 					"health" : 1,
@@ -290,10 +350,12 @@
 					"walk", "changedirection"
 				],
 				"RECTANGLE" : [-32, -32, 32, 32 ],
-				"SPAWNLOCATION_OFFSET" : -35
+				"SPAWNLOCATION_OFFSET" : -35,
+				"TEXT_ENTRY" : "This alien collects powerups for you. Use it wisely."
 			},
 
 			"ELITE_COLLECTOR" : {
+				"TYPE" : "unit",
 				"COST" : {
 					"health" : 1
 				},
@@ -310,35 +372,12 @@
 					"shield" : 0
 				},
 				"ACTIONS" : [
-					"walk"
+					"walk", "changedirection"
 				],
 				"RECTANGLE" : [-32, -32, 32, 32 ],
-				"SPAWNLOCATION_OFFSET" : -35
-			},
-
-			"SUPREME_COLLECTOR" : {
-				"COST" : {
-					"health" : 2
-				},
-				"STATS" : {
-					"health" : 1,
-					"attack" : 0,
-					"speed" : 40,
-					"shield" : 0,
-					"collectSkill" : 3
-				},
-				"POWERUP_STATS" : {
-					"health" : 0,
-					"attack" : 0,
-					"shield" : 0
-				},
-				"ACTIONS" : [
-					"walk"
-				],
-				"RECTANGLE" : [-32, -32, 32, 32 ],
-				"SPAWNLOCATION_OFFSET" : -35
+				"SPAWNLOCATION_OFFSET" : -35,
+				"TEXT_ENTRY" : "when this alien collects a powerup for you, it counts as 2 powerups."
 			}
-
 		}
 	}
 }

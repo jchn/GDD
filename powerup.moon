@@ -33,14 +33,14 @@ class Powerup
     @curve = MOAIAnimCurve.new()
     @curve\reserveKeys(2)
 
-    @curve\setKey(1, 0.25, 1)
-    @curve\setKey(2, 0.5, 2)
+    @curve\setKey(1, 0.1, 1)
+    @curve\setKey(2, 0.2, 2)
 
     @anim = MOAIAnim\new()
     @anim\reserveLinks(1)
     @anim\setLink(1, @curve, @prop, MOAIProp2D.ATTR_INDEX)
     @anim\setMode(MOAITimer.LOOP)
-    @anim\setSpan(1)
+    @anim\setSpan(0.3)
     @anim\start()
 
     @layer\insertProp @prop
@@ -204,13 +204,13 @@ class PowerUpManager
 
     switch powerupID
       when "health"
-        newPowerup = HealthPowerup(world, layer, x, y, R.ASSETS.IMAGES["#{powerupID}_ANIM"\upper!])
+        newPowerup = HealthPowerup(world, layer, x, y, R.ASSETS.IMAGES.HEALTH_ANIM)
 
       when "shield"
-        newPowerup = ShieldPowerup(world, layer, x, y, R.ASSETS.IMAGES["#{powerupID}_ANIM"\upper!])
+        newPowerup = ShieldPowerup(world, layer, x, y, R.ASSETS.IMAGES.SHIELD_ANIM)
 
       when "strength"
-        newPowerup = StrengthPowerup(world, layer, x, y, R.ASSETS.IMAGES["#{powerupID}_ANIM"\upper!])
+        newPowerup = StrengthPowerup(world, layer, x, y, R.ASSETS.IMAGES.STRENGTH_ANIM)
 
       when "bullet"
         newPowerup = Bullet(world, layer, x, y, R.ASSETS.IMAGES.PROJECTILE)
