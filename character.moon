@@ -200,28 +200,21 @@ class Unit extends PowerupUser
   die: () =>
     x, y = @getLocation()
     super super
-    if not @minDrops
-      @minDrops = 1
+    if @minDrops != nil and @maxDrops != nil and @possibleDrops != nil
 
-    if not @maxDrops
-      @maxDrops = 1
+      drops = math.random(@minDrops, @maxDrops)
 
-    if not @possibleDrops
-      @possibleDrops = { "health" }
+      for i  = 1, drops do
+        dropping = math.random(#@possibleDrops)
 
-    drops = math.random(@minDrops, @maxDrops)
-
-    for i  = 1, drops do
-      dropping = math.random(#@possibleDrops)
-
-      powerup = powerupManager.makePowerup(@possibleDrops[dropping], (x - 10 + (i * 10)) , y)
-      powerup.body\applyLinearImpulse(100,100)
-      timer = MOAITimer.new()
-      timer\setSpan(1)
-      timer\setMode(MOAITimer.NORMAL)
-      timer\setListener(MOAITimer.EVENT_TIMER_END_SPAN, ->
-        powerup\activate!)
-      timer\start()
+        powerup = powerupManager.makePowerup(@possibleDrops[dropping], (x - 10 + (i * 10)) , y)
+        powerup.body\applyLinearImpulse(100,100)
+        timer = MOAITimer.new()
+        timer\setSpan(1)
+        timer\setMode(MOAITimer.NORMAL)
+        timer\setListener(MOAITimer.EVENT_TIMER_END_SPAN, ->
+          powerup\activate!)
+        timer\start()
     performWithDelay(0.2, -> dt\addDeadUnit(@))
 
 class CollectorUnit extends Unit
@@ -459,7 +452,6 @@ class CharacterManager
         newCharacter = CollectorUnit(characterID, prop, layer, world, direction.LEFT, rectangle, bodyRectangle, stats, actions, x, y)
         newCharacter\setFilter(entityCategory.CHARACTER, entityCategory.POWERUP + entityCategory.BOUNDARY + entityCategory.INACTIVEPOWERUP + entityCategory.DRAGGEDPOWERUP)
         newCharacter\setHealthbar(Healthbar(LayerMgr\getLayer("characters"), newCharacter\getWidth(), 4), false)
-        newCharacter\setPowerupDrops(minLoot, maxLoot, possibleLoot )
         ufo\doAction("spawn")
       when "UFO"
         newCharacter = UFO(characterID, prop, layer, world, direction.LEFT, rectangle, bodyRectangle, stats, actions, 0, y, nil, false)
@@ -477,11 +469,11 @@ class CharacterManager
         newCharacter = Unit(characterID, prop, layer, world, direction.LEFT, rectangle, bodyRectangle, stats, actions, x, y, powerupStats)
         newCharacter\setFilter(entityCategory.CHARACTER, entityCategory.BOUNDARY)
         newCharacter\setHealthbar(Healthbar(LayerMgr\getLayer("characters"), newCharacter\getWidth(), 4), false)
-
-        if minLoot != nil and maxLoot != nil and possibleLoot != nil
-          newCharacter\setPowerupDrops(minLoot, maxLoot, possibleLoot )
         ufo\doAction("spawn")
 
+    if minLoot != nil and maxLoot != nil and possibleLoot != nil
+      newCharacter\setPowerupDrops(minLoot, maxLoot, possibleLoot )
+    
     if newCharacter.stats.shield > 0
       newCharacter.icon = powerupManager.makePowerupIcon("shield")
 
