@@ -75,7 +75,7 @@ class ScreenManager
 
 	doScreenElementFunctions: (functionInfo) ->
 
-		functionInfo = splitAtSpaces(functionInfo)
+		functionInfo = _.to_array(string.gmatch(functionInfo, "%S+"))
 		functionInfo[1] = functionInfo[1]\lower!
 
 		switch functionInfo[1]
@@ -83,6 +83,8 @@ class ScreenManager
 				screenManager.openScreen(functionInfo[2])
 			when "levelunlocked"
 				saveFile.Save.CURRENT_LEVEL >= tonumber(functionInfo[2])
+			when "spawnedunits"
+				#saveFile.Save.SPAWNED_UNITS >= tonumber(functionInfo[2])
 			when "rotatorshownext"
 				currentScreen.rotator\showNext()
 			when "rotatorshowprevious"
@@ -123,44 +125,6 @@ class Screen
 		ilayer = LayerMgr\getLayer("indicator")
 		infoLayer = LayerMgr\getLayer("info")
 
-		-- darkQuad = MOAIGfxQuad2D.new()
-		-- darkQuad\setTexture( R.ASSETS.TEXTURES.DARK_OVERLAY )
-		-- darkQuad\setRect( -1024, -1024, 1024, 1024 )
-		-- darkQuad\setUVRect( 0, 0, 1, 1 )
-
-		-- darkBg = MOAIProp2D.new()
-		-- darkBg\setDeck( darkQuad )
-		-- olayer\insertProp( darkBg )
-		-- darkBg\setLoc(0, 0)
-		-- darkBg\setBlendMode(MOAIProp2D.GL_SRC_ALPHA, MOAIProp2D.GL_ONE_MINUS_DST_ALPHA)
-		-- darkBg\setColor(0, 0, 0, 1)
-		-- darkBg\setPriority(30)
-
-		-- transparentQuad = MOAIGfxQuad2D.new()
-		-- transparentQuad\setTexture( R.ASSETS.TEXTURES.TRANSPARENT_OVERLAY )
-		-- transparentQuad\setRect( -240, -160, 240, 160 )
-		-- transparentQuad\setUVRect( 0, 0, 1, 1 )
-
-		-- transparentBg = MOAIProp2D.new()
-		-- transparentBg\setDeck( transparentQuad )
-		-- ilayer\insertProp( transparentBg )
-		-- transparentBg\setLoc(0, 0)
-		-- transparentBg\setBlendMode(MOAIProp2D.GL_ZERO, MOAIProp2D.GL_ONE_MINUS_SRC_COLOR)
-		-- transparentBg\setColor(0, 0, 0, 1)
-		-- transparentBg\setPriority(35)
-
-		-- lightQuad = MOAIGfxQuad2D.new()
-		-- lightQuad\setTexture( R.ASSETS.TEXTURES.INDICATOR64 )
-		-- lightQuad\setRect( -128, -128, 128, 128 )
-		-- lightQuad\setUVRect( 0, 0, 1, 1 )
-
-		-- lightBg = MOAIProp2D.new()
-		-- lightBg\setDeck( lightQuad )
-		-- ilayer\insertProp( lightBg )
-		-- lightBg\setLoc(0, 0)
-		-- lightBg\setBlendMode(MOAIProp2D.GL_ZERO, MOAIProp2D.GL_ONE_MINUS_SRC_COLOR)
-		-- lightBg\setColor(0, 0, 0, 0.5)
-
 		texture = MOAIGfxQuad2D.new()
 		texture\setTexture R.ASSETS.IMAGES.BLACK
 		texture\setRect -1024, -1024, 1024, 1024
@@ -195,7 +159,11 @@ class Screen
 		infoLayer\insertProp(imageBg)
 		infoLayer\insertProp(textbox)
 
-		txtBtn = SimpleButton(infoLayer, R.ASSETS.IMAGES.TRANSPARENT, Rectangle(-1024, -1024, 1024, 1024), 0, 0, -> @closeOverlay(overlay))\add!
+		txtBtn = SimpleButton(infoLayer, R.ASSETS.IMAGES.TRANSPARENT, Rectangle(-1024, -1024, 1024, 1024), 0, 0, ->
+			if textbox\isBusy!
+				textbox\setSpeed(10000)
+			else
+				@closeOverlay(overlay))\add!
 		e\triggerEvent("OPEN_#{overlay.ID}")
 
 
@@ -384,7 +352,7 @@ export class Level extends Screen
 
 		buttonX = 200
 		buttonXInitial = buttonX
-		buttonY = -90
+		buttonY = -120
 		buttonYOffset = -50
 		buttonXOffset = -50
 		buttonCount = 0
@@ -464,7 +432,6 @@ export class Level extends Screen
 			@pause!
 
 	updatefuelCount: () =>
-		
 		@fuel -= 1
 		difference = @length - @fuel
 		@indicator\update difference
@@ -562,9 +529,10 @@ export class Level extends Screen
 
 			if saveFile.Save.CURRENT_LEVEL <= @levelNO
 				saveFile.Save.CURRENT_LEVEL = @levelNO + 1
-				save()
+				
 			@pauseButton\remove()
-
+			characterManager.saveSpawnedUnits()
+			save()
 			performWithDelay(2, -> screenManager.openScreen("levelSelect"))
 		
 	gameOver: () =>
@@ -610,3 +578,9 @@ export class TutLevel extends Level
 	changeWrestlerActions: () =>
 		@wrestler\addAction("walk")
 		@wrestler\addAction("run")
+
+export class SandboxLevel extends Level
+
+	load: (onComplete = -> ) =>
+		super (onComplete)
+		@spawnableUnits = saveFile.Save.SPAWNED_UNITS

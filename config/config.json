@@ -46,6 +46,14 @@
 				"TYPE" : "Level",
 				"LEVEL_NO" : 4,
 				"PREVIOUS" : "levelSelect"
+			},
+
+			{
+				"NAME": "sandboxLevel",
+				"FILE" : "sandbox_level.json",
+				"TYPE" : "SandboxLevel",
+				"LEVEL_NO" : 0,
+				"PREVIOUS" : "mainMenu"
 			}
 		],
 
@@ -68,8 +76,32 @@
 				"ACTIONS" : [
 					"idle"
 				],
-				"RECTANGLE" : [-32, -32, 32, 32 ],
-				"SPAWNLOCATION_OFFSET" : -35
+				"RECTANGLE" : [-64, -64, 64, 64 ],
+				"BODYRECTANGLE" : [ -30, -64, 30, 64 ],
+				"SPAWNLOCATION_OFFSET" : -10
+			},
+
+			"IMMORTAL_WRESTLER" : {
+				"PROXY_ID" : "WRESTLER",
+				"COST" : {},
+				"STATS" : {
+					"health" : 50,
+					"attack" : 5,
+					"speed" : 40,
+					"shield" : 0
+				},
+				"POWERUP_STATS" : {
+					"health" : 5,
+					"attack" : 1,
+					"shield" : 1
+				},
+				"ACTIONS" : [
+					"idle", "walk", "run", "punch"
+				],
+				"RECTANGLE" : [-64, -64, 64, 64 ],
+				"BODYRECTANGLE" : [ -30, -64, 30, 64 ],
+				"SPAWNLOCATION_OFFSET" : -10,
+				"IMMORTAL" : true
 			},
 
 			"WRESTLER" : {
@@ -88,8 +120,9 @@
 				"ACTIONS" : [
 					"idle", "walk", "run", "punch"
 				],
-				"RECTANGLE" : [-32, -32, 32, 32 ],
-				"SPAWNLOCATION_OFFSET" : -35
+				"RECTANGLE" : [-64, -64, 64, 64 ],
+				"BODYRECTANGLE" : [ -30, -64, 30, 64 ],
+				"SPAWNLOCATION_OFFSET" : -10
 			},
 
 			"UFO" : {
@@ -113,6 +146,7 @@
 			},
 
 			"JUMPWALKER" : {
+				"TYPE" : "unit",
 				"COST" : {},
 				"STATS" : {
 					"health" : 10,
@@ -138,6 +172,7 @@
 			},
 
 			"ELITE_JUMPWALKER" : {
+				"TYPE" : "unit",
 				"COST" : {
 						"health" : 1
 					},
@@ -165,6 +200,7 @@
 			},
 
 			"SUPREME_JUMPWALKER" : {
+				"TYPE" : "unit",
 				"COST" : {
 						"shield" : 4
 					},
@@ -190,6 +226,7 @@
 			},
 
 			"RANGED" : {
+				"TYPE" : "unit",
 				"COST" : {},
 				"STATS" : {
 					"health" : 4,
@@ -214,6 +251,7 @@
 			},
 
 			"ELITE_RANGED" : {
+				"TYPE" : "unit",
 				"COST" : {
 					"health" : 3
 				},
@@ -240,6 +278,7 @@
 			},
 
 			"SUPREME_RANGED" : {
+				"TYPE" : "unit",
 				"COST" : {
 					"strength" : 4
 				},
@@ -268,6 +307,7 @@
 			},
 
 			"SLOWDOWN" : {
+				"TYPE" : "unit",
 				"COST" : {},
 				"STATS" : {
 					"health" : 20,
@@ -292,6 +332,7 @@
 			},
 
 			"COLLECTOR" : {
+				"TYPE" : "unit",
 				"COST" : {},
 				"STATS" : {
 					"health" : 1,
@@ -314,6 +355,7 @@
 			},
 
 			"ELITE_COLLECTOR" : {
+				"TYPE" : "unit",
 				"COST" : {
 					"health" : 1
 				},
@@ -330,7 +372,7 @@
 					"shield" : 0
 				},
 				"ACTIONS" : [
-					"walk"
+					"walk", "changedirection"
 				],
 				"RECTANGLE" : [-32, -32, 32, 32 ],
 				"SPAWNLOCATION_OFFSET" : -35,

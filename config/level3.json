@@ -29,7 +29,7 @@
 
         "WRESTLER_IDLE" : "resources/wrestler_idle.png",
         "WRESTLER_WALK" : "resources/wrestler_walk.png",
-        "WRESTLER_PUNCH" : "resources/wrestler_punch.png",
+        "WRESTLER_KICK" : "resources/wrestler_kick.png",
 
         "JUMPWALKER_JUMPWALK" : "resources/jumpwalker.png",
         "JUMPWALKER_ICON" : "resources/jumpwalker_icon.png",

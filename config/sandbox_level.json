@@ -1,14 +1,9 @@
 {
   "Config": {
-    "length": 80,
-    "wrestler" : "wrestler",
+    "length": 0,
+    "wrestler" : "immortal_wrestler",
 
-    "spawnableUnits" : [
-      "JUMPWALKER", "ELITE_JUMPWALKER", "SUPREME_JUMPWALKER", "COLLECTOR", "SLOWDOWN", "ELITE_RANGED", "SUPREME_RANGED"
-    ],
-
-    "startingPowerups" : [
-    ],
+    "startingPowerups" : [],
 
     "assets" : {
       "images": {

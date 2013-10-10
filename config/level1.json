@@ -26,7 +26,7 @@
 
         "WRESTLER_IDLE" : "resources/wrestler_idle.png",
         "WRESTLER_WALK" : "resources/wrestler_walk.png",
-        "WRESTLER_PUNCH" : "resources/wrestler_punch.png",
+        "WRESTLER_KICK" : "resources/wrestler_kick.png",
 
         "JUMPWALKER_JUMPWALK" : "resources/jumpwalker.png",
         "JUMPWALKER_ICON" : "resources/jumpwalker_icon.png",
@@ -98,7 +98,9 @@
         "BUTTON_EXPLANATION" : "resources/unit_spawn_button.png",
         "DRAG_POWERUP_EXPLANATION" : "resources/drag_powerup_explanation.png",
         "GIVE_POWERUP_TO_GOLDEN_UNIT_EXPLANATION" : "resources/give_powerup_to_golden_unit_explanation.png",
-        "POWERUP_FROM_COLLECTION_EXPLANATION" : "resources/powerup_from_collection_explanation.png"
+        "POWERUP_FROM_COLLECTION_EXPLANATION" : "resources/powerup_from_collection_explanation.png",
+        "ELITE_JUMPWALKER_COST_EXPLANATION" : "resources/elite_jumpwalker_cost_explanation.png",
+        "SUPREME_JUMPWALKER_COST_EXPLANATION" : "resources/supreme_jumpwalker_cost_explanation.png"
       },
       "fonts": {
         "ARIAL" : {
@@ -220,8 +222,8 @@
         },
         "FIRST_HEALTH_POWERUP4_OVERLAY" : {
           "ID" : "FIRST_HEALTH_POWERUP4",
-          "TEXT" : "Transporting this red Jumpwalker takes 1 health powerup. Let's give it a try.",
-          "TEXTURE" : "ELITE_JUMPWALKER_SINGLE",
+          "TEXT" : "Transporting a Jumpwalker takes 1 health powerup. Let's give it a try.",
+          "TEXTURE" : "ELITE_JUMPWALKER_COST_EXPLANATION",
           "EVENT" : "FIRST_HEALTH_POWERUP3_CLOSE"
         },
 
@@ -240,8 +242,8 @@
 
         "FIRST_SHIELD_POWERUP_OVERLAY" : {
           "ID" : "FIRST_SHIELD_POWERUP",
-          "TEXT" : "This is a shield powerup. Let's see what happens when we collect 4 of those.",
-          "TEXTURE" : "SHIELD_SINGLE",
+          "TEXT" : "This is a shield powerup. Collecting 4 of those'll allow me to transport a golden Jumpwalker.",
+          "TEXTURE" : "SUPREME_JUMPWALKER_COST_EXPLANATION",
           "EVENT" : "FIRST_SHIELD_FOR_UFO"
         },
         "FIRST_SHIELD_POWERUP_OVERLAY2" : {
@@ -253,7 +255,7 @@
 
         "SPAWNED_FIRST_SUPREME_JUMPWALKER_UNIT_OVERLAY" : {
           "ID" : "SPAWNED_FIRST_SUPREME_JUMPWALKER",
-          "TEXT" : "A golden alien! They are better than red and pruple aliens.",
+          "TEXT" : "A golden alien! They are better than red and purple aliens.",
           "TEXTURE" : "SUPREME_JUMPWALKER_SINGLE",
           "EVENT" : "SPAWNED_FIRST_SUPREME_JUMPWALKER_UNIT"
         },

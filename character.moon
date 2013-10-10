@@ -30,7 +30,7 @@ class Character
     @actions = {}
     for actionID in *actionIDs do
       @addAction(actionID)
-
+    @immortal = false
     @add()
     @update()
 
@@ -45,6 +45,8 @@ class Character
 
   getLocation: () =>
     return @body\getPosition()
+
+  setImmortal: (@immortal) =>
 
   showFloatingNumber: (text, length, style, offsetX = 0, offsetY = 0) =>
     x, y = @getLocation()
@@ -72,7 +74,8 @@ class Character
           return
       @colorBlink(1.0, 0.0, 0.0)
 
-    @stats.health += deltaHealth
+    if @immortal == false
+      @stats.health += deltaHealth
 
     if @stats.health > @stats.maxHealth
       @stats.maxHealth = @stats.health
@@ -279,6 +282,7 @@ class CharacterManager
   comboCounter = 0
   powerupInfoboxes =  {}
   configTable = {}
+  spawnedCharacters = {}
 
   updateCharacters: () ->
     for character in *characters do
@@ -390,6 +394,20 @@ class CharacterManager
     lastTimestamp = 0
     comboCounter = 0
     powerupInfoboxes = {}
+    spawnedCharacters = {}
+
+  saveSpawnedUnits: () ->
+    for char in *spawnedCharacters do
+      alreadySaved = false
+
+      for char2 in *saveFile.Save.SPAWNED_UNITS
+        if char == char2
+          alreadySaved = true
+
+      if alreadySaved == false
+        table.insert(saveFile.Save.SPAWNED_UNITS, char)
+
+    save()
 
   makeCharacter: (characterID) ->
     characterID = characterID\upper()
@@ -416,6 +434,8 @@ class CharacterManager
     maxLoot = characterConfig.MAX_LOOT
     possibleLoot = characterConfig.POSSIBLE_LOOT
     canUsePowerups = characterConfig.CAN_USE_POWERUPS
+    characterType = characterConfig.TYPE
+    immortal = characterConfig.IMMORTAL
 
     proxyID = characterConfig.PROXY_ID
     if proxyID != nil
@@ -429,7 +449,10 @@ class CharacterManager
     switch characterID
       when "WRESTLER"
         newCharacter = Hero(characterID, prop, layer, world, direction.RIGHT, rectangle, bodyRectangle, stats, actions, x, y, powerupStats)
-        newCharacter\setHealthbar(Healthbar(LayerMgr\getLayer("ui"), 100, 10))
+        if immortal == false or immortal == nil
+          newCharacter\setHealthbar(Healthbar(LayerMgr\getLayer("ui"), 100, 10))
+        else
+          newCharacter\setImmortal(true)
         newCharacter\setFilter(entityCategory.CHARACTER, entityCategory.POWERUP + entityCategory.BOUNDARY + entityCategory.BULLET)
       when "COLLECTOR", "ELITE_COLLECTOR", "SUPREME_COLLECTOR"
         x = ufo\getLocation()
@@ -468,9 +491,15 @@ class CharacterManager
     table.insert(characters, newCharacter)
     newCharacter\add()
 
-    performWithDelay(0.2, -> dt\addSpawnedUnit(newCharacter))
-    
+    if characterType == "unit"
+      performWithDelay(0.2, -> dt\addSpawnedUnit(newCharacter))
+      hasSpawnedThisUnit = false
+      for char in *spawnedCharacters do
+        if char == characterID
+          hasSpawnedThisUnit = true
 
+      if hasSpawnedThisUnit == false
+        table.insert(spawnedCharacters, characterID)
     return newCharacter
 
 export characterManager = CharacterManager()

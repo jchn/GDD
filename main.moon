@@ -43,12 +43,6 @@ export orientation = {
   VERTICAL: 2
 }
 
-export splitAtSpaces = (string) ->
-  words = {}
-  for word in string\gmatch("%S+") do
-    table.insert(words, word)
-  return words
-
 -- Openen window
 screenWidth = R.DEVICE_WIDTH
 screenHeight = R.DEVICE_HEIGHT
@@ -79,10 +73,19 @@ export resetSave = () =>
   saveFile.Save = {}
   saveFile.Save.CURRENT_LEVEL = 1
   saveFile.Save.LAST_PLAYED = saveFile.Save.CURRENT_LEVEL
+  saveFile.Save.SPAWNED_UNITS = {}
   save()
 
 if saveFile == nil
   resetSave()
+
+if saveFile.LAST_PLAYED == nil
+  saveFile.LAST_PLAYED = saveFile.CURRENT_LEVEL
+  save()
+
+if saveFile.Save.SPAWNED_UNITS == nil
+  saveFile.Save.SPAWNED_UNITS = {}
+  save()
 
 characterManager.setConfigTable(configTable.Characters)
 
@@ -95,6 +98,8 @@ for screen in *configTable.Screens do
       newScreen = Level("config/" .. screen.FILE, screen.LEVEL_NO, screen.PREVIOUS)
     when "tutlevel"
       newScreen = TutLevel("config/" .. screen.FILE, screen.LEVEL_NO, screen.PREVIOUS)
+    when "sandboxlevel"
+      newScreen = SandboxLevel("config/" .. screen.FILE, screen.LEVEL_NO, screen.PREVIOUS)
     else
       newScreen = GameScreen("config/" .. screen.FILE, screen.PREVIOUS)
   screenManager.registerScreen(screen.NAME, newScreen)

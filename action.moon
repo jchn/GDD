@@ -183,37 +183,33 @@ class PunchAction extends Action
   execute: (otherCharacters = {}) =>
     if @character.state == Characterstate.IDLE
 
-      texture = R.ASSETS.IMAGES.WRESTLER_PUNCH
+      texture = R.ASSETS.IMAGES.WRESTLER_KICK
 
       rect = @character.rectangle
 
       @tileLib = MOAITileDeck2D\new()
       @tileLib\setTexture(texture)
-      @tileLib\setSize(6, 1)
+      @tileLib\setSize(2, 1)
       @tileLib\setRect(rect\get())
 
       @character.prop\setDeck @tileLib
 
       @curve = MOAIAnimCurve.new()
-      @curve\reserveKeys(6)
+      @curve\reserveKeys(2)
 
-      @curve\setKey(1, 0.16, 1)
-      @curve\setKey(2, 0.33, 2)
-      @curve\setKey(3, 0.50, 3)
-      @curve\setKey(4, 0.66, 4)
-      @curve\setKey(5, 0.83, 5)
-      @curve\setKey(6, 1.00, 6)
+      @curve\setKey(1, 0.0, 1)
+      @curve\setKey(2, 0.2, 2)
 
       @anim = MOAIAnim\new()
       @anim\reserveLinks(1)
       @anim\setLink(1, @curve, @character.prop, MOAIProp2D.ATTR_INDEX)
       @anim\setMode(MOAITimer.NORMAL)
-      @anim\setSpan(1.3)
+      @anim\setSpan(0.6)
       @anim\start()
       @anim\setListener(MOAITimer.EVENT_TIMER_END_SPAN, @\stop)
 
       @timer = MOAITimer.new()
-      @timer\setSpan(0.5)
+      @timer\setSpan(0.3)
       @timer\setMode(MOAITimer.NORMAL)
       @timer\setListener(MOAITimer.EVENT_TIMER_END_SPAN, @\update)
       @timer\start()
@@ -257,7 +253,11 @@ class WalkAction extends Action
 
       @tileLib = MOAITileDeck2D\new()
       @tileLib\setTexture(texture)
-      @tileLib\setSize(6, 1)
+
+      if @character.characterID\upper! == "COLLECTOR"
+        @tileLib\setSize(6, 1)
+      else
+        @tileLib\setSize(4, 2)
       @tileLib\setRect(rect\get())
 
       @character.prop\setDeck @tileLib
@@ -265,12 +265,12 @@ class WalkAction extends Action
       @curve = MOAIAnimCurve.new()
       @curve\reserveKeys(6)
 
-      @curve\setKey(1, 0.16, 1)
-      @curve\setKey(2, 0.33, 2)
-      @curve\setKey(3, 0.50, 3)
-      @curve\setKey(4, 0.66, 4)
-      @curve\setKey(5, 0.83, 5)
-      @curve\setKey(6, 1.00, 6)
+      @curve\setKey(1, 0.0, 1)
+      @curve\setKey(2, 0.16, 2)
+      @curve\setKey(3, 0.33, 3)
+      @curve\setKey(4, 0.50, 4)
+      @curve\setKey(5, 0.66, 5)
+      @curve\setKey(6, 0.83, 6)
 
       @anim = MOAIAnim\new()
       @anim\reserveLinks(1)
@@ -320,6 +320,8 @@ class FlyAction extends Action
 
       texture = R.ASSETS.IMAGES.UFO
 
+      print "Executing fly action!"
+
       rect = @character.rectangle
 
       @tileLib = MOAITileDeck2D\new()
@@ -332,13 +334,22 @@ class FlyAction extends Action
       @curve = MOAIAnimCurve.new()
       @curve\reserveKeys(2)
 
-      @curve\setKey(1, 0.25, 1)
-      @curve\setKey(2, 0.5, 2)
+      rnd = math.random(1, 8)
+
+      if rnd == 1
+        @curve\setKey(1, 0.25, 1)
+        @curve\setKey(2, 0.75, 3)
+      elseif rnd == 2
+        @curve\setKey(1, 0.25, 1)
+        @curve\setKey(2, 0.75, 4)
+      else
+        @curve\setKey(1, 0.25, 1)
+        @curve\setKey(2, 0.75, 2)
 
       @anim = MOAIAnim\new()
       @anim\reserveLinks(1)
       @anim\setLink(1, @curve, @character.prop, MOAIProp2D.ATTR_INDEX)
-      @anim\setMode(MOAITimer.LOOP)
+      @anim\setMode(MOAITimer.NORMAL)
       @anim\setListener(MOAITimer.EVENT_TIMER_END_SPAN, @\stop)
       @anim\setSpan(1)
       @anim\start()
@@ -349,8 +360,7 @@ class FlyAction extends Action
     @anim\stop()
     @anim = nil
     @curve = nil
-
-  stop: () =>
+    print "DONE FLYING"
 
   poll: (otherCharacters = {}) =>
     return true, 1
@@ -462,14 +472,18 @@ class JumpwalkAction extends Action
       @character.prop\setDeck @tileLib
 
       @curve = MOAIAnimCurve.new()
-      @curve\reserveKeys(6)
+      @curve\reserveKeys(8)
 
-      @curve\setKey(1, 0.20, 1)
-      @curve\setKey(2, 0.30, 2)
-      @curve\setKey(3, 0.50, 3)
-      @curve\setKey(4, 1.80, 4)
-      @curve\setKey(5, 1.90, 5)
-      @curve\setKey(6, 2.00, 6)
+      @curve\setKey(1, 0.00, 1)
+      @curve\setKey(2, 0.10, 2)
+      @curve\setKey(3, 0.20, 3)
+
+      @curve\setKey(4, 0.40, 4)
+      @curve\setKey(5, 0.80, 5)
+      @curve\setKey(6, 1.20, 4)
+      @curve\setKey(7, 1.60, 5)
+
+      @curve\setKey(8, 1.80, 6)
 
       @anim = MOAIAnim\new()
       @anim\reserveLinks(1)
@@ -481,12 +495,12 @@ class JumpwalkAction extends Action
       -- @anim\stop(otherCharacters)
 
       @timer = MOAITimer.new()
-      @timer\setSpan(2.0/15)
+      @timer\setSpan(2.0/16)
       @timer\setMode(MOAITimer.LOOP)
       @timer\setListener(MOAITimer.EVENT_TIMER_END_SPAN, @\update)
       @timer\start()
       @counter = 1
-      @jumpTable = { 60, 40, 30, 20, 10, 0, 0, -10, -20, -30, -40, -60, 0, 0, 0 }
+      @jumpTable = { 0, 60, 40, 30, 20, 10, 0, 0, -10, -20, -30, -40, -60, 0, 0, 0 }
 
     super @character
 

@@ -5,7 +5,8 @@
 		"background" : "BACKGROUND",
 
 		"screenElements" : [
-			{ "ELEMENT": "textbutton", "X" : 0, "Y" : 0, "IMAGE" : "BUTTON", "TEXT" : "story mode" , "FUNCTION" : "openscreen levelSelect", "ENABLE_FUNCTION" : "true", "SIZE" : [-128, -32, 128, 32] }
+			{ "ELEMENT": "textbutton", "X" : 0, "Y" : 0, "IMAGE" : "BUTTON", "TEXT" : "story mode" , "FUNCTION" : "openscreen levelSelect", "ENABLE_FUNCTION" : "true", "SIZE" : [-128, -32, 128, 32] },
+			{ "ELEMENT": "textbutton", "X" : 0, "Y" : -70, "IMAGE" : "BUTTON", "TEXT" : "sandbox mode" , "FUNCTION" : "openscreen sandboxLevel", "ENABLE_FUNCTION" : "spawnedUnits 1", "SIZE" : [-128, -32, 128, 32] }
 		],
 
 		"assets" : {
