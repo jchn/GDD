@@ -1,10 +1,10 @@
 {
   "Config": {
-    "length": 80,
+    "length": 90,
     "wrestler" : "wrestler",
 
     "spawnableUnits" : [
-      "JUMPWALKER", "ELITE_JUMPWALKER", "SUPREME_JUMPWALKER"
+      "JUMPWALKER", "ELITE_JUMPWALKER", "SUPREME_JUMPWALKER", "ELITE_RANGED", "SUPREME_RANGED"
     ],
 
     "startingPowerups" : [
@@ -88,10 +88,15 @@
         "INDICATOR" : "resources/indicator.png",
         "GAME_OVER" : "resources/game_over.png",
         "WIN_GAME" : "resources/win_game.png",
-        
+
         "JUMPWALKER_SINGLE" : "resources/jumpwalker_single.png",
         "ELITE_JUMPWALKER_SINGLE" : "resources/elite_jumpwalker_single.png",
-        "SUPREME_JUMPWALKER_SINGLE" : "resources/supreme_jumpwalker_single.png"
+        "SUPREME_JUMPWALKER_SINGLE" : "resources/supreme_jumpwalker_single.png",
+        "COLLECTOR_SINGLE" : "resources/collector_single.png",
+        "SLOWDOWN_SINGLE" : "resources/slowdown_single.png",
+        "ELITE_RANGED_SINGLE" : "resources/elite_ranged_single.png",
+        "SUPREME_RANGED_SINGLE" : "resources/supreme_ranged_single.png"
+
       },
       "fonts": {
         "ARIAL" : {
@@ -116,6 +121,15 @@
 
             }
           }
+      },
+
+      "overlays" : {
+        "SPAWNED_FIRST_RANGED_UNIT_OVERLAY" : {
+          "ID" : "SPAWNED_RANGED_COLLECTOR_UNIT",
+          "TEXT" : "This is an ranged unit. It doesn't move, but shoots balls of acid.",
+          "TEXTURE" : "ELITE_RANGED_SINGLE",
+          "EVENT" : "SPAWNED_FIRST_ELITE_RANGED_UNIT"
+        }
       }
     }
   }

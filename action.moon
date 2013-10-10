@@ -1,4 +1,4 @@
-class Action --behavior
+class Action
 
   new: (@character) =>
 

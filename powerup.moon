@@ -204,13 +204,13 @@ class PowerUpManager
 
     switch powerupID
       when "health"
-        newPowerup = HealthPowerup(world, layer, x, y, R.ASSETS.IMAGES["#{powerupID}_ANIM"\upper!])
+        newPowerup = HealthPowerup(world, layer, x, y, R.ASSETS.IMAGES.HEALTH_ANIM)
 
       when "shield"
-        newPowerup = ShieldPowerup(world, layer, x, y, R.ASSETS.IMAGES["#{powerupID}_ANIM"\upper!])
+        newPowerup = ShieldPowerup(world, layer, x, y, R.ASSETS.IMAGES.SHIELD_ANIM)
 
       when "strength"
-        newPowerup = StrengthPowerup(world, layer, x, y, R.ASSETS.IMAGES["#{powerupID}_ANIM"\upper!])
+        newPowerup = StrengthPowerup(world, layer, x, y, R.ASSETS.IMAGES.STRENGTH_ANIM)
 
       when "bullet"
         newPowerup = Bullet(world, layer, x, y, R.ASSETS.IMAGES.PROJECTILE)

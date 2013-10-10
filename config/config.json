@@ -274,7 +274,7 @@
 				"MIN_LOOT": 1,
 				"MAX_LOOT": 2,
 				"POSSIBLE_LOOT" : [ "strength" ],
-				"TEXT_ENTRY" : "This alien shoots balls of acid, allowing them to damage enemies protected by a shield."
+				"TEXT_ENTRY" : "This alien shoots balls of acid, allowing it to damage enemies protected by a shield."
 			},
 
 			"SUPREME_RANGED" : {
