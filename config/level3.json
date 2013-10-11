@@ -53,7 +53,9 @@
         "SLOWDOWN_WALL" : "resources/slowdown.png",
         "SLOWDOWN_ICON" : "resources/slowdown_icon.png",
 
-        "UFO" : "resources/ufo2.png",
+        "UFO_FLY" : "resources/ufo_fly.png",
+        "UFO_SPAWN" : "resources/ufo_spawn.png",
+        "UFO_CRASH" : "resources/ufo_crash.png",
 
         "RED" : "resources/red_health.png",
         "GREEN" : "resources/green_health.png",
@@ -62,10 +64,7 @@
         "TRANSPARENT" : "resources/transparent.png",
 
         "PLUS_BUTTON" : "resources/up_button.png",
-        "MINUS_BUTTON" : "resources/down_button.png"
-      },
-      
-      "textures": {
+        "MINUS_BUTTON" : "resources/down_button.png",
 
         "PAUSE_BUTTON" : "resources/pause_button.png",
         "BACK_BUTTON" : "resources/back_button.png",
@@ -126,7 +125,7 @@
       "overlays" : {
         "SPAWNED_FIRST_RANGED_UNIT_OVERLAY" : {
           "ID" : "SPAWNED_RANGED_COLLECTOR_UNIT",
-          "TEXT" : "This is an ranged unit. It doesn't move, but shoots balls of acid.",
+          "TEXT" : "This is a ranged unit. It doesn't move, but shoots balls of acid. Use it to damage a wrestler, even when it's protected.",
           "TEXTURE" : "ELITE_RANGED_SINGLE",
           "EVENT" : "SPAWNED_FIRST_ELITE_RANGED_UNIT"
         }

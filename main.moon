@@ -94,7 +94,6 @@ for screen in *configTable.Screens do
   newScreen = nil
   switch screenType
     when "level"
-      print "NEW LEVEL WITH PREVIOUS SCREEN: #{screen.PREVIOUS}"
       newScreen = Level("config/" .. screen.FILE, screen.LEVEL_NO, screen.PREVIOUS)
     when "tutlevel"
       newScreen = TutLevel("config/" .. screen.FILE, screen.LEVEL_NO, screen.PREVIOUS)

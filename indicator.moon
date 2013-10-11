@@ -8,16 +8,15 @@ export class Indicator
 
     rectBase = Rectangle -64, -16, 64, 16
     @quadBase = MOAIGfxQuad2D.new()
-    @quadBase\setTexture( R.ASSETS.TEXTURES.INDICATOR_BASE )
+    @quadBase\setTexture( R.ASSETS.IMAGES.INDICATOR_BASE )
     @quadBase\setRect( rectBase\get() )
     @quadBase\setUVRect rectBase\get!
     @propBase\setDeck @quadBase
 
     rectIndicator = Rectangle -4, -8, 4, 8
     @quadIndicator = MOAIGfxQuad2D.new()
-    @quadIndicator\setTexture( R.ASSETS.TEXTURES.INDICATOR )
+    @quadIndicator\setTexture( R.ASSETS.IMAGES.INDICATOR )
     @quadIndicator\setRect rectIndicator\get()
-    @quadIndicator\setRect rectIndicator\get!
     @propIndicator\setDeck @quadIndicator
 
     @width = rectBase\getWidth!

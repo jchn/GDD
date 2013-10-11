@@ -29,12 +29,9 @@
 				"LEVEL3_PREVIEW" : "resources/level_3_preview.png",
 				"LEVEL4_PREVIEW" : "resources/level_4_preview.png",
 				"PLUS_BUTTON" : "resources/plus_button.png",
-				"MINUS_BUTTON" : "resources/minus_button.png"
-			},
-
-			"textures": {
-        "PAUSE_BUTTON" : "resources/pause_button.png",
-        "BACK_BUTTON" : "resources/back_button.png"
+				"MINUS_BUTTON" : "resources/minus_button.png",
+		        "PAUSE_BUTTON" : "resources/pause_button.png",
+		        "BACK_BUTTON" : "resources/back_button.png"
 			}
 		}
 	}

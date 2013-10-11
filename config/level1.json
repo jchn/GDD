@@ -47,7 +47,9 @@
         "SLOWDOWN_WALL" : "resources/slowdown.png",
         "SLOWDOWN_ICON" : "resources/slowdown_icon.png",
 
-        "UFO" : "resources/ufo2.png",
+        "UFO_FLY" : "resources/ufo_fly.png",
+        "UFO_SPAWN" : "resources/ufo_spawn.png",
+        "UFO_CRASH" : "resources/ufo_crash.png",
 
         "RED" : "resources/red_health.png",
         "GREEN" : "resources/green_health.png",
@@ -56,10 +58,7 @@
         "TRANSPARENT" : "resources/transparent.png",
 
         "PLUS_BUTTON" : "resources/up_button.png",
-        "MINUS_BUTTON" : "resources/down_button.png"
-      },
-      
-      "textures": {
+        "MINUS_BUTTON" : "resources/down_button.png",
 
         "PAUSE_BUTTON" : "resources/pause_button.png",
         "BACK_BUTTON" : "resources/back_button.png",
@@ -86,7 +85,6 @@
         "INDICATOR64" : "resources/indicator64.png",
         "TRANSPARENT_OVERLAY" : "resources/transparent_overlay.png",
 
-        "HEALTH" : "resources/health.png",
         "PYGO" : "resources/pygo.png",
         "JUMPWALKER_SINGLE" : "resources/jumpwalker_single.png",
         "ELITE_JUMPWALKER_SINGLE" : "resources/elite_jumpwalker_single.png",
@@ -135,7 +133,7 @@
         },
         "INTRO2_OVERLAY" : {
           "ID" : "INTRO2",
-          "TEXT" : "The Intergalactic Wrestling Federation stole the stone that provides my planet with unlimited energy!",
+          "TEXT" : "The Intergalactic Wrestling Federation stole the stone that provides my planet with energy!",
           "TEXTURE" : "PYGO",
           "EVENT" : "INTRO1_CLOSE"
         },
@@ -147,13 +145,13 @@
         },
         "INTRO4_OVERLAY" : {
           "ID" : "INTRO4",
-          "TEXT" : "With you and my alien friends, I can beat that wrestling garbage!",
+          "TEXT" : "I need your help to defeat those space traveling wrestlers!",
           "TEXTURE" : "PYGO",
           "EVENT" : "INTRO3_CLOSE"
         },
         "INTRO5_OVERLAY" : {
           "ID" : "INTRO5",
-          "TEXT" : "Use the buttons on the lower right corner of the screen to transport my friends to this planet.",
+          "TEXT" : "Use the buttons on the lower right corner of the screen to transport my alien friends to this planet.",
           "TEXTURE" : "BUTTON_EXPLANATION",
           "EVENT" : "INTRO4_CLOSE"
         },
@@ -246,12 +244,6 @@
           "TEXTURE" : "SUPREME_JUMPWALKER_COST_EXPLANATION",
           "EVENT" : "FIRST_SHIELD_FOR_UFO"
         },
-        "FIRST_SHIELD_POWERUP_OVERLAY2" : {
-          "ID" : "FIRST_SHIELD_POWERUP2",
-          "TEXT" : "Now that the wrestler has seen what the powerups can do, he'll want them too.",
-          "TEXTURE" : "PYGO",
-          "EVENT" : "FIRST_SHIELD_POWERUP_CLOSE"
-        },
 
         "SPAWNED_FIRST_SUPREME_JUMPWALKER_UNIT_OVERLAY" : {
           "ID" : "SPAWNED_FIRST_SUPREME_JUMPWALKER",
@@ -259,23 +251,17 @@
           "TEXTURE" : "SUPREME_JUMPWALKER_SINGLE",
           "EVENT" : "SPAWNED_FIRST_SUPREME_JUMPWALKER_UNIT"
         },
-        "SPAWNED_FIRST_SUPREME_JUMPWALKER_UNIT2_OVERLAY" : {
-          "ID" : "SPAWNED_FIRST_SUPREME_JUMPWALKER2",
-          "TEXT" : "To transport a golden alien I need quite a few powerups.",
-          "TEXTURE" : "PYGO",
-          "EVENT" : "SPAWNED_FIRST_SUPREME_JUMPWALKER_CLOSE"
-        },
         "SPAWNED_FIRST_SUPREME_JUMPWALKER_UNIT3_OVERLAY" : {
-          "ID" : "SPAWNED_FIRST_SUPREME_JUMPWALKER3",
+          "ID" : "SPAWNED_FIRST_SUPREME_JUMPWALKER2",
           "TEXT" : "Golden aliens can use powerups. Just drag a powerup to a golden alien and see what happens!",
           "TEXTURE" : "GIVE_POWERUP_TO_GOLDEN_UNIT_EXPLANATION",
-          "EVENT" : "SPAWNED_FIRST_SUPREME_JUMPWALKER2_CLOSE"
+          "EVENT" : "SPAWNED_FIRST_SUPREME_JUMPWALKER_CLOSE"
         },
         "SPAWNED_FIRST_SUPREME_JUMPWALKER_UNIT4_OVERLAY" : {
-          "ID" : "SPAWNED_FIRST_SUPREME_JUMPWALKER4",
+          "ID" : "SPAWNED_FIRST_SUPREME_JUMPWALKER3",
           "TEXT" : "You can use the powerups we've collected to give to golden aliens. Just drag them from our collection in the upper right corner.",
           "TEXTURE" : "POWERUP_FROM_COLLECTION_EXPLANATION",
-          "EVENT" : "SPAWNED_FIRST_SUPREME_JUMPWALKER3_CLOSE"
+          "EVENT" : "SPAWNED_FIRST_SUPREME_JUMPWALKER2_CLOSE"
         }
       }
     }

@@ -240,6 +240,10 @@ class CollectorUnit extends Unit
         own\showFloatingNumber("#{amount}", 4, R.REDSTYLE)
       powerupManager.removePowerups((p) -> return p == other)
 
+  die: () =>
+    super @
+    buttonManager.enableButtons()
+
 class UFO extends Character
 
   name: 'ufo'
@@ -294,6 +298,12 @@ class CharacterManager
 
   checkEnemySpawnable: (characterID) ->
     characterID = characterID\upper()
+
+    if characterID == "COLLECTOR"
+      collectorCharacters = characterManager.selectCharacters((char) -> return char.characterID\upper() == characterID)
+      if #collectorCharacters > 0
+        return false
+
     if configTable[characterID].COST == nil
       return true
     for powerup, amount in pairs configTable[characterID].COST do
@@ -447,6 +457,7 @@ class CharacterManager
         else
           newCharacter\setImmortal(true)
         newCharacter\setFilter(entityCategory.CHARACTER, entityCategory.POWERUP + entityCategory.BOUNDARY + entityCategory.BULLET)
+        newCharacter\doAction("idle")
       when "COLLECTOR", "ELITE_COLLECTOR", "SUPREME_COLLECTOR"
         x = ufo\getLocation()
         newCharacter = CollectorUnit(characterID, prop, layer, world, direction.LEFT, rectangle, bodyRectangle, stats, actions, x, y)

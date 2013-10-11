@@ -67,6 +67,7 @@ class IdleAction extends Action
 
   beforeStop: (otherCharacters = {}) =>
     @anim\stop()
+    @tileLib = nil
     @anim = nil
     @curve = nil
 
@@ -108,6 +109,7 @@ class WallAction extends Action
 
   beforeStop: (otherCharacters = {}) =>
     @anim\stop()
+    @tileLib = nil
     @anim = nil
     @curve = nil
 
@@ -167,6 +169,7 @@ class RangedAttackAction extends Action
 
   beforeStop: (otherCharacters = {}) =>
     @anim\stop()
+    @tileLib = nil
     @anim = nil
     @curve = nil
     @timer\stop()
@@ -232,6 +235,7 @@ class PunchAction extends Action
 
   beforeStop: (otherCharacters = {}) =>
     @anim\stop()
+    @tileLib = nil
     @anim = nil
     @curve = nil
     @timer\stop()
@@ -290,6 +294,7 @@ class WalkAction extends Action
   beforeStop: (otherCharacters = {}) =>
     @anim\stop()
     @character.body\setLinearVelocity(0, 0)
+    @tileLib = nil
     @anim = nil
     @curve = nil
 
@@ -318,15 +323,13 @@ class FlyAction extends Action
   execute: (otherCharacters = {}) =>
     if @character.state == Characterstate.IDLE
 
-      texture = R.ASSETS.IMAGES.UFO
-
-      print "Executing fly action!"
+      texture = R.ASSETS.IMAGES[@character.characterID\upper! .. "_FLY"]
 
       rect = @character.rectangle
 
       @tileLib = MOAITileDeck2D\new()
       @tileLib\setTexture(texture)
-      @tileLib\setSize(4, 5)
+      @tileLib\setSize(4, 1)
       @tileLib\setRect(rect\get())
 
       @character.prop\setDeck @tileLib
@@ -358,9 +361,9 @@ class FlyAction extends Action
 
   beforeStop: (otherCharacters = {}) =>
     @anim\stop()
+    @tileLib = nil
     @anim = nil
     @curve = nil
-    print "DONE FLYING"
 
   poll: (otherCharacters = {}) =>
     return true, 1
@@ -370,13 +373,13 @@ class CrashAction extends Action
   execute: (otherCharacters = {}) =>
     if @character.state == Characterstate.IDLE
 
-      texture = R.ASSETS.IMAGES.UFO
+      texture = R.ASSETS.IMAGES[@character.characterID\upper! .. "_CRASH"]
 
       rect = @character.rectangle
 
       @tileLib = MOAITileDeck2D\new()
       @tileLib\setTexture(texture)
-      @tileLib\setSize(4, 5)
+      @tileLib\setSize(4, 4)
       @tileLib\setRect(rect\get())
 
       @character.prop\setDeck @tileLib
@@ -384,15 +387,15 @@ class CrashAction extends Action
       @curve = MOAIAnimCurve.new()
       @curve\reserveKeys(9)
 
-      @curve\setKey(1, 0.25, 9)
-      @curve\setKey(2, 0.5, 10)
-      @curve\setKey(3, 0.75, 11)
-      @curve\setKey(4, 0.1, 12)
-      @curve\setKey(5, 1.25, 13)
-      @curve\setKey(6, 1.5, 14)
-      @curve\setKey(7, 1.75, 15)
-      @curve\setKey(8, 2.0, 16)
-      @curve\setKey(9, 2.25, 17)
+      @curve\setKey(1, 0.25, 1)
+      @curve\setKey(2, 0.5, 2)
+      @curve\setKey(3, 0.75, 3)
+      @curve\setKey(4, 0.1, 4)
+      @curve\setKey(5, 1.25, 5)
+      @curve\setKey(6, 1.5, 6)
+      @curve\setKey(7, 1.75, 7)
+      @curve\setKey(8, 2.0, 8)
+      @curve\setKey(9, 2.25, 9)
 
       @anim = MOAIAnim\new()
       @anim\reserveLinks(1)
@@ -406,6 +409,7 @@ class CrashAction extends Action
 
   beforeStop: (otherCharacters = {}) =>
     @anim\stop()
+    @tileLib = nil
     @anim = nil
     @curve = nil
 
@@ -417,13 +421,13 @@ class SpawnAction extends Action
   execute: (otherCharacters = {}) =>
     if @character.state == Characterstate.IDLE
 
-      texture = R.ASSETS.IMAGES.UFO
+      texture = R.ASSETS.IMAGES[@character.characterID\upper! .. "_SPAWN"]
 
       rect = @character.rectangle
 
       @tileLib = MOAITileDeck2D\new()
       @tileLib\setTexture(texture)
-      @tileLib\setSize(4, 5)
+      @tileLib\setSize(4, 1)
       @tileLib\setRect(rect\get())
 
       @character.prop\setDeck @tileLib
@@ -431,10 +435,10 @@ class SpawnAction extends Action
       @curve = MOAIAnimCurve.new()
       @curve\reserveKeys(4)
 
-      @curve\setKey(1, 0.2, 5)
-      @curve\setKey(2, 0.4, 6)
-      @curve\setKey(3, 0.6, 7)
-      @curve\setKey(4, 0.8, 8)
+      @curve\setKey(1, 0.2, 1)
+      @curve\setKey(2, 0.4, 2)
+      @curve\setKey(3, 0.6, 3)
+      @curve\setKey(4, 0.8, 4)
 
       @anim = MOAIAnim\new()
       @anim\reserveLinks(1)
@@ -448,6 +452,7 @@ class SpawnAction extends Action
 
   beforeStop: (otherCharacters = {}) =>
     @anim\stop()
+    @tileLib = nil
     @anim = nil
     @curve = nil
 
@@ -518,6 +523,7 @@ class JumpwalkAction extends Action
       if not died
         @timer\stop()
         @anim\stop()
+        @anim\apply(0)
         @x, @y = @character\getLocation()
 
         deltaX = (120 + @character.stats.speed) / 24
@@ -554,6 +560,7 @@ class JumpwalkAction extends Action
     @timer\stop()
     @anim\stop()
     @character.body\setLinearVelocity(0, 0)
+    @tileLib = nil
     @anim = nil
     @timer = nil
     @curve = nil

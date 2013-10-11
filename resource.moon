@@ -1,11 +1,5 @@
 class Resource
   new: () =>
-    @WRESTLER_IDLE = MOAIImage.new()
-    @WRESTLER_WALK = MOAIImage.new()
-
-    @RED = MOAIImage.new()
-    @GREEN = MOAIImage.new()
-    @YELLOW = MOAIImage.new()
 
     @FONT = MOAIFont.new()
     @CHARCODES = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz .!0123456789:-+"
@@ -31,10 +25,6 @@ class Resource
 
     @GREENSTYLE\setFont(@FONT)
     @GREENSTYLE\setColor(0, 1, 0)
-
-    @RED\load("resources/red_health.png")
-    @GREEN\load("resources/green_health.png")
-    @YELLOW\load("resources/yellow_health.png")
 
     @HIT\load "resources/snare.wav"
 

@@ -196,7 +196,7 @@
 				"MIN_LOOT": 1,
 				"MAX_LOOT": 2,
 				"POSSIBLE_LOOT" : [ "health", "shield", "shield" ],
-				"TEXT_ENTRY" : "These red Jumpwalkers are protected by a shield."
+				"TEXT_ENTRY" : "These red Jumpwalkers are protected by a shield. They are slightly slower than purple Jumpwalkers."
 			},
 
 			"SUPREME_JUMPWALKER" : {
@@ -222,7 +222,7 @@
 				"BODYRECTANGLE" : [-20, -20, 20, 20],
 				"SPAWNLOCATION_OFFSET" : -50,
 				"CAN_USE_POWERUPS" : true,
-				"TEXT_ENTRY" : "These golden Jumpwalkers are the strongest of their species!"
+				"TEXT_ENTRY" : "These golden Jumpwalkers are the strongest of their species! Use their ability to use powerups to it's fullest potential."
 			},
 
 			"RANGED" : {
@@ -290,15 +290,15 @@
 					"ranged_cooldown": 2
 				},
 				"POWERUP_STATS" : {
-					"health" : 0,
-					"attack" : 0,
-					"shield" : 0
+					"health" : 5,
+					"attack" : 1,
+					"shield" : 1
 				},
 				"ACTIONS" : [
 					"ranged_attack"
 				],
 				"RECTANGLE" : [-32, -32, 32, 32 ],
-				"SPAWNLOCATION_OFFSET" : -35,
+				"SPAWNLOCATION_OFFSET" : -40,
 				"CAN_USE_POWERUPS" : true,
 				"MIN_LOOT": 1,
 				"MAX_LOOT": 2,
@@ -351,7 +351,7 @@
 				],
 				"RECTANGLE" : [-32, -32, 32, 32 ],
 				"SPAWNLOCATION_OFFSET" : -35,
-				"TEXT_ENTRY" : "This alien collects powerups for you. Use it wisely."
+				"TEXT_ENTRY" : "This alien collects powerups for you. There can only be one of these on the battlefield at any given time."
 			},
 
 			"ELITE_COLLECTOR" : {

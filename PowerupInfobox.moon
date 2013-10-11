@@ -25,7 +25,7 @@ export class PowerupInfobox
 
 	setLoc: (@x, @y) =>
 		@prop\setLoc(@x - (@imageRectangle\getWidth! / 2), @y)
-		@textbox\setLoc(@x + 5, @y - (@textboxRectangle\getHeight()/2))
+		@textbox\setLoc(@x, @y - (@textboxRectangle\getHeight()/2))
 
 	triggerClick: (x, y) =>
 		x, y = @layer\worldToWnd x, y

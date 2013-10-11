@@ -11,7 +11,7 @@ export class AssetLoader
     if @config.images != nil
       images = @config.images
       for k, v in pairs(images)
-        @IMAGES[k] = MOAIImage.new()
+        @IMAGES[k] = MOAITexture.new()
         @IMAGES[k]\load(v, MOAIImage.PREMULTIPLY_ALPHA)
 
     -- Load textures
@@ -40,7 +40,7 @@ export class AssetLoader
       for k, v in pairs(overlays)
         @OVERLAYS[k] = {}
         @OVERLAYS[k]["TEXT"] = v["TEXT"]
-        @OVERLAYS[k]["TEXTURE"] = @TEXTURES[v["TEXTURE"]]
+        @OVERLAYS[k]["TEXTURE"] = @IMAGES[v["TEXTURE"]]
         @OVERLAYS[k]["EVENT"] = v["EVENT"]
         @OVERLAYS[k]["ID"] = v["ID"]
 

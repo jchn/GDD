@@ -22,7 +22,6 @@ class ScreenManager
 		screens[screenID] = screen
 
 	openPrevious: () ->
-		print "Previous screen: #{previousScreenID}"
 		if screenManager.hasPreviousScreen!
 			screenManager.openScreen(currentScreen.previousScreenID)
 
@@ -43,7 +42,6 @@ class ScreenManager
 		currentScreen.screenID = screenID
 
 	hasPreviousScreen: () ->
-		print "Has previous screen: #{currentScreen.previousScreenID}"
 		return (currentScreen.previousScreenID != "" and currentScreen.previousScreenID != nil)
 
 	makeScreenElement: (layer, screenElementConfig, secondaryLayer = layer) ->
@@ -136,7 +134,6 @@ class Screen
 		@pausemenuBackground\setColor 1, 1, 1, 0.6
 
 		olayer\insertProp(@pausemenuBackground)
-
 		imageQuad = MOAIGfxQuad2D.new()
 		imageQuad\setTexture( overlay.TEXTURE )
 		imageQuad\setRect( -64, -64, 64, 64 )
@@ -205,11 +202,8 @@ export class GameScreen extends Screen
 
 		backgroundLayer\insertProp bgprop
 
-		print "OPENED SCREEN. PREVIOUS SCREEN #{@previousScreenID}"
-
 		if screenManager.hasPreviousScreen!
-			@backButton = SimpleButton LayerMgr\getLayer('screen'), R.ASSETS.TEXTURES.BACK_BUTTON, Rectangle(-64, -64, 64, 64), -200, 140, ( -> 
-				print "Open the previos screen!"
+			@backButton = SimpleButton LayerMgr\getLayer('screen'), R.ASSETS.IMAGES.BACK_BUTTON, Rectangle(-64, -64, 64, 64), -200, 140, ( -> 
 				screenManager.openPrevious!)
 			@backButton\add()
 
@@ -365,10 +359,10 @@ export class Level extends Screen
 			if buttonCount % 9 == 0
 				buttonX = buttonXInitial
 				buttonY += buttonYOffset
-			unitInfo = UnitInfo(LayerMgr\getLayer("pausemenu"), R.ASSETS.TEXTURES[spawnableUnit .. "_SINGLE"], Rectangle(-64, -64, 64, 64), Rectangle(-160, -64, 160, 64), characterManager.getConfigTable(spawnableUnit))
+			unitInfo = UnitInfo(LayerMgr\getLayer("pausemenu"), R.ASSETS.IMAGES[spawnableUnit .. "_SINGLE"], Rectangle(-64, -64, 64, 64), Rectangle(-160, -64, 160, 64), characterManager.getConfigTable(spawnableUnit))
 			@rotator\addElement(unitInfo)
 
-		@pauseButton = SimpleButton LayerMgr\getLayer("pausebutton"), R.ASSETS.TEXTURES.PAUSE_BUTTON, Rectangle(-32, -32, 32, 32), -200, -140, ( -> @\togglePauseScreen!)
+		@pauseButton = SimpleButton LayerMgr\getLayer("pausebutton"), R.ASSETS.IMAGES.PAUSE_BUTTON, Rectangle(-32, -32, 32, 32), -200, -140, ( -> @\togglePauseScreen!)
 		@pauseButton\add()
 
 		for startingPowerup in *@startingPowerups
@@ -419,7 +413,7 @@ export class Level extends Screen
 
 			pauseMenuLayer\insertProp(@pausemenuBackground)
 
-			@backButton = SimpleButton pauseMenuLayer, R.ASSETS.TEXTURES.BACK_BUTTON, Rectangle(-64, -64, 64, 64), -200, 140, ( -> screenManager.openPrevious! )
+			@backButton = SimpleButton pauseMenuLayer, R.ASSETS.IMAGES.BACK_BUTTON, Rectangle(-64, -64, 64, 64), -200, 140, ( -> screenManager.openPrevious! )
 			@backButton\add()
 
 			@plusButton = SimpleButton(LayerMgr\getLayer("pausebutton"), R.ASSETS.IMAGES.PLUS_BUTTON, Rectangle(-32, -32, 32, 32), 0, 140, -> @rotator\showPrevious(), -> true)
@@ -487,6 +481,7 @@ export class Level extends Screen
 		e\triggerEvent("LEVEL_RESUME")
 
 	close: () =>
+		AssetLoader\destroy()
 		dt\reset!
 		e\clear!
 		if @fuelTimer != nil
@@ -518,7 +513,7 @@ export class Level extends Screen
 			rectangle = Rectangle( -128, -32, 128, 32 )
 
 			gfxQuad = MOAIGfxQuad2D.new()
-			gfxQuad\setTexture( R.ASSETS.TEXTURES.WIN_GAME )
+			gfxQuad\setTexture( R.ASSETS.IMAGES.WIN_GAME )
 			gfxQuad\setRect( rectangle\get() )
 
 			prop\setDeck( gfxQuad )
@@ -552,7 +547,7 @@ export class Level extends Screen
 	    rectangle = Rectangle( -128, -32, 128, 32 )
 
 	    gfxQuad = MOAIGfxQuad2D.new()
-	    gfxQuad\setTexture( R.ASSETS.TEXTURES.GAME_OVER )
+	    gfxQuad\setTexture( R.ASSETS.IMAGES.GAME_OVER )
 	    gfxQuad\setRect( rectangle\get() )
 
 	    prop\setDeck( gfxQuad )
